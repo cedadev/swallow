@@ -2,7 +2,7 @@ from pywps import Service
 from pywps.tests import assert_response_success
 
 from .common import client_for
-from hawfinch.processes import processes
+from testbird.processes import processes
 
 
 def test_wps_caps():
@@ -13,5 +13,6 @@ def test_wps_caps():
                             '/wps:Process'
                             '/ows:Identifier')
     assert sorted(names.split()) == [
-        'hello',
-    ]
+        'plotall',
+        'runname',
+        'runnamestd']
