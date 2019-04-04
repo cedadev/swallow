@@ -7,6 +7,7 @@
 # PyWPS 
 custom.cfg
 .custom.cfg
+jasmin.cfg
 *.pid
 
 # Python / Extensions etc.
