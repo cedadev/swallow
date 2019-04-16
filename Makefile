@@ -3,11 +3,9 @@ APP_ROOT := $(CURDIR)
 APP_NAME := hawfinch
 
 # Anaconda
-ANACONDA_HOME ?= $(HOME)/anaconda
-CONDA_ENV ?= $(APP_NAME)
-CONDA_ENVS_DIR ?= $(HOME)/anaconda/envs
-CONDA_ENV_PATH := $(CONDA_ENVS_DIR)/$(CONDA_ENV)
-CONDA_PINNED := $(APP_ROOT)/requirements/conda_pinned
+CONDA := $(shell command -v conda 2> /dev/null)
+ANACONDA_HOME := $(shell conda info --base 2> /dev/null)
+CONDA_ENV := $(APP_NAME)
 
 TEMP_FILES := *.egg-info *.log *.sqlite
 
@@ -47,17 +45,17 @@ endif
 .PHONY: conda_env
 conda_env: check_conda
 	@echo "Updating conda environment $(CONDA_ENV) ..."
-	"$(ANACONDA_HOME)/bin/activate" env update -n $(CONDA_ENV) -f environment.yml
+	"$(CONDA)" env update -n $(CONDA_ENV) -f environment.yml
 
 .PHONY: envclean
 envclean: check_conda
 	@echo "Removing conda env $(CONDA_ENV)"
-	@-"$(ANACONDA_HOME)/bin/activate" remove -n $(CONDA_ENV) --yes --all
+	@-"$(CONDA)" remove -n $(CONDA_ENV) --yes --all
 
 .PHONY: spec
 spec: check_conda
 	@echo "Updating conda environment specification file ..."
-	@-"$(ANACONDA_HOME)/bin/activate" list -n $(CONDA_ENV) --explicit > spec-file.txt
+	@-"$(CONDA)" list -n $(CONDA_ENV) --explicit > spec-file.txt
 
 ## Build targets
 
@@ -68,7 +66,7 @@ bootstrap: check_conda conda_env bootstrap_dev
 .PHONY: bootstrap_dev
 bootstrap_dev:
 	@echo "Installing development requirements for tests and docs ..."
-	@-bash -c "$(ANACONDA_HOME)/bin/activate install -y -n $(CONDA_ENV) -c conda-forge pytest flake8 sphinx bumpversion gunicorn psycopg2"
+	@-bash -c "$(CONDA) install -y -n $(CONDA_ENV) -c conda-forge pytest flake8 sphinx bumpversion gunicorn psycopg2"
 	@-bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV) && pip install -r requirements_dev.txt"
 
 .PHONY: install
