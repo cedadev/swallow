@@ -78,7 +78,7 @@ install: bootstrap
 .PHONY: start
 start: check_conda
 	@echo "Starting application ..."
-	@-bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV) && $(APP_NAME) start -d"
+	@-bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV) && $(APP_NAME)"
 
 .PHONY: stop
 stop: check_conda
