@@ -1,9 +1,3 @@
-# installer
-#Makefile
-
-# Docker
-#Dockerfile
-
 # PyWPS 
 custom.cfg
 .custom.cfg

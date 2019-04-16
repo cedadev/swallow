@@ -1,0 +1,20 @@
+[buildout]
+extends = buildout.cfg
+
+[settings]
+# hostname = localhost
+# http-port = 5000
+# output-port = 8090
+project = NAME-WPS
+abstract = A Web Processing Service to run the Met Office model NAME
+
+## development options
+# log-level = WARN
+# versions = noversions
+
+## deployment options
+# prefix =  /opt/birdhouse
+# user = www-data
+# etc-user = root
+
+[noversions]
