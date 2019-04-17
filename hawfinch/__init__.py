@@ -3,7 +3,6 @@
 """Top-level package for hawfinch."""
 
 from .wsgi import application
-from .cli import main
 
 __author__ = """Teri Forey"""
 __email__ = 'trf5@le.ac.uk'

@@ -46,5 +46,5 @@ setup(name='hawfinch',
       install_requires=reqs,
       entry_points={
           'console_scripts': [
-             'hawfinch=hawfinch.cli:main',
+             'hawfinch=hawfinch.cli:cli',
           ]},)
