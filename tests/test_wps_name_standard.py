@@ -3,8 +3,8 @@ import pytest
 from pywps import Service
 from pywps.tests import assert_response_success
 
-from testbird.tests.common import client_for
-from testbird.processes.wps_name_standard import RunNAMEstandard
+from hawfinch.tests.common import client_for
+from hawfinch.processes.wps_name_standard import RunNAMEstandard
 
 
 @pytest.mark.online
