@@ -2,12 +2,12 @@ name: hawfinch
 channels:
 - conda-forge
 - defaults
-- teriforey
 dependencies:
-- pywps=4.3.2
 - python=2.7
 - sphinx
 - jinja2
 - click
 - psutil
-- pynameplot
+- pip:
+  - -e git+https://github.com/geopython/pywps@master#egg=pywps 
+  - -e git+https://github.com/TeriForey/pyNAMEplot@master#egg=pynameplot
