@@ -3,7 +3,7 @@ import pytest
 from pywps import Service
 from pywps.tests import assert_response_success
 
-from hawfinch.tests.common import client_for
+from tests.common import client_for
 from hawfinch.processes.wps_plot_allops import PlotAll
 
 
