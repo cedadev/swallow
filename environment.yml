@@ -12,6 +12,3 @@ dependencies:
 - pytest
 - click
 - psutil
-# - pip:
-#   - -e git+https://github.com/geopython/pywps@master#egg=pywps 
-#   - -e git+https://github.com/TeriForey/pyNAMEplot@master#egg=pynameplot
