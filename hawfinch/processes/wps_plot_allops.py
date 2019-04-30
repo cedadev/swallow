@@ -128,6 +128,8 @@ class PlotAll(Process):
         # We need to find all the groups and loop through them one at a time!
         groups = {}
         for filename in os.listdir(os.path.join(rundir, 'outputs')):
+            if not filename.endswith("txt"):
+                continue
             groupnum = filename[14]
             try:
                 groupnum = int(groupnum)
@@ -200,7 +202,11 @@ class PlotAll(Process):
                 s.sumAll()
                 plotoptions['caption'] = "{} {} {} {}: Summed (UTC)".format(s.runname, s.averaging, s.altitude,
                                                                             s.direction)
-                plotoptions['outfile'] = "{}_{}_summed_all.png".format(s.runname, s.altitude.strip('()'))
+                plotoptions['outfile'] = "{}_{}_summed_all.png".format(s.runname, s.altitude.strip('()'))#TODO: Copy to plot all
+                #TODO: Fix: Currently all levels plotted with same name and overwritten, bug?
+                # Happening because of: https://github.com/TeriForey/pyNAMEplot/blob/master/pynameplot/namereader/name.py#L151
+                # Is is this correct or an assumption?
+                # If correct then maybe text input should be a string list
                 try:
                     drawMap(s, 'total', **plotoptions)
                     LOGGER.debug("Plotted %s" % plotoptions['outfile'])
