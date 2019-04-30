@@ -13,12 +13,12 @@ def clean_title(title):
     # List of unsafe characters to remove 
     chars_to_remove = [",","(",")"]
     # First replace spaces with underscores
-    title.replace(" ", "_")
+    clean_title = title.replace(" ", "_")
     # Remove unsafe characters with regex
     regex_expression = "[" + re.escape("".join(chars_to_remove)) + "]"
-    re.sub(regex_expression, "", title)
-    
-    return title
+    clean_title = re.sub(regex_expression, "", clean_title)
+
+    return clean_title
 
 def run_name(params, response):
     """
