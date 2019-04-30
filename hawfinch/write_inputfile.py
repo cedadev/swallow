@@ -188,12 +188,11 @@ def generate_inputfile(params, rundate, i):
         backwards = "Yes"
         runtype= "BCK"
 
-    # This will need editing, will need loggedin username, and a run id sub dir.
+    # This will need editing, will need loggedin username, and a run id sub dir.TODO:??
 
     jasminconfigs = getjasminconfigs()
 
-    userdir = jasminconfigs.get('jasmin', 'userdir')
-    workdir = os.path.join(userdir, 'WPStest', params['runid'])
+    workdir = os.path.join(jasminconfigs.get('jasmin', 'outputdir'), params['runid'])
 
     utilsdir = jasminconfigs.get('jasmin', 'utilsdir')
     namedir = jasminconfigs.get('jasmin', 'namedir')
@@ -216,7 +215,7 @@ def generate_inputfile(params, rundate, i):
 
     MetDefnFile = os.path.join(namedir, "Resources", "Defns", MetVals['MetDefnFileName'])
     MetDeclnFile = os.path.join(utilsdir, "MetDeclarations", MetVals['MetDeclFileName'])
-    MetRestoreScript = os.path.join(userdir, "MetRestore_JASMIN.ksh")
+    MetRestoreScript = jasminconfigs.get("jasmin", "met_restore")
 
     params['npart'] = ParticlesPerSource
     params['ntimesperhour'] = nIntTimesPerHour

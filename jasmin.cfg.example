@@ -1,5 +1,5 @@
 [jasmin]
-userdir = /path/to/user
+met_restore = /path/to/user
 namedir = /path/to/name_executable
 topodir = /path/to/topo_resources
 utilsdir = /path/to/utilities

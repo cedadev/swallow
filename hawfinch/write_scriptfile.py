@@ -12,8 +12,7 @@ def write_file(params, maxruns):
 
     jasminconfigs = getjasminconfigs()
 
-    userdir = jasminconfigs.get('jasmin', 'userdir')
-    workdir = os.path.join(userdir, 'WPStest', params['runid'])
+    workdir = os.path.join(jasminconfigs.get('jasmin', 'outputdir'), params['runid'])
     namedir = jasminconfigs.get('jasmin', 'namedir')
     topodir = jasminconfigs.get('jasmin', 'topodir')
 
@@ -27,7 +26,7 @@ def write_file(params, maxruns):
 
     lines.append("#!/bin/bash")
     lines.append("#BSUB -q {}".format(queue))
-    lines.append("#BSUB -oo r-%J-%I.out")
+    lines.append("#BSUB -oo r-%J-%I.out")#TODO: Fix
     lines.append("#BSUB -eo r-%J-%I.err")
     lines.append("#BSUB -W {}".format(walltime))
     lines.append('#BSUB -R "rusage[mem={}]"'.format(mem))

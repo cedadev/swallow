@@ -18,11 +18,10 @@ def run_name(params, response):
     :return: names of the output dir and zipped file
     """
 
-    # replace any white space in title with underscores
+    # Replace any white space in title with underscores
     params['title'] = params['title'].replace(' ', '_')
-    params['title'] = params['title'].replace(',', '')
-    params['title'] = params['title'].replace('(', '')
-    params['title'] = params['title'].replace(')', '')
+    # Remove any unsafe characters
+    params['title'].translate(None, ",()")
 
     runtype = "FWD"
     if params['runBackwards']:
@@ -58,25 +57,27 @@ def run_name(params, response):
 
     response.update_status("Input files created", 10)
 
-    # TODO: We'll insert the commands to run NAME here.
-    # cat = subprocess.Popen(['cat', os.path.join(params['outputdir'], 'script.bsub')], stdout=subprocess.PIPE)
-    # runbsub = subprocess.Popen('bsub', stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=cat.stdout)
-    # sout, serr = runbsub.communicate()
-    # jobid = sout.split(' ')[1].replace('>', '').replace('<', '')
-    # jobrunning = True
-    # while jobrunning:
-    #     time.sleep(30)
-    #     checkjob = subprocess.check_output('bjobs')
-    #     if jobid in checkjob:
-    #         print("Job %s is still running" % jobid)
-    #           processesrunning = 0
-    #           for l in checkjob.split('\n'):
-    #               if jobid in l:
-    #                   processesrunning += 1
-    #           percentcomplete = (((i+1)-processesrunning)/float(i+1))*85
-    #           response.update_status("Running NAME", 10+percentcomplete)
-    #     else:
-    #         jobrunning = False
+    cat = subprocess.Popen(['cat', os.path.join(params['outputdir'], 'script.bsub')], stdout=subprocess.PIPE)
+    runbsub = subprocess.Popen('bsub', stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=cat.stdout)
+    sout, serr = runbsub.communicate()
+    jobid = sout.split(' ')[1].replace('>', '').replace('<', '')
+    jobrunning = True
+    while jobrunning:
+        time.sleep(30)
+        checkjob = subprocess.check_output('bjobs')
+        if jobid in checkjob:
+            print("Job %s is still running" % jobid)
+            processesrunning = 0
+            for l in checkjob.split('\n'):
+                if jobid in l:
+                    processesrunning += 1
+            percentcomplete = (((i+1)-processesrunning)/float(i+1))*85
+            response.update_status("Running NAME", 10+percentcomplete)
+        else:
+            jobrunning = False
+
+
+    
 
     response.update_status("NAME simulation finished", 95)
 
@@ -84,11 +85,11 @@ def run_name(params, response):
     fakefile = os.path.join(jasconfigs.get('jasmin', 'outputdir'), '20171101_output.txt')
 
     n = Name(fakefile)
-    mapfile = "ExamplePlot.png"
+    mapfile = "ExamplePlot.png"#TODO: Make real output file
     drawMap(n, n.timestamps[0], outfile=mapfile)
 
     # Zip all the output files into one directory to be served back to the user.
     zippedfile = params['runid']
-    shutil.make_archive(zippedfile, 'zip', params['outputdir'])
+    shutil.make_archive(zippedfile, 'zip', params['outputdir'])#TODO: Only zip outputs not all
 
     return params['runid'], zippedfile, mapfile
