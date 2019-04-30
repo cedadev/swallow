@@ -27,7 +27,7 @@ def write_file(params, maxruns):
     lines.append("#!/bin/bash")
     lines.append("#BSUB -q {}".format(queue))
     lines.append("#BSUB -oo {}/r-%J-%I.out".format(os.path.join(params['outputdir'], 'lotus')))
-    lines.append("#BSUB -eo r-%J-%I.err")
+    lines.append("#BSUB -oo {}/r-%J-%I.err".format(os.path.join(params['outputdir'], 'lotus')))
     lines.append("#BSUB -W {}".format(walltime))
     lines.append('#BSUB -R "rusage[mem={}]"'.format(mem))
     lines.append("#BSUB -M {}".format(mem))
