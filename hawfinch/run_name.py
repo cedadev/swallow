@@ -38,6 +38,7 @@ def run_name(params, response):
         os.makedirs(params['outputdir'])
         os.makedirs(os.path.join(params['outputdir'], 'inputs'))
         os.makedirs(os.path.join(params['outputdir'], 'outputs'))
+        os.makedirs(os.path.join(params['outputdir'], 'lotus'))
 
     # Will write a file that lists all the input parameters
     with open(os.path.join(params['outputdir'], 'user_input_parameters.txt'), 'w') as ins:
