@@ -1,4 +1,4 @@
-import os
+import os, re
 import shutil
 import subprocess
 import time
@@ -9,6 +9,16 @@ from .utils import daterange, getjasminconfigs
 from .write_inputfile import generate_inputfile
 from .write_scriptfile import write_file
 
+def clean_title(title):
+    # List of unsafe characters to remove 
+    chars_to_remove = [",","(",")"]
+    # First replace spaces with underscores
+    title.replace(" ", "_")
+    # Remove unsafe characters with regex
+    regex_expression = "[" + re.escape("".join(chars_to_remove)) + "]"
+    re.sub(regex_expression, "", title)
+    
+    return title
 
 def run_name(params, response):
     """
@@ -17,11 +27,9 @@ def run_name(params, response):
     :param response: the WPS response object
     :return: names of the output dir and zipped file
     """
-
-    # Replace any white space in title with underscores
-    params['title'] = params['title'].replace(' ', '_')
+    
     # Remove any unsafe characters
-    params['title'].translate(None, ",()")
+    params["title"] = clean_title(params["title"])
 
     runtype = "FWD"
     if params['runBackwards']:
