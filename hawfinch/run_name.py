@@ -3,7 +3,7 @@ import shutil
 import subprocess
 import time
 from datetime import timedelta, datetime
-from pynameplot import Name, drawMap
+from pynameplot import Name, drawMap, Sum
 
 from .utils import daterange, getjasminconfigs
 from .write_inputfile import generate_inputfile
@@ -90,15 +90,16 @@ def run_name(params, response):
 
     response.update_status("NAME simulation finished", 95)
 
-    # TODO: Need to replace this with an actual result file
-    fakefile = os.path.join(params['outputdir'], "outputs", "20171101_output.txt")
 
-    n = Name(fakefile)
-    mapfile = "ExamplePlot.png"#TODO: Make real output file
-    drawMap(n, n.timestamps[0], outfile=mapfile)
+    outputs = os.path.join(params['outputdir'], "outputs")
+
+    s = Sum(outputs)
+    s.sumAll()
+    plot_filename = "{}_{}_summed_all.png".format(s.runname, s.altitude.strip('()'))
+    drawMap(s, "total", outfile=os.path.join(outputs, plot_filename))
 
     # Zip all the output files into one directory to be served back to the user.
-    zippedfile = params['runid']
-    shutil.make_archive(zippedfile, 'zip', os.path.join(params['outputdir'], "outputs"))
+    zipped_filename = os.path.join(params['outputdir'], params['runid'])
+    shutil.make_archive(zipped_filename, 'zip', os.path.join(params['outputdir'], "outputs"))
 
-    return params['runid'], zippedfile, mapfile
+    return params['runid'], zipped_filename, plot_filename
