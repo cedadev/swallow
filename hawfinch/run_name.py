@@ -82,7 +82,7 @@ def run_name(params, response):
     response.update_status("NAME simulation finished", 95)
 
     # TODO: Need to replace this with an actual result file
-    fakefile = os.path.join(jasconfigs.get('jasmin', 'outputdir'), '20171101_output.txt')
+    fakefile = os.path.join(params['outputdir'], "outputs", "20171101_output.txt")
 
     n = Name(fakefile)
     mapfile = "ExamplePlot.png"#TODO: Make real output file
@@ -90,6 +90,6 @@ def run_name(params, response):
 
     # Zip all the output files into one directory to be served back to the user.
     zippedfile = params['runid']
-    shutil.make_archive(zippedfile, 'zip', params['outputdir'])#TODO: Only zip outputs not all
+    shutil.make_archive(zippedfile, 'zip', os.path.join(params['outputdir'], "outputs"))
 
     return params['runid'], zippedfile, mapfile
