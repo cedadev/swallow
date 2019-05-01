@@ -152,7 +152,7 @@ class RunNAME(Process):
 
         response.outputs['FileContents'].file = zippedfile + '.zip'
         response.outputs['runid'].data = outdir
-        response.outputs['ExamplePlot'].file = mapfile
+        response.outputs['SummaryPlot'].file = mapfile
 
         response.update_status('done', 100)
         return response
