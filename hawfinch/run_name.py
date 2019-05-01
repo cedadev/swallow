@@ -92,14 +92,14 @@ def run_name(params, response):
 
 
     outputs = os.path.join(params['outputdir'], "outputs")
-
+    # Sum all of the output files and plot them on one plot
     s = Sum(outputs)
     s.sumAll()
     plot_filename = "{}_{}_summed_all.png".format(s.runname, s.altitude.strip('()'))
     plot_path = os.path.join(outputs, plot_filename)
     drawMap(s, "total", outfile=plot_path)
 
-    # Zip all the output files into one directory to be served back to the user.
+    # Zip all the output files into one directory to be served back to the user
     zipped_path = os.path.join(params['outputdir'], params['runid'])
     shutil.make_archive(zipped_path, 'zip', os.path.join(params['outputdir'], "outputs"))
 

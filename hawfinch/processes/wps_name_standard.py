@@ -66,8 +66,8 @@ class RunNAMEstandard(Process):
                           abstract="Output files (zipped)",
                           supported_formats=[Format('application/x-zipped-shp')],
                           as_reference=True),
-            ComplexOutput('ExamplePlot', 'Example Plot of initial time point',
-                          abstract='Example plot of initial time point',
+            ComplexOutput('SummaryPlot', 'Summary Plot',
+                          abstract='Summary plot of whole time period',
                           supported_formats=[Format('image/tiff')],
                           as_reference=True),
             ]
