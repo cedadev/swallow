@@ -7,7 +7,7 @@ import datetime as dt
 
 from .utils import get_Mk_global, get_Met_vals, getjasminconfigs
 
-LOGGER = logging.getLogger("PYWPS")
+LOGGER = logging.getLogger('PYWPS')
 
 
 def generate_hourlys(params, index, cur_date, start_hour, stop_hour):
@@ -57,13 +57,13 @@ Name,                             Quantity,      Species,                  Sourc
 
 
     for nzgrids in range(1, len(params['elevationOut']) + 1):
-        strings.append("Req{}_{}, Air concentration, TRACER1, SourceID1_{}, HGrid1, ZGrid{}, TGrid{},         No,"
-                       "         Int, {}:00, {},    No,            D,     TZ,  Z,          IA, {}_group{}".format(nzgrids,
+        strings.append('Req{}_{}, Air concentration, TRACER1, SourceID1_{}, HGrid1, ZGrid{}, TGrid{},         No,'
+                       '         Int, {}:00, {},    No,            D,     TZ,  Z,          IA, {}_group{}'.format(nzgrids,
             index,index, nzgrids, index, params['runDuration'], params['runDuration']*params['ntimesperhour'],
-            dt.datetime.strftime(cur_date, "%Y%m%d"), nzgrids))
+            dt.datetime.strftime(cur_date, '%Y%m%d'), nzgrids))
 
 
-    return "\n".join(strings)+"\n"
+    return '\n'.join(strings)+'\n'
 
 
 
@@ -110,9 +110,9 @@ Name,   Z-Coord,  nZ,      Z0,      dZ,""")
         nzgrids += 1
         dZ = maxele - minele
         Z0 = minele + (dZ/2)
-        coordsstrings.append("ZGrid{},   m agl,   1,    {},   {},".format(nzgrids, Z0, dZ))
+        coordsstrings.append('ZGrid{},   m agl,   1,    {},   {},'.format(nzgrids, Z0, dZ))
 
-    if params['timeFmt'] == "days":
+    if params['timeFmt'] == 'days':
         maxagehours = params['time']*24
     else:
         maxagehours = params['time']
@@ -125,7 +125,7 @@ Temporal Grids:
 Name,                      nt,     dt,               t0,""")
         if params['runBackwards']:
             for i in range(1,9):
-                coordsstrings.append("TGrid{},              1,  03:00,   {},".format(i,
+                coordsstrings.append('TGrid{},              1,  03:00,   {},'.format(i,
                                                                                      dt.datetime.strftime(
                                                                                          cur_date - dt.timedelta(
                                                                                              days=params['time']),
@@ -135,7 +135,7 @@ Name,                      nt,     dt,               t0,""")
         else:
             for i in range(1,9):
                 cur_date = cur_date + dt.timedelta(hours=3)
-                coordsstrings.append("TGrid{},              1,  03:00,   {},".format(i,
+                coordsstrings.append('TGrid{},              1,  03:00,   {},'.format(i,
                                                                                      dt.datetime.strftime(
                                                                                          cur_date + dt.timedelta(
                                                                                              days=params['time']),
@@ -159,7 +159,7 @@ Dispersion Domain,           No, Lat-Long,    {},   {},   {},   {},           No
 """.format(CompDom_Xmin, CompDom_Xmax, CompDom_Ymin, CompDom_Ymax, runDuration))
 
 
-    return "\n".join(coordsstrings)
+    return '\n'.join(coordsstrings)
 
 
 def generate_inputfile(params, rundate, i):
@@ -182,11 +182,11 @@ def generate_inputfile(params, rundate, i):
     else:
         SamplingPeriod_Hours = params['dailyreleaselen']
 
-    backwards = "No"
-    runtype = "FWD"
+    backwards = 'No'
+    runtype = 'FWD'
     if params['runBackwards']:
-        backwards = "Yes"
-        runtype= "BCK"
+        backwards = 'Yes'
+        runtype= 'BCK'
 
     # This will need editing, will need loggedin username, and a run id sub dir.TODO:??
 
@@ -197,7 +197,7 @@ def generate_inputfile(params, rundate, i):
     utilsdir = jasminconfigs.get('jasmin', 'utilsdir')
     namedir = jasminconfigs.get('jasmin', 'namedir')
     topodir = jasminconfigs.get('jasmin', 'topodir')
-    metdir = os.path.join(workdir, "met_data", "input{}".format(i))
+    metdir = os.path.join(workdir, 'met_data', 'input{}'.format(i))
 
     cur_date = dt.datetime.combine(rundate, dt.time(0))
     if 'dailytime' in params and params['timestamp'] == 'daily':
@@ -207,15 +207,15 @@ def generate_inputfile(params, rundate, i):
     end_globalMK = get_Mk_global(cur_date - dt.timedelta(days=params['time']))
 
     if start_globalMk == 0 or end_globalMK == 0:
-        raise Exception("Date is before the earliest available Global met data")
+        raise Exception('Date is before the earliest available Global met data')
     elif start_globalMk != end_globalMK:
-        raise Exception("The start and stop dates of the NAME run do not use the same 'Mk' Global met data")
+        raise Exception('The start and stop dates of the NAME run do not use the same "Mk" Global met data')
 
     MetVals = get_Met_vals(start_globalMk)
 
-    MetDefnFile = os.path.join(namedir, "Resources", "Defns", MetVals['MetDefnFileName'])
-    MetDeclnFile = os.path.join(utilsdir, "MetDeclarations", MetVals['MetDeclFileName'])
-    MetRestoreScript = jasminconfigs.get("jasmin", "met_restore")
+    MetDefnFile = os.path.join(namedir, 'Resources', 'Defns', MetVals['MetDefnFileName'])
+    MetDeclnFile = os.path.join(utilsdir, 'MetDeclarations', MetVals['MetDeclFileName'])
+    MetRestoreScript = jasminconfigs.get('jasmin', 'met_restore')
 
     params['npart'] = ParticlesPerSource
     params['ntimesperhour'] = nIntTimesPerHour
@@ -248,7 +248,7 @@ Dispersion Options Ensemble Size, Met Ensemble Size,
 OpenMP Options:
 Use OpenMP?,    Threads, Parallel MetRead, Parallel MetProcess,
          No,         {},               No,                  No,
-""".format(params['runid'], dt.datetime.strftime(cur_date, "%d/%m/%Y"), params['title'], backwards, nthreads)
+""".format(params['runid'], dt.datetime.strftime(cur_date, '%d/%m/%Y'), params['title'], backwards, nthreads)
 
     inandout = """
 Output Options:
@@ -296,7 +296,7 @@ Max # Particles,   Max # Full Particles, Skew Time, Velocity Memory Time, Mesosc
 
 
     if not os.path.exists(MetDeclnFile):
-        raise Exception("Cannot find Met Declaration file {}".format(MetDeclnFile))
+        raise Exception('Cannot find Met Declaration file {}'.format(MetDeclnFile))
 
     declstrings = []
     with open(MetDeclnFile, 'r') as ins:
@@ -307,5 +307,5 @@ Max # Particles,   Max # Full Particles, Skew Time, Velocity Memory Time, Mesosc
             l = re.sub('%MetRestoreScript%', MetRestoreScript, l)
             declstrings.append(l)
 
-    return header+inandout+coordstr+footer+"\n".join(hourstrings)+"\n\n"+"\n".join(declstrings)
+    return header+inandout+coordstr+footer+'\n'.join(hourstrings)+'\n\n'+'\n'.join(declstrings)
 

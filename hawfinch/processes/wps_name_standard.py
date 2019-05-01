@@ -8,7 +8,7 @@ from hawfinch.run_name import run_name
 from datetime import timedelta
 
 import logging
-LOGGER = logging.getLogger("PYWPS")
+LOGGER = logging.getLogger('PYWPS')
 
 
 class RunNAMEstandard(Process):
@@ -22,7 +22,7 @@ class RunNAMEstandard(Process):
     def __init__(self):
         inputs = [
             LiteralInput('title', 'Release Station', data_type='string',
-                         abstract="standard location of release",
+                         abstract='standard location of release',
                          allowed_values=[
                             'Cape Verde',
                             'Beijing Tower',
@@ -49,7 +49,7 @@ class RunNAMEstandard(Process):
                          allowed_values=[1,5,10,12], default=1, min_occurs=0),
             LiteralInput('elevationOut', 'Output elevation averaging range(s)', data_type='string',
                          abstract='Elevation range where the particle number is counted (m agl)'
-                                  " Example: 0-100",
+                                  ' Example: 0-100',
                          default='0-100', min_occurs=1, max_occurs=4), # I want ranges, so going to use string format then process the results.
             LiteralInput('resolution','Resolution', data_type='float',
                          abstract='degrees, note the UM global Met data was only 17Km resolution',
@@ -63,7 +63,7 @@ class RunNAMEstandard(Process):
             LiteralOutput('runid', 'Run ID', data_type='string',
                           abstract='Unique run identifier, this is needed to create plots'),
             ComplexOutput('FileContents', 'Output files (zipped)',
-                          abstract="Output files (zipped)",
+                          abstract='Output files (zipped)',
                           supported_formats=[Format('application/x-zipped-shp')],
                           as_reference=True),
             ComplexOutput('SummaryPlot', 'Summary Plot',
@@ -76,7 +76,7 @@ class RunNAMEstandard(Process):
             self._handler,
             identifier='runnamestd',
             title='Run NAME-on-JASMIN - Standard Location',
-            abstract="Run NAME 3-hourly from a choice of standard release locations",
+            abstract='Run NAME 3-hourly from a choice of standard release locations',
             version='0.1',
             metadata=[
                 Metadata('NAME-on-JASMIN guide', 'http://jasmin.ac.uk/jasmin-users/stories/processing/'),
@@ -108,20 +108,20 @@ class RunNAMEstandard(Process):
 
         # Need to test start and end dates make sense relative to each other
         if params['startdate'] >= params['enddate'] + timedelta(days=1):
-            raise InvalidParameterValue("The end date is earlier than the start date!")
+            raise InvalidParameterValue('The end date is earlier than the start date!')
 
         if (params['enddate'] + timedelta(days=1)) - params['startdate'] >= timedelta(days=93):
-            raise InvalidParameterValue("Can only run across a maximum of three months in one go")
+            raise InvalidParameterValue('Can only run across a maximum of three months in one go')
 
         params['elevation'] = 10
-        params['timeFmt'] = "days"
+        params['timeFmt'] = 'days'
         params['timestamp'] = '3-hourly'
 
-        if params['title'] == "Cape Verde":
+        if params['title'] == 'Cape Verde':
             params['longitude'] = -24.867222
             params['latitude'] = 16.863611
             params['domain'] = [-30.0, -120.0, 90.0, 80.0] # minY,minX,maxY,maxX
-        elif params['title'] == "Beijing Tower":
+        elif params['title'] == 'Beijing Tower':
             params['longitude'] = 116.377
             params['latitude'] = 39.975
             if params['time'] == 1:
@@ -165,7 +165,7 @@ class RunNAMEstandard(Process):
             params['longitude'] = 77.23184
             params['latitude'] = 28.6644
             params['domain'] = [-20.0, 0.0, 60.0, 180.0]
-        elif params['title'] == "Bachok, Malaysia":
+        elif params['title'] == 'Bachok, Malaysia':
             params['longitude'] = 102.425
             params['latitude'] = 6.009
             params['domain'] = [-45.0, 65.0, 80.0, 195.0]
@@ -202,7 +202,7 @@ class RunNAMEstandard(Process):
             params['elevation'] = 15
             params['domain'] = [20.0, -180.0, 90.0, 90.0]
 
-        response.update_status("Processed parameters", 5)
+        response.update_status('Processed parameters', 5)
 
         outdir, zippedfile, mapfile = run_name(params, response)
 
@@ -210,5 +210,5 @@ class RunNAMEstandard(Process):
         response.outputs['runid'].data = outdir
         response.outputs['ExamplePlot'].file = mapfile
 
-        response.update_status("done", 100)
+        response.update_status('done', 100)
         return response

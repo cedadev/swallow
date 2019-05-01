@@ -8,7 +8,7 @@ from hawfinch.run_name import run_name
 from datetime import timedelta
 
 import logging
-LOGGER = logging.getLogger("PYWPS")
+LOGGER = logging.getLogger('PYWPS')
 
 
 class RunNAME(Process):
@@ -22,21 +22,21 @@ class RunNAME(Process):
     def __init__(self):
         inputs = [
             LiteralInput('title', 'Title', data_type='string',
-                         abstract="Title of run"),
+                         abstract='Title of run'),
             LiteralInput('longitude', 'Longitude', data_type='float',
-                         abstract="Location of release",
+                         abstract='Location of release',
                          default=-24.867222),
             LiteralInput('latitude', 'Latitude', data_type='float',
-                         abstract="Location of release",
+                         abstract='Location of release',
                          default=16.863611),
             LiteralInput('elevation', 'Elevation', data_type='integer',
-                         abstract="Elevation of release, m agl for land, m asl for marine release",
+                         abstract='Elevation of release, m agl for land, m asl for marine release',
                          default=10, min_occurs=0),
             # LiteralInput('elevation_range_min','Elevation Range Min', data_type='integer',
-            #              abstract="Minimum range of elevation",
+            #              abstract='Minimum range of elevation',
             #              default=None, min_occurs=0),
             # LiteralInput('elevation_range_max', 'Elevation Range Max', data_type='integer',
-            #              abstract = "Maximum range of elevation",
+            #              abstract = 'Maximum range of elevation',
             #              default=None, min_occurs=0),
 
             LiteralInput('runBackwards', 'Run Backwards', data_type='boolean',
@@ -53,7 +53,7 @@ class RunNAME(Process):
                              min_occurs=1),
             LiteralInput('elevationOut', 'Output elevation averaging range(s)', data_type='string',
                          abstract='Elevation range where the particle number is counted (m agl)'
-                                  " Example: 0-100",
+                                  ' Example: 0-100',
                          default='0-100', min_occurs=1, max_occurs=4),
             LiteralInput('resolution','Resolution', data_type='float',
                          abstract='degrees, note the UM global Met data was only 17Km resolution',
@@ -76,7 +76,7 @@ class RunNAME(Process):
             LiteralOutput('runid', 'Run ID', data_type='string',
                           abstract='Unique run identifier, this is needed to create plots'),
             ComplexOutput('FileContents', 'Output files (zipped)',
-                          abstract="Output files (zipped)",
+                          abstract='Output files (zipped)',
                           supported_formats=[Format('application/x-zipped-shp')],
                           as_reference=True),
             ComplexOutput('SummaryPlot', 'Summary Plot',
@@ -89,7 +89,7 @@ class RunNAME(Process):
             self._handler,
             identifier='runname',
             title='Run NAME-on-JASMIN',
-            abstract="Run NAME using user-defined settings",
+            abstract='Run NAME using user-defined settings',
             version='0.1',
             metadata=[
                 Metadata('NAME-on-JASMIN guide', 'http://jasmin.ac.uk/jasmin-users/stories/processing/'),
@@ -112,7 +112,7 @@ class RunNAME(Process):
                     'The value "{}" does not contain a "-" character to define a range, '
                     'e.g. 0-100'.format(elevationrange.data))
 
-        LOGGER.debug("domains: %s" % (request.inputs['domain'][0].data))
+        LOGGER.debug('domains: %s' % (request.inputs['domain'][0].data))
         domains = []
         for val in request.inputs['domain'][0].data:
             ## Values appear to be coming in as minY, minX, maxY, maxX
@@ -133,20 +133,20 @@ class RunNAME(Process):
 
         # Need to test start and end dates make sense relative to each other
         if params['startdate'] >= params['enddate'] + timedelta(days=1):
-            raise InvalidParameterValue("The end date is earlier than the start date!")
+            raise InvalidParameterValue('The end date is earlier than the start date!')
 
         if (params['enddate'] + timedelta(days=1)) - params['startdate'] >= timedelta(days=93):
-            raise InvalidParameterValue("Can only run across a maximum of three months in one go")
+            raise InvalidParameterValue('Can only run across a maximum of three months in one go')
 
         # Need to test we don't run too far backwards/forwards
-        if params['timeFmt'] == "days":
+        if params['timeFmt'] == 'days':
             if params['time'] > 20:
-                raise InvalidParameterValue("Can only run NAME over a maximum of 20 days forwards/backwards")
+                raise InvalidParameterValue('Can only run NAME over a maximum of 20 days forwards/backwards')
         else:
             if params['time'] > 20 * 24:
-                raise InvalidParameterValue("Can only run NAME over a maximum of 20 days forwards/backwards")
+                raise InvalidParameterValue('Can only run NAME over a maximum of 20 days forwards/backwards')
 
-        response.update_status("Processed parameters", 5)
+        response.update_status('Processed parameters', 5)
 
         outdir, zippedfile, mapfile = run_name(params, response)
 
@@ -154,5 +154,5 @@ class RunNAME(Process):
         response.outputs['runid'].data = outdir
         response.outputs['ExamplePlot'].file = mapfile
 
-        response.update_status("done", 100)
+        response.update_status('done', 100)
         return response

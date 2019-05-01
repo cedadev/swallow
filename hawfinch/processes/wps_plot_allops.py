@@ -16,7 +16,7 @@ import tempfile
 from hawfinch.utils import getjasminconfigs, get_num_dates
 
 import logging
-LOGGER = logging.getLogger("PYWPS")
+LOGGER = logging.getLogger('PYWPS')
 
 
 class PlotAll(Process):
@@ -29,13 +29,13 @@ class PlotAll(Process):
     def __init__(self):
         inputs = [
             LiteralInput('filelocation', 'NAME run ID', data_type='string',
-                         abstract="Run ID that identifies the NAME output files"),
+                         abstract='Run ID that identifies the NAME output files'),
             LiteralInput('summarise', 'Summarise data', data_type='string',
                          abstract='Plot summaries of each day/week/month',
                          allowed_values=['NA', 'day', 'week', 'month', 'all'], default='NA'),
             LiteralInput('timestamp', 'Plot specific date and time', data_type='dateTime',
-                         abstract="Plot only a specific timestamp. Excludes the creation of summary plots. "
-                                  "Format: YYYY-MM-DD HH:MM",
+                         abstract='Plot only a specific timestamp. Excludes the creation of summary plots. '
+                                  'Format: YYYY-MM-DD HH:MM',
                          min_occurs=0),
             LiteralInput('station', 'Mark release location', data_type='boolean',
                          abstract='Mark the location of release onto the image',
@@ -56,7 +56,7 @@ class PlotAll(Process):
             ]
         outputs = [
             ComplexOutput('FileContents', 'Plot file(s)',
-                          abstract="Plot files",
+                          abstract='Plot files',
                           supported_formats=[Format('application/x-zipped-shp'),
                                              Format('text/plain'),
                                              Format('image/png'),
@@ -68,7 +68,7 @@ class PlotAll(Process):
             self._handler,
             identifier='plotall',
             title='Plot NAME results - Concentration',
-            abstract="PNG plots are generated from the NAME output files",
+            abstract='PNG plots are generated from the NAME output files',
             version='0.1',
             metadata=[
                 Metadata('NAME-on-JASMIN guide', 'http://jasmin.ac.uk/jasmin-users/stories/processing/'),
@@ -83,7 +83,7 @@ class PlotAll(Process):
 
         jasconfigs = getjasminconfigs()
         rundir = os.path.join(jasconfigs.get('jasmin', 'outputdir'), request.inputs['filelocation'][0].data)
-        LOGGER.debug("Working Directory for plots: %s" % rundir)
+        LOGGER.debug('Working Directory for plots: %s' % rundir)
 
         # Parse NAME run input params
         inputs = {}
@@ -94,9 +94,9 @@ class PlotAll(Process):
 
         # Parse input params into plot options
         plotoptions = {}
-        plotoptions['outdir'] = os.path.join(rundir, "plots_{}".format(datetime.strftime(datetime.now(), "%s")))
+        plotoptions['outdir'] = os.path.join(rundir, 'plots_{}'.format(datetime.strftime(datetime.now(), '%s')))
         for p in request.inputs:
-            if p == "timestamp" or p == "filelocation" or p == "summarise":
+            if p == 'timestamp' or p == 'filelocation' or p == 'summarise':
                 continue
             elif p == 'lon_bounds' or p == 'lat_bounds':
                 statcoords = request.inputs[p][0].data.split(',')
@@ -104,37 +104,37 @@ class PlotAll(Process):
             elif p == 'scale':
                 statcoords = request.inputs[p][0].data.split(',')
                 plotoptions[p] = (float(statcoords[0].strip()), float(statcoords[1].strip()))
-            elif p == "station" and request.inputs[p][0].data == True:
+            elif p == 'station' and request.inputs[p][0].data == True:
                 plotoptions[p] = (float(inputs['longitude']), float(inputs['latitude']))
             else:
                 plotoptions[p] = request.inputs[p][0].data
 
         files = glob.glob(os.path.join(rundir, 'outputs', '*_group*.txt'))
         if len(files) == 0:
-            raise InvalidParameterValue("Unable to find any output files. File names must be named '*_group*.txt'")
+            raise InvalidParameterValue('Unable to find any output files. File names must be named "*_group*.txt"')#
 
         if 'timestamp' in request.inputs:
             request.inputs['summarise'][0].data = 'NA'
 
-        LOGGER.debug("Plot options: %s" % plotoptions)
+        LOGGER.debug('Plot options: %s' % plotoptions)
 
-        response.update_status("Processed plot parameters", 5)
+        response.update_status('Processed plot parameters', 5)
 
-        tot_plots = get_num_dates(start=datetime.strptime(inputs['startdate'], "%Y-%m-%d"),
-                                  end=datetime.strptime(inputs['enddate'], "%Y-%m-%d"),
+        tot_plots = get_num_dates(start=datetime.strptime(inputs['startdate'], '%Y-%m-%d'),
+                                  end=datetime.strptime(inputs['enddate'], '%Y-%m-%d'),
                                   sum=request.inputs['summarise'][0].data,
                                   type=inputs['timestamp'])
 
         # We need to find all the groups and loop through them one at a time!
         groups = {}
         for filename in os.listdir(os.path.join(rundir, 'outputs')):
-            if not filename.endswith("txt"):
+            if not filename.endswith('txt'):
                 continue
             groupnum = filename[14]
             try:
                 groupnum = int(groupnum)
             except:
-                raise Exception("Cannot identify groupnumber %s" % groupnum)
+                raise Exception('Cannot identify groupnumber %s' % groupnum)
 
             if groupnum in groups:
                 shutil.copy(os.path.join(rundir, 'outputs', filename), groups[groupnum])
@@ -146,7 +146,7 @@ class PlotAll(Process):
         tot_plots = tot_plots * ngroups
         plots_made = 0
 
-        response.update_status("Plotting", 10)
+        response.update_status('Plotting', 10)
 
         oldper = 10
 
@@ -158,64 +158,64 @@ class PlotAll(Process):
                 for week in range(1, 53):
                     s.sumWeek(week)
                     if len(s.files) == 0:
-                        LOGGER.debug("No files found for week %s" % week)
+                        LOGGER.debug('No files found for week %s' % week)
                         continue
-                    plotoptions['caption'] = "{} {} {} {}: {} week {} sum (UTC)".format(s.runname, s.averaging,
+                    plotoptions['caption'] = '{} {} {} {}: {} week {} sum (UTC)'.format(s.runname, s.averaging,
                                                                                         s.altitude, s.direction,
                                                                                         s.year, week)
-                    plotoptions['outfile'] = "{}_{}_{}_{}_weekly.png".format(s.runname, s.altitude.strip('()'),
+                    plotoptions['outfile'] = '{}_{}_{}_{}_weekly.png'.format(s.runname, s.altitude.strip('()'),
                                                                              s.year, week)
                     try:
                         drawMap(s, 'total', **plotoptions)
-                        LOGGER.debug("Plotted %s" % plotoptions['outfile'])
+                        LOGGER.debug('Plotted %s' % plotoptions['outfile'])
                     except:
-                        LOGGER.error("Failed to plot %s" % plotoptions['outfile'])
+                        LOGGER.error('Failed to plot %s' % plotoptions['outfile'])
                     plots_made += 1
                     newper = 10+int((plots_made/float(tot_plots))*85)
                     if oldper != newper:
-                        response.update_status("Plotting", newper)
+                        response.update_status('Plotting', newper)
                         oldper = newper
 
             elif request.inputs['summarise'][0].data == 'month':
                 for month in range(1, 13):
                     s.sumMonth(str(month))
                     if len(s.files) == 0:
-                        LOGGER.debug("No files found for month %s" % month)
+                        LOGGER.debug('No files found for month %s' % month)
                         continue
-                    plotoptions['caption'] = "{} {} {} {}: {} {} sum (UTC)".format(s.runname, s.averaging, s.altitude,
+                    plotoptions['caption'] = '{} {} {} {}: {} {} sum (UTC)'.format(s.runname, s.averaging, s.altitude,
                                                                              s.direction, s.year,
                                                                              calendar.month_name[month])
-                    plotoptions['outfile'] = "{}_{}_{}_{}_monthly.png".format(s.runname, s.altitude.strip('()'),
+                    plotoptions['outfile'] = '{}_{}_{}_{}_monthly.png'.format(s.runname, s.altitude.strip('()'),
                                                                               s.year, month)
                     try:
                         drawMap(s, 'total', **plotoptions)
-                        LOGGER.debug("Plotted %s" % plotoptions['outfile'])
+                        LOGGER.debug('Plotted %s' % plotoptions['outfile'])
                     except:
-                        LOGGER.error("Failed to plot %s" % plotoptions['outfile'])
+                        LOGGER.error('Failed to plot %s' % plotoptions['outfile'])
                     plots_made += 1
                     newper = 10 + int((plots_made / float(tot_plots)) * 85)
                     if oldper != newper:
-                        response.update_status("Plotting", newper)
+                        response.update_status('Plotting', newper)
                         oldper = newper
 
             elif request.inputs['summarise'][0].data == 'all':
                 s.sumAll()
-                plotoptions['caption'] = "{} {} {} {}: Summed (UTC)".format(s.runname, s.averaging, s.altitude,
+                plotoptions['caption'] = '{} {} {} {}: Summed (UTC)'.format(s.runname, s.averaging, s.altitude,
                                                                             s.direction)
-                plotoptions['outfile'] = "{}_{}_summed_all.png".format(s.runname, s.altitude.strip('()'))#TODO: Copy to plot all
+                plotoptions['outfile'] = '{}_{}_summed_all.png'.format(s.runname, s.altitude.strip('()'))#TODO: Copy to plot all
                 #TODO: Fix: Currently all levels plotted with same name and overwritten, bug?
                 # Happening because of: https://github.com/TeriForey/pyNAMEplot/blob/master/pynameplot/namereader/name.py#L151
                 # Is is this correct or an assumption?
                 # If correct then maybe text input should be a string list
                 try:
                     drawMap(s, 'total', **plotoptions)
-                    LOGGER.debug("Plotted %s" % plotoptions['outfile'])
+                    LOGGER.debug('Plotted %s' % plotoptions['outfile'])
                 except:
-                    LOGGER.error("Failed to plot %s" % plotoptions['outfile'])
+                    LOGGER.error('Failed to plot %s' % plotoptions['outfile'])
                 plots_made += 1
                 newper = 10 + int((plots_made / float(tot_plots)) * 85)
                 if oldper != newper:
-                    response.update_status("Plotting", newper)
+                    response.update_status('Plotting', newper)
                     oldper = newper
             else:
                 for filename in os.listdir(tmpdir):
@@ -224,72 +224,72 @@ class PlotAll(Process):
                             #s = Sum(tmpdir)
                             date = util.shortname(filename)
                             s.sumDay(date)
-                            plotoptions['caption'] = "{} {} {} {}: {}{}{} day sum (UTC)".format(s.runname, s.averaging,
+                            plotoptions['caption'] = '{} {} {} {}: {}{}{} day sum (UTC)'.format(s.runname, s.averaging,
                                                                                           s.altitude, s.direction,
                                                                                           s.year, s.month, s.day)
-                            plotoptions['outfile'] = "{}_{}_{}{}{}_daily.png".format(s.runname, s.altitude.strip('()'),
+                            plotoptions['outfile'] = '{}_{}_{}{}{}_daily.png'.format(s.runname, s.altitude.strip('()'),
                                                                                      s.year, s.month, s.day)
                             try:
                                 drawMap(s, 'total', **plotoptions)
-                                LOGGER.debug("Plotted %s" % plotoptions['outfile'])
+                                LOGGER.debug('Plotted %s' % plotoptions['outfile'])
                             except:
-                                LOGGER.error("Failed to plot %s" % plotoptions['outfile'])
+                                LOGGER.error('Failed to plot %s' % plotoptions['outfile'])
                             plots_made += 1
                             newper = 10 + int((plots_made / float(tot_plots)) * 85)
                             if oldper != newper:
-                                response.update_status("Plotting", newper)
+                                response.update_status('Plotting', newper)
                                 oldper = newper
                         elif request.inputs['summarise'][0].data == 'NA':
                             n = Name(os.path.join(tmpdir, filename))
                             if 'timestamp' in request.inputs:
-                                timestamp = datetime.strftime(request.inputs['timestamp'][0].data, "%d/%m/%Y %H:%M UTC")
-                                LOGGER.debug("Reformatted time: %s" % timestamp)
+                                timestamp = datetime.strftime(request.inputs['timestamp'][0].data, '%d/%m/%Y %H:%M UTC')
+                                LOGGER.debug('Reformatted time: %s' % timestamp)
                                 if timestamp in n.timestamps:
                                     try:
                                         drawMap(n, timestamp, **plotoptions)
-                                        LOGGER.debug("Plotted %s" % timestamp)
+                                        LOGGER.debug('Plotted %s' % timestamp)
                                     except:
-                                        LOGGER.error("Failed to plot %s" % timestamp)
+                                        LOGGER.error('Failed to plot %s' % timestamp)
                                     plots_made += 1
                                     newper = 10 + int((plots_made / float(tot_plots)) * 85)
                                     if oldper != newper:
-                                        response.update_status("Plotting", newper)
+                                        response.update_status('Plotting', newper)
                                         oldper = newper
                                     break
                             else:
                                 for column in n.timestamps:
                                     try:
                                         drawMap(n, column, **plotoptions)
-                                        LOGGER.debug("Plotted %s" % column)
+                                        LOGGER.debug('Plotted %s' % column)
                                     except:
-                                        LOGGER.error("Failed to plot %s" % column)
+                                        LOGGER.error('Failed to plot %s' % column)
                                     plots_made += 1
                                     newper = 10 + int((plots_made / float(tot_plots)) * 85)
                                     if oldper != newper:
-                                        response.update_status("Plotting", newper)
+                                        response.update_status('Plotting', newper)
                                         oldper = newper
 
             # Finished plotting so will now delete temp directory
             shutil.rmtree(tmpdir)
 
         # Outputting different response based on the number of plots generated
-        response.update_status("Formatting output", 95)
+        response.update_status('Formatting output', 95)
         if not os.path.exists(plotoptions['outdir']):
-            LOGGER.debug("Did not create any plots")
+            LOGGER.debug('Did not create any plots')
             response.outputs['FileContents'].data_format = FORMATS.TEXT
-            response.outputs['FileContents'].data = "No plots created, check input options"
+            response.outputs['FileContents'].data = 'No plots created, check input options'
         else:
             if len(os.listdir(plotoptions['outdir'])) == 1:
-                LOGGER.debug("Only one output plot")
+                LOGGER.debug('Only one output plot')
                 response.outputs['FileContents'].data_format = Format('image/png')
                 response.outputs['FileContents'].file = os.path.join(plotoptions['outdir'],
                                                                      os.listdir(plotoptions['outdir'])[0])
             else:
-                zippedfile = "{}_plots".format(request.inputs['filelocation'][0].data)
+                zippedfile = '{}_plots'.format(request.inputs['filelocation'][0].data)
                 shutil.make_archive(zippedfile, 'zip', plotoptions['outdir'])
-                LOGGER.debug("Zipped file: %s (%s bytes)" % (zippedfile+'.zip', os.path.getsize(zippedfile+'.zip')))
+                LOGGER.debug('Zipped file: %s (%s bytes)' % (zippedfile+'.zip', os.path.getsize(zippedfile+'.zip')))
                 response.outputs['FileContents'].data_format = FORMATS.SHP
                 response.outputs['FileContents'].file = zippedfile + '.zip'
 
-        response.update_status("done", 100)
+        response.update_status('done', 100)
         return response
