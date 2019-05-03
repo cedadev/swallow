@@ -160,11 +160,10 @@ class RunNAME(Process):
             domains[3] = 179.9
 
         params = dict()
+        params['domain'] = domains
         for p in request.inputs:
             if p == 'elevationOut':
                 params[p] = ranges
-            elif p == 'domain':
-                params[p] = domains
             else:
                 params[p] = request.inputs[p][0].data
 
