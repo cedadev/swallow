@@ -48,9 +48,34 @@ class RunNAME(Process):
             LiteralInput('timeFmt',' ', data_type='string',
                          abstract='number of days/hours NAME will run over. Maximum is 20 days.',
                          allowed_values = ['days','hours'], default='days'),
-            BoundingBoxInput('domain', 'Computational Domain', crss=['epsg:4326'],
-                             abstract='Coordinates to run NAME within',
-                             min_occurs=1),
+            # Use fake bbox input until BoundingBoxInput supported by pywps
+            # BoundingBoxInput('domain', 'Computational Domain', crss=['epsg:4326'],
+            #                  abstract='Coordinates to run NAME within',
+            #                  min_occurs=1),
+            LiteralInput('minX',
+                         'Minimum longitude',
+                         abstract='Minimum longitude.',
+                         data_type='float',
+                         default=-180,
+                         min_occurs=1),
+            LiteralInput('maxX',
+                         'Maximum longitude',
+                         abstract='Maximum longitude.',
+                         data_type='float',
+                         default=180,
+                         min_occurs=1),
+            LiteralInput('minY',
+                         'Minimum latitude',
+                         abstract='Minimum latitude.',
+                         data_type='float',
+                         default=-90,
+                         min_occurs=1),
+            LiteralInput('maxY',
+                         'Maximum latitude',
+                         abstract='Maximum latitude.',
+                         data_type='float',
+                         default=90,
+                         min_occurs=1),
             LiteralInput('elevationOut', 'Output elevation averaging range(s)', data_type='string',
                          abstract='Elevation range where the particle number is counted (m agl)'
                                   ' Example: 0-100',
@@ -114,9 +139,22 @@ class RunNAME(Process):
 
         LOGGER.debug('domains: %s' % (request.inputs['domain'][0].data))
         domains = []
-        for val in request.inputs['domain'][0].data:
-            ## Values appear to be coming in as minY, minX, maxY, maxX
-            domains.append(float(val))
+
+        if request.inputs['minX'][0].data < -180:
+            raise InvalidParameterValue('Bounding box minimum longitude input cannot be below -180')
+        if request.inputs['maxX'][0].data > 180:
+            raise InvalidParameterValue('Bounding box maximum longitude input cannot be above 180')
+        if request.inputs['minY'][0].data < -90:
+            raise InvalidParameterValue('Bounding box minimum latitude input cannot be below -90')
+        if request.inputs['maxY'][0].data > 90:
+            raise InvalidParameterValue('Bounding box minimum latitude input cannot be above 90')
+        
+        #minY, minX, maxY, maxX
+        domains.append(request.inputs['minY'][0].data)
+        domains.append(request.inputs['minX'][0].data)
+        domains.append(request.inputs['maxY'][0].data)
+        domains.append(request.inputs['maxX'][0].data)
+
         # If minX and maxX are 180, need to reset to 179.9
         if domains[1] == -180 and domains[3] == 180:
             domains[1] = -179.875
