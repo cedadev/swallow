@@ -137,7 +137,6 @@ class RunNAME(Process):
                     'The value "{}" does not contain a "-" character to define a range, '
                     'e.g. 0-100'.format(elevationrange.data))
 
-        LOGGER.debug('domains: %s' % (request.inputs['domain'][0].data))
         domains = []
 
         if request.inputs['minX'][0].data < -180:
