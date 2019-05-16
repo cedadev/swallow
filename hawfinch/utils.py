@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import os
-import ConfigParser
+import configparser
 
 
 def daterange(start_date, end_date):
@@ -10,11 +10,11 @@ def daterange(start_date, end_date):
 
 def getjasminconfigs():
     """
-    This will use ConfigParser to retrieve the JASMIN specific configurations
+    This will use configparser to retrieve the JASMIN specific configurations
     :return: configparser obj
     """
     cfile = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'jasmin.cfg')
-    cparser = ConfigParser.SafeConfigParser()
+    cparser = configparser.SafeConfigParser()
     cparser.read([cfile])
     return cparser
 
