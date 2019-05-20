@@ -21,10 +21,10 @@ def test_wps_nameparams():
         "2017-11-02",
         "-180,80,-90,90"
     )
-    print datainputs
+    print(datainputs)
     resp = client.get(
         service='wps', request='execute', version='1.0.0',
         identifier='runname',
         datainputs=datainputs)
-    print resp.data
+    print(resp.data)
     assert_response_success(resp)
