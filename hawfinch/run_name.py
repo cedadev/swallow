@@ -69,7 +69,7 @@ def run_name(params, response):
     cat = subprocess.Popen(['cat', os.path.join(params['outputdir'], 'script.bsub')], stdout=subprocess.PIPE)
     runbsub = subprocess.Popen('bsub', stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=cat.stdout)
     sout, serr = runbsub.communicate()
-    jobid = sout.split(' ')[1].replace('>', '').replace('<', '')
+    jobid = sout.split(b' ')[1].replace(b'>', b'').replace(b'<', b'')
     jobrunning = True
     while jobrunning:
         time.sleep(30)
