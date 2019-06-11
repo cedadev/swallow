@@ -77,7 +77,7 @@ def run_name(params, response):
         if jobid in checkjob:
             print('Job %s is still running' % jobid)
             processesrunning = 0
-            for l in checkjob.split('\n'):
+            for l in checkjob.split(b'\n'):
                 if jobid in l:
                     processesrunning += 1
             percentcomplete = (((i+1)-processesrunning)/float(i+1))*85
