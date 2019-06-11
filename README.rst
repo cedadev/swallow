@@ -39,4 +39,4 @@ This package was created with Cookiecutter_ and the `bird-house/cookiecutter-bir
 STFC Licence
 ------------
 
-(`LICENCE <https://github.com/cedadev/hawfinch/blob/master/LICENSE>`_)
+`LICENCE <https://github.com/cedadev/hawfinch/blob/master/LICENSE>`_
