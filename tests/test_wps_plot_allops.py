@@ -4,7 +4,7 @@ from pywps import Service
 from pywps.tests import assert_response_success
 
 from tests.common import client_for
-from hawfinch.processes.wps_plot_allops import PlotAll
+from swallow.processes.wps_plot_allops import PlotAll
 
 
 @pytest.mark.online

@@ -1,7 +1,7 @@
 # vim:set ft=dockerfile:
 FROM continuumio/miniconda3
 MAINTAINER https://github.com/tommygod3
-LABEL Description="hawfinch WPS" Vendor="Birdhouse" Version="0.1.0"
+LABEL Description="swallow WPS" Vendor="Birdhouse" Version="0.1.0"
 
 # Update Debian system
 RUN apt-get update && apt-get install -y \
@@ -25,9 +25,9 @@ RUN ["/bin/bash", "-c", "source activate wps && python setup.py develop"]
 # Start WPS service on port 5000 on 0.0.0.0
 EXPOSE 5000
 ENTRYPOINT ["/bin/bash", "-c"]
-CMD ["source activate wps && exec hawfinch start -b 0.0.0.0 -c /opt/wps/etc/demo.cfg"]
+CMD ["source activate wps && exec swallow start -b 0.0.0.0 -c /opt/wps/etc/demo.cfg"]
 
-# docker build -t tommygod3/hawfinch .
-# docker run -p 5000:5000 tommygod3/hawfinch
+# docker build -t tommygod3/swallow .
+# docker run -p 5000:5000 tommygod3/swallow
 # http://localhost:5000/wps?request=GetCapabilities&service=WPS
 # http://localhost:5000/wps?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0

@@ -1,6 +1,6 @@
 # Application
 APP_ROOT := $(CURDIR)
-APP_NAME := hawfinch
+APP_NAME := swallow
 
 # Anaconda
 CONDA := $(shell command -v conda 2> /dev/null)

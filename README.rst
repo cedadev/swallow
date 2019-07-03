@@ -1,12 +1,12 @@
-hawfinch
+swallow
 ===============================
 
 .. image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
-   :target: http://hawfinch.readthedocs.io/en/latest/?badge=latest
+   :target: http://swallow.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
-.. image:: https://travis-ci.org/tommygod3/hawfinch.svg?branch=master
-   :target: https://travis-ci.org/tommygod3/hawfinch
+.. image:: https://travis-ci.org/tommygod3/swallow.svg?branch=master
+   :target: https://travis-ci.org/tommygod3/swallow
    :alt: Travis Build
 
 .. image:: https://badges.gitter.im/bird-house/birdhouse.svg
@@ -14,19 +14,19 @@ hawfinch
     :alt: Join the chat at https://gitter.im/bird-house/birdhouse
 
 
-hawfinch (the bird)
-  *The hawfinch is a shy species, and therefore difficult to observe and study. It spends most of the day on top of high branches, above all during breeding season.
-  [..].* ( `Wikipedia <https://en.wikipedia.org/wiki/Hawfinch>`_ ).
+swallow (the bird)
+  *The swallow is a shy species, and therefore difficult to observe and study. It spends most of the day on top of high branches, above all during breeding season.
+  [..].* ( `Wikipedia <https://en.wikipedia.org/wiki/swallow>`_ ).
 
 A Web Processing Service - For running the Met Office NAME model
 ----------------------------------------------------------------
-Hawfinch is a WPS to run the Met Office NAME model.
+swallow is a WPS to run the Met Office NAME model.
 It was initially developed by Teri Forey at Leicester University ( `namewps <https://github.com/TeriForey/namewps>`_ ).
-It is now maintained by CEDA ( `hawfinch <https://github.com/cedadev/hawfinch>`_ ).
+It is now maintained by CEDA ( `swallow <https://github.com/cedadev/swallow>`_ ).
 
 
 * Free software: Apache Software License 2.0
-* Documentation: https://hawfinch.readthedocs.io.
+* Documentation: https://swallow.readthedocs.io.
 
 Credits
 -------
@@ -39,4 +39,4 @@ This package was created with Cookiecutter_ and the `bird-house/cookiecutter-bir
 STFC Licence
 ------------
 
-`LICENCE <https://github.com/cedadev/hawfinch/blob/master/LICENSE>`_
+`LICENCE <https://github.com/cedadev/swallow/blob/master/LICENSE>`_

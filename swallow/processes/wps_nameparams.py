@@ -4,7 +4,7 @@ from pywps import LiteralInput, LiteralOutput, BoundingBoxInput
 from pywps.exceptions import InvalidParameterValue
 from pywps.app.Common import Metadata
 
-from hawfinch.run_name import run_name
+from swallow.run_name import run_name
 from datetime import timedelta
 
 import logging

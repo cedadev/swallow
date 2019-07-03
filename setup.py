@@ -12,7 +12,7 @@ README = open(os.path.join(here, 'README.rst')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
 about = {}
-with open(os.path.join(here, 'hawfinch', '__version__.py'), 'r') as f:
+with open(os.path.join(here, 'swallow', '__version__.py'), 'r') as f:
     exec(f.read(), about)
 
 reqs = [line.strip() for line in open('requirements.txt')]
@@ -31,20 +31,20 @@ classifiers = [
     'License :: OSI Approved :: Apache Software License',
 ]
 
-setup(name='hawfinch',
+setup(name='swallow',
       version=about['__version__'],
       description="WPS to run the Met Office NAME model.",
       long_description=README + '\n\n' + CHANGES,
       author=about['__author__'],
       author_email=about['__email__'],
-      url='https://github.com/tommygod3/hawfinch',
+      url='https://github.com/tommygod3/swallow',
       classifiers=classifiers,
       license="Apache Software License 2.0",
-      keywords='wps pywps birdhouse hawfinch',
+      keywords='wps pywps birdhouse swallow',
       packages=find_packages(),
       include_package_data=True,
       install_requires=reqs,
       entry_points={
           'console_scripts': [
-             'hawfinch=hawfinch.cli:cli',
+             'swallow=swallow.cli:cli',
           ]},)

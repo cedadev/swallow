@@ -5,7 +5,7 @@ extends = buildout.cfg
 # hostname = localhost
 # http-port = 5000
 # output-port = 8090
-project = hawfinch
+project = swallow
 abstract = A Web Processing Service to run the Met Office model NAME
 
 ## development options
@@ -14,7 +14,7 @@ abstract = A Web Processing Service to run the Met Office model NAME
 
 ## deployment options
 # prefix = /opt/birdhouse
-# user = hawfinch
+# user = swallow
 # etc-user = root
 
 [noversions]

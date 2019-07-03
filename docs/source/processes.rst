@@ -10,6 +10,6 @@ Processes
 Say Hello
 ---------
 
-.. autoprocess:: hawfinch.processes.wps_say_hello.SayHello
+.. autoprocess:: swallow.processes.wps_say_hello.SayHello
    :docstring:
    :skiplines: 1

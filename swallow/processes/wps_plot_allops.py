@@ -13,7 +13,7 @@ import os
 import calendar
 import glob
 import tempfile
-from hawfinch.utils import getjasminconfigs, get_num_dates
+from swallow.utils import getjasminconfigs, get_num_dates
 
 import logging
 LOGGER = logging.getLogger('PYWPS')

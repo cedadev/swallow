@@ -17,14 +17,14 @@ Install from Conda
 Install from GitHub
 -------------------
 
-Check out code from the hawfinch GitHub repo and start the installation:
+Check out code from the swallow GitHub repo and start the installation:
 
 .. code-block:: sh
 
-   $ git clone https://github.com/tommygod3/hawfinch.git
-   $ cd hawfinch
+   $ git clone https://github.com/tommygod3/swallow.git
+   $ cd swallow
    $ conda env create -f environment.yml
-   $ source activate hawfinch
+   $ source activate swallow
    $ python setup.py develop
 
 ... or do it the lazy way
@@ -35,24 +35,24 @@ We provide also a ``Makefile`` to run this installation without additional steps
 
 .. code-block:: sh
 
-   $ git clone https://github.com/tommygod3/hawfinch.git
-   $ cd hawfinch
+   $ git clone https://github.com/tommygod3/swallow.git
+   $ cd swallow
    $ make clean    # cleans up a previous Conda environment
    $ make install  # installs Conda if necessary and runs the above installation steps
 
-Start hawfinch PyWPS service
+Start swallow PyWPS service
 ----------------------------
 
-After successful installation you can start the service using the ``hawfinch`` command-line.
+After successful installation you can start the service using the ``swallow`` command-line.
 
 .. code-block:: sh
 
-   $ hawfinch --help # show help
-   $ hawfinch start  # start service with default configuration
+   $ swallow --help # show help
+   $ swallow start  # start service with default configuration
 
    OR
 
-   $ hawfinch start --daemon # start service as daemon
+   $ swallow start --daemon # start service as daemon
    loading configuration
    forked process id: 42
 
@@ -88,19 +88,19 @@ You can also use the ``Makefile`` to start and stop the service:
   $ make stop
 
 
-Run hawfinch as Docker container
+Run swallow as Docker container
 --------------------------------
 
-You can also run hawfinch as a Docker container.
+You can also run swallow as a Docker container.
 
 .. warning::
 
   TODO: Describe Docker container support.
 
-Use Ansible to deploy hawfinch on your System
+Use Ansible to deploy swallow on your System
 ---------------------------------------------
 
-Use the `Ansible playbook`_ for PyWPS to deploy hawfinch on your system.
+Use the `Ansible playbook`_ for PyWPS to deploy swallow on your system.
 
 
 .. _Ansible playbook: http://ansible-wps-playbook.readthedocs.io/en/latest/index.html

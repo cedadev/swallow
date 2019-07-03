@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Top-level package for hawfinch."""
+"""Top-level package for swallow."""
 
 from .wsgi import application
 

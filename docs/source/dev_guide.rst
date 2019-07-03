@@ -26,11 +26,11 @@ Running tests
 
 Run tests using `pytest`_.
 
-First activate the ``hawfinch`` Conda environment and install ``pytest``.
+First activate the ``swallow`` Conda environment and install ``pytest``.
 
 .. code-block:: console
 
-   $ source activate hawfinch
+   $ source activate swallow
    $ conda install pytest flake8  # if not already installed
 
 Run quick tests (skip slow and online):
@@ -81,7 +81,7 @@ Update the Conda specification file to build identical environments_ on a specif
 Bump a new version
 ------------------
 
-Make a new version of hawfinch in the following steps:
+Make a new version of swallow in the following steps:
 
 * Make sure everything is commit to GitHub.
 * Update ``CHANGES.rst`` with the next version.

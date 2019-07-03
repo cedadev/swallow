@@ -7,15 +7,15 @@ Command-line options
 --------------------
 
 You can overwrite the default `PyWPS`_ configuration by using command-line options.
-See the hawfinch help which options are available::
+See the swallow help which options are available::
 
-    $ hawfinch start --help
+    $ swallow start --help
     --hostname HOSTNAME        hostname in PyWPS configuration.
     --port PORT                port in PyWPS configuration.
 
 Start service with different hostname and port::
 
-    $ hawfinch start --hostname localhost --port 5001
+    $ swallow start --hostname localhost --port 5001
 
 Use a custom configuration file
 -------------------------------
@@ -28,7 +28,7 @@ For example change the hostname (*demo.org*) and logging level:
 
 .. code-block:: sh
 
-   $ cd hawfinch
+   $ cd swallow
    $ vim etc/custom.cfg
    $ cat etc/custom.cfg
    [server]
@@ -43,7 +43,7 @@ Start the service with your custom configuration:
 .. code-block:: sh
 
    # start the service with this configuration
-   $ hawfinch start -c etc/custom.cfg
+   $ swallow start -c etc/custom.cfg
 
 
 .. _PyWPS: http://pywps.org/

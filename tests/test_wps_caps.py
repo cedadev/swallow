@@ -2,7 +2,7 @@ from pywps import Service
 from pywps.tests import assert_response_success
 
 from .common import client_for
-from hawfinch.processes import processes
+from swallow.processes import processes
 
 
 def test_wps_caps():
