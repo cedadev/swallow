@@ -1,8 +1,8 @@
 # Application
 APP_ROOT := $(CURDIR)
 APP_NAME := swallow
-PORT := 5000
-HOSTNAME := localhost
+PORT ?= 5000
+HOSTNAME ?= localhost
 
 # Anaconda
 CONDA := $(shell command -v conda 2> /dev/null)
