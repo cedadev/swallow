@@ -1,6 +1,8 @@
 # Application
 APP_ROOT := $(CURDIR)
 APP_NAME := swallow
+PORT := 5000
+HOSTNAME := localhost
 
 # Anaconda
 CONDA := $(shell command -v conda 2> /dev/null)
@@ -79,7 +81,7 @@ install: bootstrap
 .PHONY: start
 start: check_conda
 	@echo "Starting application ..."
-	@-bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV) && $(APP_NAME) start -d"
+	@-bash -c "source $(ANACONDA_HOME)/bin/activate $(CONDA_ENV) && $(APP_NAME) start -d -b 0.0.0.0 --port $(PORT) --hostname $(HOSTNAME)"
 
 .PHONY: stop
 stop: check_conda
