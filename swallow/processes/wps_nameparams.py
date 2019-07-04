@@ -118,6 +118,7 @@ class RunNAME(Process):
             version='0.1',
             metadata=[
                 Metadata('NAME-on-JASMIN guide', 'http://jasmin.ac.uk/jasmin-users/stories/processing/'),
+                Metadata('Process image', 'https://name-staging.ceda.ac.uk/static/phoenix/img/NAME_banner_dark.png', 'http://www.opengis.net/spec/wps/2.0/def/process/description/media'),
             ],
             inputs=inputs,
             outputs=outputs,
