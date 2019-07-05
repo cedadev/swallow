@@ -14,7 +14,7 @@ def getjasminconfigs():
     :return: configparser obj
     """
     cfile = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'jasmin.cfg')
-    cparser = configparser.SafeConfigParser()
+    cparser = configparser.ConfigParser()
     cparser.read([cfile])
     return cparser
 
