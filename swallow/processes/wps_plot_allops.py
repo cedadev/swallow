@@ -3,6 +3,8 @@ from pywps import ComplexOutput, Format, FORMATS
 from pywps import LiteralInput
 from pywps.app.Common import Metadata
 from pywps.exceptions import InvalidParameterValue
+from pywps.inout.literaltypes import AllowedValue
+from pywps.validator.mode import MODE
 
 from pynameplot import Name, drawMap, Sum
 from pynameplot.namereader import util
@@ -46,6 +48,46 @@ class PlotAll(Process):
                          abstract='X-axis: Min and Max longitude to plot. Format: Min,Max', min_occurs=0),
             LiteralInput('lat_bounds', 'Latitudinal boundary', data_type='string',
                          abstract='Y-axis: Min and Max latitude boundary. Format: Min,Max', min_occurs=0),
+            # Use fake bbox input until BoundingBoxInput supported by pywps
+            # BoundingBoxInput('domain', 'Computational Domain', crss=['epsg:4326'],
+            #                  abstract='Coordinates to plot within',
+            #                  min_occurs=1),
+            LiteralInput('min_lon', 'Minimum longitude',
+                         abstract='Choose number from range: -180 to 180 (step 1), -90 to 90 (step 10)',
+                         metadata=[
+                            Metadata('PyWPS Docs', 'https://pywps.readthedocs.io/en/master/api.html#pywps.inout.literaltypes.AllowedValue'),  # noqa
+                            Metadata('AllowedValue Example', 'http://docs.opengeospatial.org/is/14-065/14-065.html#98'),  # noqa
+                            ],
+                         data_type='float',
+                         default='1',
+                         allowed_values=[
+                             AllowedValue(minval=-180, maxval=180),
+                             AllowedValue(minval=-90, maxval=90)
+                         ],
+                        mode=MODE.SIMPLE,),
+            LiteralInput('minX', 'Minimum longitude',
+                         abstract='Minimum longitude.',
+                         data_type='float',
+                         default=-180,
+                         min_occurs=1),
+            LiteralInput('maxX',
+                         'Maximum longitude',
+                         abstract='Maximum longitude.',
+                         data_type='float',
+                         default=180,
+                         min_occurs=1),
+            LiteralInput('minY',
+                         'Minimum latitude',
+                         abstract='Minimum latitude.',
+                         data_type='float',
+                         default=-90,
+                         min_occurs=1),
+            LiteralInput('maxY',
+                         'Maximum latitude',
+                         abstract='Maximum latitude.',
+                         data_type='float',
+                         default=90,
+                         min_occurs=1),
             LiteralInput('scale', 'Particle concentration scale', data_type='string',
                          abstract='Particle concentration scale. If no value is set, it will autoscale. '
                                   'Format: Min,Max',
