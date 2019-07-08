@@ -77,7 +77,7 @@ class RunNamePreset(Process):
             self._handler,
             identifier='run_name_preset',
             title='Run NAME with Presets',
-            abstract='Run NAME 3-hourly from a choice of preset standard release locations',
+            abstract='Run NAME 3-hourly from a choice of preset standard release locations.',
             version='0.1',
             metadata=[
                 Metadata('NAME-on-JASMIN guide', 'http://jasmin.ac.uk/jasmin-users/stories/processing/'),
