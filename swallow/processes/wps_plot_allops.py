@@ -53,38 +53,25 @@ class PlotAll(Process):
             #                  abstract='Coordinates to plot within',
             #                  min_occurs=1),
             LiteralInput('min_lon', 'Minimum longitude',
-                         abstract='Choose number from range: -180 to 180 (step 1), -90 to 90 (step 10)',
-                         metadata=[
-                            Metadata('PyWPS Docs', 'https://pywps.readthedocs.io/en/master/api.html#pywps.inout.literaltypes.AllowedValue'),  # noqa
-                            Metadata('AllowedValue Example', 'http://docs.opengeospatial.org/is/14-065/14-065.html#98'),  # noqa
-                            ],
-                         data_type='float',
-                         default='1',
-                         allowed_values=[
-                             AllowedValue(minval=-180, maxval=180),
-                             AllowedValue(minval=-90, maxval=90)
-                         ],
-                        mode=MODE.SIMPLE,),
-            LiteralInput('minX', 'Minimum longitude',
-                         abstract='Minimum longitude.',
+                         abstract='Minimum longitude for plot boundary.',
                          data_type='float',
                          default=-180,
                          min_occurs=1),
-            LiteralInput('maxX',
+            LiteralInput('max_lon',
                          'Maximum longitude',
-                         abstract='Maximum longitude.',
+                         abstract='Maximum longitude for plot boundary.',
                          data_type='float',
                          default=180,
                          min_occurs=1),
-            LiteralInput('minY',
+            LiteralInput('min_lat',
                          'Minimum latitude',
-                         abstract='Minimum latitude.',
+                         abstract='Minimum latitude for plot boundary.',
                          data_type='float',
                          default=-90,
                          min_occurs=1),
-            LiteralInput('maxY',
+            LiteralInput('max_lat',
                          'Maximum latitude',
-                         abstract='Maximum latitude.',
+                         abstract='Maximum latitude for plot boundary.',
                          data_type='float',
                          default=90,
                          min_occurs=1),
@@ -135,15 +122,25 @@ class PlotAll(Process):
                 data = l.rstrip().split(': ')
                 inputs[data[0]] = data[1]
 
+        # For now throw unless bounds looks exceptional
+        if request.inputs['min_lon'][0].data < -180:
+            raise InvalidParameterValue('Bounding box minimum longitude input cannot be below -180')
+        if request.inputs['max_lon'][0].data > 180:
+            raise InvalidParameterValue('Bounding box maximum longitude input cannot be above 180')
+        if request.inputs['min_lat'][0].data < -90:
+            raise InvalidParameterValue('Bounding box minimum latitude input cannot be below -90')
+        if request.inputs['max_lat'][0].data > 90:
+            raise InvalidParameterValue('Bounding box minimum latitude input cannot be above 90')
+
         # Parse input params into plot options
         plotoptions = {}
+        plotoptions["lon_bounds"] = (request.inputs["min_lon"][0].data, request.inputs["max_lon"][0].data)
+        plotoptions["lat_bounds"] = (request.inputs["min_lat"][0].data, request.inputs["max_lat"][0].data)
+
         plotoptions['outdir'] = os.path.join(rundir, 'plots_{}'.format(datetime.strftime(datetime.now(), '%s')))
         for p in request.inputs:
             if p == 'timestamp' or p == 'filelocation' or p == 'summarise':
                 continue
-            elif p == 'lon_bounds' or p == 'lat_bounds':
-                statcoords = request.inputs[p][0].data.split(',')
-                plotoptions[p] = (int(statcoords[0].strip()), int(statcoords[1].strip()))
             elif p == 'scale':
                 statcoords = request.inputs[p][0].data.split(',')
                 plotoptions[p] = (float(statcoords[0].strip()), float(statcoords[1].strip()))

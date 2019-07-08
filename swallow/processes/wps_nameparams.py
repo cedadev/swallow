@@ -52,27 +52,27 @@ class RunNAME(Process):
             # BoundingBoxInput('domain', 'Computational Domain', crss=['epsg:4326'],
             #                  abstract='Coordinates to run NAME within',
             #                  min_occurs=1),
-            LiteralInput('minX',
+            LiteralInput('min_lon',
                          'Minimum longitude',
-                         abstract='Minimum longitude.',
+                         abstract='Minimum longitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
                          data_type='float',
                          default=-180,
                          min_occurs=1),
-            LiteralInput('maxX',
+            LiteralInput('max_lon',
                          'Maximum longitude',
-                         abstract='Maximum longitude.',
+                         abstract='Maximum longitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
                          data_type='float',
                          default=180,
                          min_occurs=1),
-            LiteralInput('minY',
+            LiteralInput('min_lat',
                          'Minimum latitude',
-                         abstract='Minimum latitude.',
+                         abstract='Minimum latitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
                          data_type='float',
                          default=-90,
                          min_occurs=1),
-            LiteralInput('maxY',
+            LiteralInput('max_lat',
                          'Maximum latitude',
-                         abstract='Maximum latitude.',
+                         abstract='Maximum latitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
                          data_type='float',
                          default=90,
                          min_occurs=1),
@@ -140,22 +140,23 @@ class RunNAME(Process):
 
         domains = []
 
-        if request.inputs['minX'][0].data < -180:
+        # For now throw unless bounds looks exceptional
+        if request.inputs['min_lon'][0].data < -180:
             raise InvalidParameterValue('Bounding box minimum longitude input cannot be below -180')
-        if request.inputs['maxX'][0].data > 180:
+        if request.inputs['max_lon'][0].data > 180:
             raise InvalidParameterValue('Bounding box maximum longitude input cannot be above 180')
-        if request.inputs['minY'][0].data < -90:
+        if request.inputs['min_lat'][0].data < -90:
             raise InvalidParameterValue('Bounding box minimum latitude input cannot be below -90')
-        if request.inputs['maxY'][0].data > 90:
+        if request.inputs['max_lat'][0].data > 90:
             raise InvalidParameterValue('Bounding box minimum latitude input cannot be above 90')
         
-        #minY, minX, maxY, maxX
-        domains.append(request.inputs['minY'][0].data)
-        domains.append(request.inputs['minX'][0].data)
-        domains.append(request.inputs['maxY'][0].data)
-        domains.append(request.inputs['maxX'][0].data)
+        #min_lat, min_lon, max_lat, max_lon
+        domains.append(request.inputs['min_lat'][0].data)
+        domains.append(request.inputs['min_lon'][0].data)
+        domains.append(request.inputs['max_lat'][0].data)
+        domains.append(request.inputs['max_lon'][0].data)
 
-        # If minX and maxX are 180, need to reset to 179.9
+        # If min_lon and max_lon are 180, need to reset to 179.9
         if domains[1] == -180 and domains[3] == 180:
             domains[1] = -179.875
             domains[3] = 179.9
