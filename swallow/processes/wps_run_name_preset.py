@@ -75,9 +75,9 @@ class RunNamePreset(Process):
 
         super(RunNamePreset, self).__init__(
             self._handler,
-            identifier='runnamestd',
-            title='Run NAME-on-JASMIN - Standard Location',
-            abstract='Run NAME 3-hourly from a choice of standard release locations',
+            identifier='run_name_preset',
+            title='Run NAME with Presets',
+            abstract='Run NAME 3-hourly from a choice of preset standard release locations',
             version='0.1',
             metadata=[
                 Metadata('NAME-on-JASMIN guide', 'http://jasmin.ac.uk/jasmin-users/stories/processing/'),

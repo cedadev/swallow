@@ -26,7 +26,7 @@ class PlotNAME(Process):
     Notes
     -----
 
-    From a directory of NAME output files we can generate all possible plots
+    This process takes the output of a previous NAME job and plots the outputs with user defined parameters. 
     """
     def __init__(self):
         inputs = [
@@ -91,9 +91,9 @@ class PlotNAME(Process):
 
         super(PlotNAME, self).__init__(
             self._handler,
-            identifier='plotall',
-            title='Plot NAME results - Concentration',
-            abstract='PNG plots are generated from the NAME output files',
+            identifier='plot_name',
+            title='Plot NAME results',
+            abstract='Generate a plot of concentration from a completed NAME job',
             version='0.1',
             metadata=[
                 Metadata('NAME-on-JASMIN guide', 'http://jasmin.ac.uk/jasmin-users/stories/processing/'),

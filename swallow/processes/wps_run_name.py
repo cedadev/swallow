@@ -110,9 +110,9 @@ class RunNAME(Process):
 
         super(RunNAME, self).__init__(
             self._handler,
-            identifier='runname',
-            title='Run NAME-on-JASMIN',
-            abstract='Run NAME using user-defined settings',
+            identifier='run_name',
+            title='Run NAME',
+            abstract='Run NAME on JASMIN using user-defined release location and bounding box.',
             version='0.1',
             metadata=[
                 Metadata('NAME-on-JASMIN guide', 'http://jasmin.ac.uk/jasmin-users/stories/processing/'),
