@@ -16,18 +16,17 @@ class RunNAME(Process):
     Notes
     -----
 
-    This will take and regurgitate all the parameters required to run NAME.
-    It should make it easier to then add in the actual process.
+    This process runs NAME on JASMIN with the user providing all parameters including the name of the job.
     """
     def __init__(self):
         inputs = [
             LiteralInput('title', 'Title', data_type='string',
-                         abstract='Title of run'),
+                         abstract='Title of job'),
             LiteralInput('longitude', 'Longitude', data_type='float',
-                         abstract='Location of release',
+                         abstract='Longitude of release',
                          default=-24.867222),
             LiteralInput('latitude', 'Latitude', data_type='float',
-                         abstract='Location of release',
+                         abstract='Latitude of release',
                          default=16.863611),
             LiteralInput('elevation', 'Elevation', data_type='integer',
                          abstract='Elevation of release, m agl for land, m asl for marine release',
@@ -38,7 +37,6 @@ class RunNAME(Process):
             # LiteralInput('elevation_range_max', 'Elevation Range Max', data_type='integer',
             #              abstract = 'Maximum range of elevation',
             #              default=None, min_occurs=0),
-
             LiteralInput('runBackwards', 'Run Backwards', data_type='boolean',
                          abstract = 'Whether to run backwards in time or forwards',
                          default = '1', min_occurs=0),

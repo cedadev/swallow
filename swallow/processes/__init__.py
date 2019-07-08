@@ -1,9 +1,9 @@
-from .wps_nameparams import RunNAME
-from .wps_name_standard import RunNAMEstandard
-from .wps_plot_allops import PlotAll
+from .wps_run_name import RunNAME
+from .wps_run_name_preset import RunNamePreset
+from .wps_plot_name import PlotNAME
 
 processes = [
     RunNAME(),
-    RunNAMEstandard(),
-    PlotAll(),
+    RunNamePreset(),
+    PlotNAME(),
 ]

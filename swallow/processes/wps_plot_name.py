@@ -21,7 +21,7 @@ import logging
 LOGGER = logging.getLogger('PYWPS')
 
 
-class PlotAll(Process):
+class PlotNAME(Process):
     """
     Notes
     -----
@@ -89,7 +89,7 @@ class PlotAll(Process):
                           as_reference=True),
             ]
 
-        super(PlotAll, self).__init__(
+        super(PlotNAME, self).__init__(
             self._handler,
             identifier='plotall',
             title='Plot NAME results - Concentration',

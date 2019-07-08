@@ -13,13 +13,12 @@ import logging
 LOGGER = logging.getLogger('PYWPS')
 
 
-class RunNAMEstandard(Process):
+class RunNamePreset(Process):
     """
     Notes
     -----
 
-    This will take and regurgitate all the parameters required to run NAME.
-    It should make it easier to then add in the actual process.
+    This process runs NAME on JASMIN with a 3-hourly release on a selected preset location and bounding box.
     """
     def __init__(self):
         inputs = [
@@ -74,7 +73,7 @@ class RunNAMEstandard(Process):
                           as_reference=True),
             ]
 
-        super(RunNAMEstandard, self).__init__(
+        super(RunNamePreset, self).__init__(
             self._handler,
             identifier='runnamestd',
             title='Run NAME-on-JASMIN - Standard Location',
