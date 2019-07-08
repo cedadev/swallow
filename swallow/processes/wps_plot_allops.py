@@ -44,10 +44,6 @@ class PlotAll(Process):
                          min_occurs=0),
             LiteralInput('projection', 'Projection', data_type='string',
                          abstract='Map projection', allowed_values=['cyl', 'npstere', 'spstere'], min_occurs=0),
-            LiteralInput('lon_bounds', 'Longitudinal boundary', data_type='string',
-                         abstract='X-axis: Min and Max longitude to plot. Format: Min,Max', min_occurs=0),
-            LiteralInput('lat_bounds', 'Latitudinal boundary', data_type='string',
-                         abstract='Y-axis: Min and Max latitude boundary. Format: Min,Max', min_occurs=0),
             # Use fake bbox input until BoundingBoxInput supported by pywps
             # BoundingBoxInput('domain', 'Computational Domain', crss=['epsg:4326'],
             #                  abstract='Coordinates to plot within',
