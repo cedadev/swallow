@@ -3,6 +3,8 @@ from pywps import ComplexOutput, Format
 from pywps import LiteralInput, LiteralOutput, BoundingBoxInput
 from pywps.exceptions import InvalidParameterValue
 from pywps.app.Common import Metadata
+from pywps.inout.literaltypes import AllowedValue
+from pywps.validator.mode import MODE
 
 from swallow.run_name import run_name
 from datetime import timedelta
@@ -50,6 +52,19 @@ class RunNAME(Process):
             # BoundingBoxInput('domain', 'Computational Domain', crss=['epsg:4326'],
             #                  abstract='Coordinates to run NAME within',
             #                  min_occurs=1),
+            LiteralInput('int_range', 'Integer Range',
+                         abstract='Choose number from range: 1-10 (step 1), 100-200 (step 10)',
+                         metadata=[
+                            Metadata('PyWPS Docs', 'https://pywps.readthedocs.io/en/master/api.html#pywps.inout.literaltypes.AllowedValue'),  # noqa
+                            Metadata('AllowedValue Example', 'http://docs.opengeospatial.org/is/14-065/14-065.html#98'),  # noqa
+                            ],
+                         data_type='integer',
+                         default='1',
+                         allowed_values=[
+                             AllowedValue(minval=1, maxval=10),
+                             AllowedValue(minval=100, maxval=200, spacing=10)
+                         ],
+                         mode=MODE.SIMPLE,),
             LiteralInput('min_lon',
                          'Minimum longitude',
                          abstract='Minimum longitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
