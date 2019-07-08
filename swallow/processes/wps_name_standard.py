@@ -3,6 +3,8 @@ from pywps import ComplexOutput, Format
 from pywps import LiteralInput, LiteralOutput
 from pywps.exceptions import InvalidParameterValue
 from pywps.app.Common import Metadata
+from pywps.inout.literaltypes import AllowedValue
+from pywps.validator.mode import MODE
 
 from swallow.run_name import run_name
 from datetime import timedelta
@@ -51,6 +53,19 @@ class RunNAMEstandard(Process):
                          abstract='Elevation range where the particle number is counted (m agl)'
                                   ' Example: 0-100',
                          default='0-100', min_occurs=1, max_occurs=4), # I want ranges, so going to use string format then process the results.
+            LiteralInput('elevationOut2', 'Output elevation averaging range(s)',
+                         abstract='Choose number from range: 1-10 (step 1), 100-200 (step 10)',
+                         metadata=[
+                            Metadata('PyWPS Docs', 'https://pywps.readthedocs.io/en/master/api.html#pywps.inout.literaltypes.AllowedValue'),  # noqa
+                            Metadata('AllowedValue Example', 'http://docs.opengeospatial.org/is/14-065/14-065.html#98'),  # noqa
+                            ],
+                         data_type='integer',
+                         default='1',
+                         allowed_values=[
+                             AllowedValue(minval=1, maxval=10),
+                             AllowedValue(minval=100, maxval=200, spacing=10)
+                         ],
+mode=MODE.SIMPLE,),
             LiteralInput('resolution','Resolution', data_type='float',
                          abstract='degrees, note the UM global Met data was only 17Km resolution',
                          allowed_values=[0.05,0.25], default=0.25, min_occurs=0),
