@@ -55,9 +55,9 @@ class RunNamePreset(Process):
             LiteralInput('resolution','Resolution', data_type='float',
                          abstract='degrees, note the UM global Met data was only 17Km resolution',
                          allowed_values=[0.05,0.25], default=0.25, min_occurs=0),
-            LiteralInput('startdate', 'Start date', data_type='date',
+            LiteralInput('startdate', 'Start date', data_type='dateTime',
                          abstract='UTC start date of runs (YYYY-MM-DD)'),
-            LiteralInput('enddate', 'End date', data_type='date',
+            LiteralInput('enddate', 'End date', data_type='dateTime',
                          abstract = 'UTC end date of runs (YYYY-MM-DD)')
             ]
         outputs = [
