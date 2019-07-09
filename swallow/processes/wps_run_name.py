@@ -113,20 +113,23 @@ class RunNAME(Process):
                     'The value "{}" does not contain a "-" character to define a range, '
                     'e.g. 0-100'.format(elevationrange.data))
 
+        domains = []
+        for val in request.inputs['domain'][0].data:
+            domains.append(float(val))
+
+        # If min_lon and max_lon are 180, need to reset to 179.9
+        if domains[1] == -180 and domains[3] == 180:
+            domains[1] = -179.875
+            domains[3] = 179.9
+
         params = dict()
         for p in request.inputs:
             if p == 'elevationOut':
                 params[p] = ranges
+            elif p == 'domain':
+                params[p] = domains
             else:
                 params[p] = request.inputs[p][0].data
-
-        for index, coord in enumerate(params['domain']):
-            params['domain'][index] = float(coord)
-
-        # If min_lon and max_lon are 180, need to reset to 179.9
-        if params['domain'][1] == -180 and params['domain'][3] == 180:
-            params['domain'][1] = -179.875
-            params['domain'][3] = 179.9
 
         # Need to test start and end dates make sense relative to each other
         if params['startdate'] >= params['enddate'] + timedelta(days=1):
