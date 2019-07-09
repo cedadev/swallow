@@ -152,10 +152,10 @@ class RunNAME(Process):
         # domains.append(request.inputs['max_lat'][0].data)
         # domains.append(request.inputs['max_lon'][0].data)
 
-        domains.append(request.inputs['domain'][0].data[0][0])
-        domains.append(request.inputs['domain'][0].data[0][1])
-        domains.append(request.inputs['domain'][0].data[1][0])
-        domains.append(request.inputs['domain'][0].data[1][1])
+        domains.append(int(request.inputs['domain'][0].data[0]))
+        domains.append(int(request.inputs['domain'][0].data[1]))
+        domains.append(int(request.inputs['domain'][0].data[2]))
+        domains.append(int(request.inputs['domain'][0].data[3]))
 
         # If min_lon and max_lon are 180, need to reset to 179.9
         if domains[1] == -180 and domains[3] == 180:
