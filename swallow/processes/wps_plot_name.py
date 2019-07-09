@@ -97,8 +97,8 @@ class PlotNAME(Process):
 
         # Parse input params into plot options
         plotoptions = {}
-        plotoptions["lon_bounds"] = (request.inputs["domain"][0].data[0], request.inputs["domain"][0].data[1])
-        plotoptions["lat_bounds"] = (request.inputs["domain"][0].data[2], request.inputs["domain"][0].data[3])
+        plotoptions["lon_bounds"] = (float(request.inputs["domain"][0].data[0]), float(request.inputs["domain"][0].data[1]))
+        plotoptions["lat_bounds"] = (float(request.inputs["domain"][0].data[2]), float(request.inputs["domain"][0].data[3]))
 
         plotoptions['outdir'] = os.path.join(rundir, 'plots_{}'.format(datetime.strftime(datetime.now(), '%s')))
         for p in request.inputs:
