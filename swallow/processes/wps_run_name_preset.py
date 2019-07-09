@@ -73,7 +73,7 @@ class RunNAMEPreset(Process):
                           as_reference=True),
             ]
 
-        super(RunNamePreset, self).__init__(
+        super(RunNAMEPreset, self).__init__(
             self._handler,
             identifier='run_name_preset',
             title='Run NAME with Presets',
