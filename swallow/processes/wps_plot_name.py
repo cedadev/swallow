@@ -1,6 +1,6 @@
 from pywps import Process
 from pywps import ComplexOutput, Format, FORMATS
-from pywps import LiteralInput
+from pywps import LiteralInput, BoundingBoxInput
 from pywps.app.Common import Metadata
 from pywps.exceptions import InvalidParameterValue
 from pywps.inout.literaltypes import AllowedValue
@@ -44,30 +44,9 @@ class PlotNAME(Process):
                          min_occurs=0),
             LiteralInput('projection', 'Projection', data_type='string',
                          abstract='Map projection', allowed_values=['cyl', 'npstere', 'spstere'], min_occurs=0),
-            # Use fake bbox input until BoundingBoxInput supported by pywps
-            # BoundingBoxInput('domain', 'Computational Domain', crss=['epsg:4326'],
-            #                  abstract='Coordinates to plot within',
-            #                  min_occurs=1),
-            LiteralInput('min_lon', 'Minimum longitude',
-                         abstract='Minimum longitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
-                         data_type='float',
-                         default=-180,
-                         min_occurs=1),
-            LiteralInput('max_lon', 'Maximum longitude',
-                         abstract='Maximum longitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
-                         data_type='float',
-                         default=180,
-                         min_occurs=1),
-            LiteralInput('min_lat', 'Minimum latitude',
-                         abstract='Minimum latitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
-                         data_type='float',
-                         default=-90,
-                         min_occurs=1),
-            LiteralInput('max_lat', 'Maximum latitude',
-                         abstract='Maximum latitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
-                         data_type='float',
-                         default=90,
-                         min_occurs=1),
+            BoundingBoxInput('domain', 'Computational Domain', crss=['epsg:4326'],
+                             abstract='Coordinates to plot within',
+                             min_occurs=0),
             LiteralInput('scale', 'Particle concentration scale', data_type='string',
                          abstract='Particle concentration scale. If no value is set, it will autoscale. '
                                   'Format: Min,Max',
@@ -115,20 +94,10 @@ class PlotNAME(Process):
                 data = l.rstrip().split(': ')
                 inputs[data[0]] = data[1]
 
-        # For now throw unless bounds looks exceptional
-        if request.inputs['min_lon'][0].data < -180:
-            raise InvalidParameterValue('Bounding box minimum longitude input cannot be below -180')
-        if request.inputs['max_lon'][0].data > 180:
-            raise InvalidParameterValue('Bounding box maximum longitude input cannot be above 180')
-        if request.inputs['min_lat'][0].data < -90:
-            raise InvalidParameterValue('Bounding box minimum latitude input cannot be below -90')
-        if request.inputs['max_lat'][0].data > 90:
-            raise InvalidParameterValue('Bounding box minimum latitude input cannot be above 90')
-
         # Parse input params into plot options
         plotoptions = {}
-        plotoptions["lon_bounds"] = (request.inputs["min_lon"][0].data, request.inputs["max_lon"][0].data)
-        plotoptions["lat_bounds"] = (request.inputs["min_lat"][0].data, request.inputs["max_lat"][0].data)
+        plotoptions["lon_bounds"] = (request.inputs["domain"][0].data[0], request.inputs["domain"][0].data[1])
+        plotoptions["lat_bounds"] = (request.inputs["domain"][0].data[2], request.inputs["domain"][0].data[3])
 
         plotoptions['outdir'] = os.path.join(rundir, 'plots_{}'.format(datetime.strftime(datetime.now(), '%s')))
         for p in request.inputs:
