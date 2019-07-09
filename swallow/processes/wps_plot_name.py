@@ -16,6 +16,7 @@ import calendar
 import glob
 import tempfile
 from swallow.utils import getjasminconfigs, get_num_dates
+from dateutil.parser import parse
 
 import logging
 LOGGER = logging.getLogger('PYWPS')
@@ -37,7 +38,7 @@ class PlotNAME(Process):
                          allowed_values=['NA', 'day', 'week', 'month', 'all'], default='NA'),
             LiteralInput('timestamp', 'Plot specific date and time', data_type='dateTime',
                          abstract='Plot only a specific timestamp. Excludes the creation of summary plots. '
-                                  'Format: YYYY-MM-DD HH:MM',
+                                  'Format: YYYY-MM-DD HH:MM:SSZ',
                          min_occurs=0),
             LiteralInput('station', 'Mark release location', data_type='boolean',
                          abstract='Mark the location of release onto the image',
@@ -122,8 +123,8 @@ class PlotNAME(Process):
 
         response.update_status('Processed plot parameters', 5)
 
-        tot_plots = get_num_dates(start=datetime.strptime(inputs['startdate'], '%Y-%m-%d'),
-                                  end=datetime.strptime(inputs['enddate'], '%Y-%m-%d'),
+        tot_plots = get_num_dates(start=parse(inputs['startdate']),
+                                  end=parse(inputs['enddate']),
                                   sum=request.inputs['summarise'][0].data,
                                   type=inputs['timestamp'])
 
