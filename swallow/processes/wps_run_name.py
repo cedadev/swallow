@@ -105,7 +105,7 @@ class RunNAME(Process):
         # Need to process the elevationOut inputs from a list of strings, into an array of tuples.
         ranges = []
         for elevation_range in request.inputs['elevationOut']:
-            ranges.append(elevation_range.data)
+            ranges.append(self.translate_elevation(elevation_range.data))
 
         domains = []
         for val in request.inputs['domain'][0].data:

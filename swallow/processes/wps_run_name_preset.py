@@ -93,7 +93,7 @@ class RunNAMEPreset(Process):
         # Need to process the elevationOut inputs from a list of strings, into an array of tuples.
         ranges = []
         for elevation_range in request.inputs['elevationOut']:
-            ranges.append(elevation_range.data)
+            ranges.append(self.translate_elevation(elevation_range.data))
 
         params = dict()
         for p in request.inputs:
