@@ -279,8 +279,7 @@ class PlotNAME(Process):
         response.update_status('Formatting output', 95)
         if not os.path.exists(plotoptions['outdir']):
             LOGGER.debug('Did not create any plots')
-            response.outputs['FileContents'].data_format = FORMATS.TEXT
-            response.outputs['FileContents'].data = 'No plots created, check input options'
+            raise InvalidParameterValue(f'Input Job {request.inputs["domain"][0]} does not exist')
         else:
             if len(os.listdir(plotoptions['outdir'])) == 1:
                 LOGGER.debug('Only one output plot')
