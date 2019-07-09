@@ -49,29 +49,29 @@ class RunNAME(Process):
                          abstract='number of days/hours NAME will run over. Maximum is 20 days.',
                          allowed_values = ['days','hours'], default='days'),
             # Use fake bbox input until BoundingBoxInput supported by pywps
-            # BoundingBoxInput('domain', 'Computational Domain', crss=['epsg:4326'],
-            #                  abstract='Coordinates to run NAME within',
-            #                  min_occurs=1),
-            LiteralInput('min_lon', 'Minimum longitude',
-                         abstract='Minimum longitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
-                         data_type='float',
-                         default=-180,
-                         min_occurs=1,
-            LiteralInput('max_lon', 'Maximum longitude',
-                         abstract='Maximum longitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
-                         data_type='float',
-                         default=180,
-                         min_occurs=1,
-            LiteralInput('min_lat', 'Minimum latitude',
-                         abstract='Minimum latitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
-                         data_type='float',
-                         default=-90,
-                         min_occurs=1,
-            LiteralInput('max_lat', 'Maximum latitude',
-                         abstract='Maximum latitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
-                         data_type='float',
-                         default=90,
-                         min_occurs=1,
+            BoundingBoxInput('domain', 'Computational Domain', crss=['epsg:4326'],
+                             abstract='Coordinates to run NAME within',
+                             min_occurs=1),
+            # LiteralInput('min_lon', 'Minimum longitude',
+            #              abstract='Minimum longitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
+            #              data_type='float',
+            #              default=-180,
+            #              min_occurs=1,
+            # LiteralInput('max_lon', 'Maximum longitude',
+            #              abstract='Maximum longitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
+            #              data_type='float',
+            #              default=180,
+            #              min_occurs=1,
+            # LiteralInput('min_lat', 'Minimum latitude',
+            #              abstract='Minimum latitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
+            #              data_type='float',
+            #              default=-90,
+            #              min_occurs=1,
+            # LiteralInput('max_lat', 'Maximum latitude',
+            #              abstract='Maximum latitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
+            #              data_type='float',
+            #              default=90,
+            #              min_occurs=1,
             LiteralInput('elevationOut', 'Output elevation averaging range(s)', data_type='string',
                          abstract='Elevation range where the particle number is counted (m agl)'
                                   ' Example: 0-100',
@@ -128,7 +128,7 @@ class RunNAME(Process):
         for elevationrange in request.inputs['elevationOut']:
             if '-' in elevationrange.data:
                 minrange, maxrange = elevationrange.data.split('-')
-                ranges.append((int(minrange), int(maxrange))) # need to error catch int() and min < max
+                ranges.append((int(minrange), int(maxrange))) # need to error catch int() and min < max #TODO
             else:
                 raise InvalidParameterValue(
                     'The value "{}" does not contain a "-" character to define a range, '
@@ -137,20 +137,25 @@ class RunNAME(Process):
         domains = []
 
         # For now throw unless bounds looks exceptional
-        if request.inputs['min_lon'][0].data < -180:
-            raise InvalidParameterValue('Bounding box minimum longitude input cannot be below -180')
-        if request.inputs['max_lon'][0].data > 180:
-            raise InvalidParameterValue('Bounding box maximum longitude input cannot be above 180')
-        if request.inputs['min_lat'][0].data < -90:
-            raise InvalidParameterValue('Bounding box minimum latitude input cannot be below -90')
-        if request.inputs['max_lat'][0].data > 90:
-            raise InvalidParameterValue('Bounding box minimum latitude input cannot be above 90')
+        # if request.inputs['min_lon'][0].data < -180:
+        #     raise InvalidParameterValue('Bounding box minimum longitude input cannot be below -180')
+        # if request.inputs['max_lon'][0].data > 180:
+        #     raise InvalidParameterValue('Bounding box maximum longitude input cannot be above 180')
+        # if request.inputs['min_lat'][0].data < -90:
+        #     raise InvalidParameterValue('Bounding box minimum latitude input cannot be below -90')
+        # if request.inputs['max_lat'][0].data > 90:
+        #     raise InvalidParameterValue('Bounding box minimum latitude input cannot be above 90')
         
-        #min_lat, min_lon, max_lat, max_lon
-        domains.append(request.inputs['min_lat'][0].data)
-        domains.append(request.inputs['min_lon'][0].data)
-        domains.append(request.inputs['max_lat'][0].data)
-        domains.append(request.inputs['max_lon'][0].data)
+        # #min_lat, min_lon, max_lat, max_lon
+        # domains.append(request.inputs['min_lat'][0].data)
+        # domains.append(request.inputs['min_lon'][0].data)
+        # domains.append(request.inputs['max_lat'][0].data)
+        # domains.append(request.inputs['max_lon'][0].data)
+
+        domains.append(request.inputs['domain'][0].data[0][0])
+        domains.append(request.inputs['domain'][0].data[0][1])
+        domains.append(request.inputs['domain'][0].data[1][0])
+        domains.append(request.inputs['domain'][0].data[1][1])
 
         # If min_lon and max_lon are 180, need to reset to 179.9
         if domains[1] == -180 and domains[3] == 180:
