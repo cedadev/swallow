@@ -104,14 +104,8 @@ class RunNAME(Process):
 
         # Need to process the elevationOut inputs from a list of strings, into an array of tuples.
         ranges = []
-        for elevationrange in request.inputs['elevationOut']:
-            if '-' in elevationrange.data:
-                minrange, maxrange = elevationrange.data.split('-')
-                ranges.append((int(minrange), int(maxrange))) # need to error catch int() and min < max #TODO
-            else:
-                raise InvalidParameterValue(
-                    'The value "{}" does not contain a "-" character to define a range, '
-                    'e.g. 0-100'.format(elevationrange.data))
+        for elevation_range in request.inputs['elevationOut']:
+            ranges.append(elevation_range.data)
 
         domains = []
         for val in request.inputs['domain'][0].data:
@@ -156,3 +150,19 @@ class RunNAME(Process):
 
         response.update_status('done', 100)
         return response
+
+    def translate_elevation(self, elevation_range):
+        if '-' not in elevation_range:
+            raise InvalidParameterValue(
+                f'The value "{elevation_range}" does not contain a "-" character to define a range, e.g. 0-100')
+        mini, maxi = elevation_range.split('-')
+        try:
+            mini = int(mini)
+            maxi = int(maxi)
+        except ValueError:
+            raise InvalidParameterValue(f'The value {elevation_range} is incorrect: cannot find two numbers')
+        if mini >= maxi:
+            raise InvalidParameterValue(f'The value {elevation_range} is incorrect: minimum is not less than maximum')
+        if mini < 0 or maxi < 0:
+            raise InvalidParameterValue(f'The value {elevation_range} is incorrect: Entire range must be above 0')
+        return mini, maxi
