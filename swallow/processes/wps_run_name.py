@@ -134,41 +134,20 @@ class RunNAME(Process):
                     'The value "{}" does not contain a "-" character to define a range, '
                     'e.g. 0-100'.format(elevationrange.data))
 
-        domains = []
-
-        # For now throw unless bounds looks exceptional
-        # if request.inputs['min_lon'][0].data < -180:
-        #     raise InvalidParameterValue('Bounding box minimum longitude input cannot be below -180')
-        # if request.inputs['max_lon'][0].data > 180:
-        #     raise InvalidParameterValue('Bounding box maximum longitude input cannot be above 180')
-        # if request.inputs['min_lat'][0].data < -90:
-        #     raise InvalidParameterValue('Bounding box minimum latitude input cannot be below -90')
-        # if request.inputs['max_lat'][0].data > 90:
-        #     raise InvalidParameterValue('Bounding box minimum latitude input cannot be above 90')
-        
-        # #min_lat, min_lon, max_lat, max_lon
-        # domains.append(request.inputs['min_lat'][0].data)
-        # domains.append(request.inputs['min_lon'][0].data)
-        # domains.append(request.inputs['max_lat'][0].data)
-        # domains.append(request.inputs['max_lon'][0].data)
-
-        domains.append(int(request.inputs['domain'][0].data[0]))
-        domains.append(int(request.inputs['domain'][0].data[1]))
-        domains.append(int(request.inputs['domain'][0].data[2]))
-        domains.append(int(request.inputs['domain'][0].data[3]))
-
-        # If min_lon and max_lon are 180, need to reset to 179.9
-        if domains[1] == -180 and domains[3] == 180:
-            domains[1] = -179.875
-            domains[3] = 179.9
-
         params = dict()
-        params['domain'] = domains
         for p in request.inputs:
             if p == 'elevationOut':
                 params[p] = ranges
             else:
                 params[p] = request.inputs[p][0].data
+
+        for index, coord in enumerate(params['domain']):
+            params['domain'][index] = float(coord)
+
+        # If min_lon and max_lon are 180, need to reset to 179.9
+        if params['domain'][1] == -180 and params['domain'][3] == 180:
+            params['domain'][1] = -179.875
+            params['domain'][3] = 179.9
 
         # Need to test start and end dates make sense relative to each other
         if params['startdate'] >= params['enddate'] + timedelta(days=1):
