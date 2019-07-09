@@ -123,8 +123,8 @@ class PlotNAME(Process):
 
         response.update_status('Processed plot parameters', 5)
 
-        tot_plots = get_num_dates(start=parse(inputs['startdate']),
-                                  end=parse(inputs['enddate']),
+        tot_plots = get_num_dates(start=datetime.date(parse(inputs['startdate'])),
+                                  end=datetime.date(parse(inputs['enddate'])),
                                   sum=request.inputs['summarise'][0].data,
                                   type=inputs['timestamp'])
 
