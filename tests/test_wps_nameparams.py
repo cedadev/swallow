@@ -10,17 +10,17 @@ from swallow.processes.wps_nameparams import RunNAME
 @pytest.mark.online
 def test_wps_nameparams_success():
     client = client_for(Service(processes=[RunNAME()]))
-    datainputs = "title={};runBackwards={};time={};elevationOut={};resolution={};startdate={};enddate={};" \
-                 "domain={};timestamp={}".format(
-        "CAPEVERDE",
-        "true",
-        "1",
-        "0-100",
-        "0.25",
-        "2017-11-01",
-        "2017-11-02",
-        "-180,80,-90,90",
-        "3-hourly"
+    datainputs = 'title={};runBackwards={};time={};elevationOut={};resolution={};startdate={};enddate={};' \
+                 'domain={};timestamp={}'.format(
+        'CAPEVERDE',
+        'true',
+        '1',
+        '0-100',
+        '0.25',
+        '2017-11-01',
+        '2017-11-02',
+        '-180,80,-90,90',
+        '3-hourly'
     )
     resp = client.get(
         service='wps', request='execute', version='1.0.0',
@@ -31,17 +31,17 @@ def test_wps_nameparams_success():
 @pytest.mark.skip
 def test_wps_nameparams_filename():
     client = client_for(Service(processes=[RunNAME()]))
-    datainputs = "title={};runBackwards={};time={};elevationOut={};resolution={};startdate={};enddate={};" \
-                 "domain={};timestamp={}".format(
-        "CAPEVERDE",
-        "true",
-        "1",
-        "0-100",
-        "0.25",
-        "2017-11-01",
-        "2017-11-02",
-        "-180,80,-90,90",
-        "3-hourly"
+    datainputs = 'title={};runBackwards={};time={};elevationOut={};resolution={};startdate={};enddate={};' \
+                 'domain={};timestamp={}'.format(
+        'CAPEVERDE',
+        'true',
+        '1',
+        '0-100',
+        '0.25',
+        '2017-11-01',
+        '2017-11-02',
+        '-180,80,-90,90',
+        '3-hourly'
     )
     resp = client.get(
         service='wps', request='execute', version='1.0.0',
