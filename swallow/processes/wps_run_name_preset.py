@@ -13,7 +13,7 @@ import logging
 LOGGER = logging.getLogger('PYWPS')
 
 
-class RunNamePreset(Process):
+class RunNAMEPreset(Process):
     """
     Notes
     -----

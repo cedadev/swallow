@@ -4,12 +4,12 @@ from pywps import Service
 from pywps.tests import assert_response_success
 
 from tests.common import client_for
-from swallow.processes.wps_name_standard import RunNAMEstandard
+from swallow.processes.wps_run_name_preset import RunNAMEPreset
 
 
 @pytest.mark.online
-def test_wps_name_standard():
-    client = client_for(Service(processes=[RunNAMEstandard()]))
+def test_wps_run_name_preset_success():
+    client = client_for(Service(processes=[RunNAMEPreset()]))
     datainputs = 'title={};runBackwards={};time={};elevationOut={};resolution={};startdate={};enddate={}'.format(
         'Cape Verde',
         'true',

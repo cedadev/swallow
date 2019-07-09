@@ -4,11 +4,11 @@ from pywps import Service
 from pywps.tests import assert_response_success
 
 from tests.common import client_for, get_output
-from swallow.processes.wps_nameparams import RunNAME
+from swallow.processes.wps_run_name import RunNAME
 
 
 @pytest.mark.online
-def test_wps_nameparams_success():
+def test_wps_run_name_success():
     client = client_for(Service(processes=[RunNAME()]))
     datainputs = 'title={};runBackwards={};time={};elevationOut={};resolution={};startdate={};enddate={};' \
                  'domain={};timestamp={}'.format(
@@ -29,7 +29,7 @@ def test_wps_nameparams_success():
     assert_response_success(resp)
 
 @pytest.mark.skip
-def test_wps_nameparams_filename():
+def test_wps_run_name_filename():
     client = client_for(Service(processes=[RunNAME()]))
     datainputs = 'title={};runBackwards={};time={};elevationOut={};resolution={};startdate={};enddate={};' \
                  'domain={};timestamp={}'.format(
