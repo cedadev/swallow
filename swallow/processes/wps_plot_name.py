@@ -70,7 +70,7 @@ class PlotNAME(Process):
             self._handler,
             identifier='plot_name',
             title='Plot NAME results',
-            abstract='Generate a plot of concentration from a completed NAME job.',
+            abstract='Generate plots from a completed NAME job.',
             version='0.1',
             metadata=[
                 Metadata('NAME-on-JASMIN guide', 'http://jasmin.ac.uk/jasmin-users/stories/processing/'),
