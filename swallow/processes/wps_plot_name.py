@@ -45,9 +45,31 @@ class PlotNAME(Process):
                          min_occurs=0),
             LiteralInput('projection', 'Projection', data_type='string',
                          abstract='Map projection', allowed_values=['cyl', 'npstere', 'spstere'], min_occurs=0),
-            BoundingBoxInput('domain', 'Computational Domain', crss=['epsg:4326'],
-                             abstract='Coordinates to plot within',
-                             min_occurs=0),
+            # bbox not working:
+            # BoundingBoxInput('domain', 'Computational Domain', crss=['epsg:4326'],
+            #                  abstract='Coordinates to plot within',
+            #                  min_occurs=0),
+            # Temporary bbox solution
+            LiteralInput('min_lon', 'Minimum longitude',
+                         abstract='Minimum longitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
+                         data_type='float',
+                         default=-180,
+                         min_occurs=1),
+            LiteralInput('max_lon', 'Maximum longitude',
+                         abstract='Maximum longitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
+                         data_type='float',
+                         default=180,
+                         min_occurs=1),
+            LiteralInput('min_lat', 'Minimum latitude',
+                         abstract='Minimum latitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
+                         data_type='float',
+                         default=-90,
+                         min_occurs=1),
+            LiteralInput('max_lat', 'Maximum latitude',
+                         abstract='Maximum latitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
+                         data_type='float',
+                         default=90,
+                         min_occurs=1),
             LiteralInput('scale', 'Particle concentration scale', data_type='string',
                          abstract='Particle concentration scale. If no value is set, it will autoscale. '
                                   'Format: Min,Max',
@@ -95,14 +117,32 @@ class PlotNAME(Process):
                 data = l.rstrip().split(': ')
                 inputs[data[0]] = data[1]
 
+        # Throw manually with temporary bbox solution
+        if request.inputs['min_lon'][0].data < -180:
+            raise InvalidParameterValue('Bounding box minimum longitude input cannot be below -180')
+        if request.inputs['max_lon'][0].data > 180:
+            raise InvalidParameterValue('Bounding box maximum longitude input cannot be above 180')
+        if request.inputs['min_lat'][0].data < -90:
+            raise InvalidParameterValue('Bounding box minimum latitude input cannot be below -90')
+        if request.inputs['max_lat'][0].data > 90:
+            raise InvalidParameterValue('Bounding box minimum latitude input cannot be above 90')
+
+
         # Parse input params into plot options
         plotoptions = {}
-        plotoptions['lon_bounds'] = (int(float(request.inputs['domain'][0].data[1])), int(float(request.inputs['domain'][0].data[3])))
-        plotoptions['lat_bounds'] = (int(float(request.inputs['domain'][0].data[0])), int(float(request.inputs['domain'][0].data[2])))
+        # When using bbox:
+        # plotoptions['lon_bounds'] = (int(float(request.inputs['domain'][0].data[1])), int(float(request.inputs['domain'][0].data[3])))
+        # plotoptions['lat_bounds'] = (int(float(request.inputs['domain'][0].data[0])), int(float(request.inputs['domain'][0].data[2])))
+        # When using temporary bbox solution
+        plotoptions['lon_bounds'] = (int(request.inputs['min_lon'][0].data), int(request.inputs['max_lon'][0].data))
+        plotoptions['lat_bounds'] = (int(request.inputs['min_lat'][0].data), int(request.inputs['max_lat'][0].data))
 
         plotoptions['outdir'] = os.path.join(rundir, 'plots_{}'.format(datetime.strftime(datetime.now(), '%s')))
         for p in request.inputs:
-            if p == 'timestamp' or p == 'filelocation' or p == 'summarise' or p == 'domain':
+            # When using bbox
+            # if p == 'timestamp' or p == 'filelocation' or p == 'summarise' or p == 'domain':
+            # When using temporary bbox solution
+            if p == 'timestamp' or p == 'filelocation' or p == 'summarise' or p == 'min_lon' or p == 'max_lon' or p == 'min_lat' or p == 'max_lat':
                 continue
             elif p == 'scale':
                 statcoords = request.inputs[p][0].data.split(',')
@@ -114,7 +154,7 @@ class PlotNAME(Process):
 
         files = glob.glob(os.path.join(rundir, 'outputs', '*_group*.txt'))
         if len(files) == 0:
-            raise InvalidParameterValue('Unable to find any output files. File names must be named "*_group*.txt"')#
+            raise InvalidParameterValue('Unable to find any output files. File names must be named "*_group*.txt"')
 
         if 'timestamp' in request.inputs:
             request.inputs['summarise'][0].data = 'NA'

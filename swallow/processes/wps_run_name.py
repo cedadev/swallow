@@ -48,9 +48,31 @@ class RunNAME(Process):
             LiteralInput('timeFmt',' ', data_type='string',
                          abstract='number of days/hours NAME will run over. Maximum is 20 days.',
                          allowed_values = ['days','hours'], default='days'),
-            BoundingBoxInput('domain', 'Computational Domain', crss=['epsg:4326'],
-                             abstract='Coordinates to run NAME within',
-                             min_occurs=1),
+            # bbox not working:
+            # BoundingBoxInput('domain', 'Computational Domain', crss=['epsg:4326'],
+            #                  abstract='Coordinates to run NAME within',
+            #                  min_occurs=1),
+            # Temporary bbox solution:
+            LiteralInput('min_lon', 'Minimum longitude',
+                         abstract='Minimum longitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
+                         data_type='float',
+                         default=-180,
+                         min_occurs=1),
+            LiteralInput('max_lon', 'Maximum longitude',
+                         abstract='Maximum longitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
+                         data_type='float',
+                         default=180,
+                         min_occurs=1),
+            LiteralInput('min_lat', 'Minimum latitude',
+                         abstract='Minimum latitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
+                         data_type='float',
+                         default=-90,
+                         min_occurs=1),
+            LiteralInput('max_lat', 'Maximum latitude',
+                         abstract='Maximum latitude for plot boundary. Note that reducing the size of the bounds will speed up the run-time of the process.',
+                         data_type='float',
+                         default=90,
+                         min_occurs=1),
             LiteralInput('elevationOut', 'Output elevation averaging range(s)', data_type='string',
                          abstract='Elevation range where the particle number is counted (m agl)'
                                   ' Example: 0-100',
@@ -108,8 +130,26 @@ class RunNAME(Process):
             ranges.append(self.translate_elevation(elevation_range.data))
 
         domains = []
-        for val in request.inputs['domain'][0].data:
-            domains.append(float(val))
+
+        # Throw manually with temporary bbox solution
+        if request.inputs['min_lon'][0].data < -180:
+            raise InvalidParameterValue('Bounding box minimum longitude input cannot be below -180')
+        if request.inputs['max_lon'][0].data > 180:
+            raise InvalidParameterValue('Bounding box maximum longitude input cannot be above 180')
+        if request.inputs['min_lat'][0].data < -90:
+            raise InvalidParameterValue('Bounding box minimum latitude input cannot be below -90')
+        if request.inputs['max_lat'][0].data > 90:
+            raise InvalidParameterValue('Bounding box minimum latitude input cannot be above 90')
+
+        # Add manually with temporary bbox solution
+        domains.append(request.inputs['min_lat'][0].data)
+        domains.append(request.inputs['min_lon'][0].data)
+        domains.append(request.inputs['max_lat'][0].data)
+        domains.append(request.inputs['max_lon'][0].data)
+
+        # Don't add automatically as bbox not working
+        # for val in request.inputs['domain'][0].data:
+        #     domains.append(float(val))
 
         # If min_lon and max_lon are 180, need to reset to 179.9
         if domains[1] == -180 and domains[3] == 180:
@@ -120,10 +160,14 @@ class RunNAME(Process):
         for p in request.inputs:
             if p == 'elevationOut':
                 params[p] = ranges
-            elif p == 'domain':
-                params[p] = domains
+            # Don't assign automatically as bbox not working
+            # elif p == 'domain':
+            #     params[p] = domains
             else:
                 params[p] = request.inputs[p][0].data
+            
+        # Assign manually with temporary bbox solution
+        params['domain'] = domains
 
         # Need to test start and end dates make sense relative to each other
         if params['startdate'] >= params['enddate'] + timedelta(days=1):
