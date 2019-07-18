@@ -13,6 +13,6 @@ def test_wps_caps():
                             '/wps:Process'
                             '/ows:Identifier')
     assert sorted(names.split()) == [
-        'plotall',
-        'runname',
-        'runnamestd']
+        'plot_name',
+        'run_name',
+        'run_name_preset']
