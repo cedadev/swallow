@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
-from dateutil.parser import parse
 import pytz
+from dateutil.parser import parse
 
 from pywps import get_ElementMakerForVersion
 from pywps.app.basic import get_xpath_ns
@@ -53,6 +53,29 @@ def get_outputs_path(xml):
     output_dir = f"{jasconfigs.get('jasmin', 'outputdir')}/{get_output(xml)['runid']}"
     return output_dir
 
+def get_valid_date(output_type):
+    expected_values = test_outputs[output_type]
+    release_start_string = expected_values['release_start']
+    release_start = parse(release_start_string, dayfirst=True)
+
+    release_end_string = expected_values['release_end']
+    release_end = parse(release_end_string, dayfirst=True)
+
+    middle_datetime = release_start + (release_end - release_start)/2
+    return datetime.strftime(middle_datetime, "%Y/%m/%d %H:%M")
+
+def get_invalid_date(output_type):
+    expected_values = test_outputs[output_type]
+    release_start_string = expected_values['release_start']
+    release_start = parse(release_start_string, dayfirst=True)
+
+    release_end_string = expected_values['release_end']
+    release_end = parse(release_end_string, dayfirst=True)
+
+    middle_datetime = release_start + (release_start - release_end)/2
+    return datetime.strftime(middle_datetime, "%Y/%m/%d %H:%M")
+
+
 def valid_output_file(output_file, output_type):
     expected_values = test_outputs[output_type]
 
@@ -72,7 +95,7 @@ def valid_output_file(output_file, output_type):
     run_time = output[2].split()
     run_datetime_list = run_time[2:]
     run_datetime_string = ' '.join(run_datetime_list)
-    run_datetime = parse(run_datetime_string)
+    run_datetime = parse(run_datetime_string, dayfirst=True)
     if run_datetime - datetime.now(pytz.utc) > timedelta(1):
         print(run_datetime_string)
         return False
