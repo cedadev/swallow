@@ -1,0 +1,6 @@
+# Anaconda 
+ANACONDA_HOME ?= /opt/anaconda
+CONDA_ENVS_DIR ?= /opt/anaconda/envs
+# Application
+PORT := 5000
+HOSTNAME := hostname.ac.uk

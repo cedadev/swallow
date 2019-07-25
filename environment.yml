@@ -1,0 +1,17 @@
+name: swallow
+channels:
+- defaults
+- teriforey
+- conda-forge
+dependencies:
+- python
+- pip
+- pywps
+- sphinx
+- jinja2
+- pytest
+- click
+- psutil
+- basemap
+- pip:
+  - git+https://github.com/tommygod3/pyNAMEplot@master#egg=pynameplot
