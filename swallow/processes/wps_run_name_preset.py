@@ -41,7 +41,8 @@ class RunNAMEPreset(Process):
                             'Chilbolton Observatory',
                             'Harwell',
                             'Mace Head',
-                            'Penlee (PML)']),
+                            'Penlee (PML)',
+                            'Coyhaique']),
             LiteralInput('runBackwards', 'Run Backwards', data_type='boolean',
                          abstract = 'Whether to run backwards in time or forwards',
                          default = '1', min_occurs=0),
@@ -197,6 +198,10 @@ class RunNAMEPreset(Process):
             params['latitude'] = 53.41388702
             params['elevation'] = 15
             params['domain'] = [20.0, -180.0, 90.0, 90.0]
+        elif params['title'] == 'Coyhaique':
+            params['longitude'] = -72.049977
+            params['latitude'] =  -45.578936
+            params['domain'] = [-90, -180.0, 90.0, 180]
 
         response.update_status('Processed parameters', 5)
 
