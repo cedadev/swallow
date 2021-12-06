@@ -1,13 +1,9 @@
 swallow
-===============================
+=======
 
 .. image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
    :target: http://swallow.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
-
-.. image:: https://travis-ci.org/tommygod3/swallow.svg?branch=master
-   :target: https://travis-ci.org/tommygod3/swallow
-   :alt: Travis Build
 
 .. image:: https://badges.gitter.im/bird-house/birdhouse.svg
     :target: https://gitter.im/bird-house/birdhouse?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
@@ -20,13 +16,23 @@ swallow (the bird)
 
 A Web Processing Service - For running the Met Office NAME model
 ----------------------------------------------------------------
+
 swallow is a WPS to run the Met Office NAME model.
+
 It was initially developed by Teri Forey at Leicester University ( `namewps <https://github.com/TeriForey/namewps>`_ ).
 It is now maintained by CEDA ( `swallow <https://github.com/cedadev/swallow>`_ ).
 
-
 * Free software: Apache Software License 2.0
 * Documentation: https://swallow.readthedocs.io.
+
+Testing
+-------
+
+To test the WPS, run:
+
+```
+python -m pytest -W ignore tests
+```
 
 Credits
 -------
