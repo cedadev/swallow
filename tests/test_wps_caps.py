@@ -1,5 +1,4 @@
 from pywps import Service
-from pywps.tests import assert_response_success
 
 from .common import client_for
 from swallow.processes import processes
@@ -13,6 +12,5 @@ def test_wps_caps():
                             '/wps:Process'
                             '/ows:Identifier')
     assert sorted(names.split()) == [
-        'plot_name',
-        'run_name',
-        'run_name_preset']
+        'hello',
+    ]

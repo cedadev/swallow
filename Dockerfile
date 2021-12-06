@@ -1,6 +1,6 @@
 # vim:set ft=dockerfile:
 FROM continuumio/miniconda3
-MAINTAINER https://github.com/tommygod3
+MAINTAINER https://github.com/cedadev/swallow
 LABEL Description="swallow WPS" Vendor="Birdhouse" Version="0.1.0"
 
 # Update Debian system
@@ -16,18 +16,18 @@ COPY . /opt/wps
 
 WORKDIR /opt/wps
 
-# Create conda environment
-RUN conda env create -n wps -f environment.yml
+# Create conda environment with PyWPS
+RUN ["conda", "env", "create", "-n", "wps", "-f", "environment.yml"]
 
 # Install WPS
-RUN ["/bin/bash", "-c", "source activate wps && python setup.py develop"]
+RUN ["/bin/bash", "-c", "source activate wps && pip install -e ."]
 
 # Start WPS service on port 5000 on 0.0.0.0
 EXPOSE 5000
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["source activate wps && exec swallow start -b 0.0.0.0 -c /opt/wps/etc/demo.cfg"]
 
-# docker build -t tommygod3/swallow .
-# docker run -p 5000:5000 tommygod3/swallow
+# docker build -t cedadev/swallow .
+# docker run -p 5000:5000 cedadev/swallow
 # http://localhost:5000/wps?request=GetCapabilities&service=WPS
 # http://localhost:5000/wps?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0

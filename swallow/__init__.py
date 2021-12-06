@@ -2,8 +2,6 @@
 
 """Top-level package for swallow."""
 
-from .wsgi import application
+from .__version__ import __author__, __email__, __version__  # noqa: F401
 
-__author__ = """Teri Forey"""
-__email__ = 'trf5@le.ac.uk'
-__version__ = '0.2.0'
+from .wsgi import application  # noqa: F401

@@ -2,7 +2,7 @@ version: '3'
 services:
   wps:
     build: .
-    image: tommygod3/swallow
+    image: cedadev/swallow
     ports:
       - "5000:5000"
 

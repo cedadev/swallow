@@ -14,7 +14,7 @@ from pywps import configuration
 from . import wsgi
 from urllib.parse import urlparse
 
-PID_FILE = os.path.abspath(os.path.join(os.path.curdir, 'pywps.pid'))
+PID_FILE = os.path.abspath(os.path.join(os.path.curdir, "pywps.pid"))
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
@@ -27,7 +27,7 @@ template_env = Environment(
 def write_user_config(**kwargs):
     config_templ = template_env.get_template('pywps.cfg')
     rendered_config = config_templ.render(**kwargs)
-    config_file = os.path.abspath(os.path.join(os.path.curdir, '.custom.cfg'))
+    config_file = os.path.abspath(os.path.join(os.path.curdir, ".custom.cfg"))
     with open(config_file, 'w') as fp:
         fp.write(rendered_config)
     return config_file
@@ -37,7 +37,7 @@ def get_host():
     url = configuration.get_config_value('server', 'url')
     url = url or 'http://localhost:5000/wps'
 
-    click.echo('starting WPS service on {}'.format(url))
+    click.echo("starting WPS service on {}".format(url))
 
     parsed_url = urlparse(url)
     if ':' in parsed_url.netloc:
@@ -59,10 +59,10 @@ def run_process_action(action=None):
             p = psutil.Process(pid)
             if action == 'stop':
                 p.terminate()
-                msg = 'pid={}, status=terminated'.format(p.pid)
+                msg = "pid={}, status=terminated".format(p.pid)
             else:
                 from psutil import _pprint_secs
-                msg = 'pid={}, status={}, created={}'.format(
+                msg = "pid={}, status={}, created={}".format(
                     p.pid, p.status(), _pprint_secs(p.create_time()))
         if action == 'stop':
             os.remove(PID_FILE)
@@ -166,9 +166,9 @@ def start(config, bind_host, daemon, hostname, port,
             if pid:
                 click.echo('forked process id: {}'.format(pid))
                 with open(PID_FILE, 'w') as fp:
-                    fp.write('{}'.format(pid))
+                    fp.write("{}".format(pid))
         except OSError as e:
-            raise Exception('%s [%d]' % (e.strerror, e.errno))
+            raise Exception("%s [%d]" % (e.strerror, e.errno))
 
         if pid == 0:
             os.setsid()
