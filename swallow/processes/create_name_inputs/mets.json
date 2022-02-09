@@ -1,0 +1,82 @@
+[
+    {
+        "mk": 3,
+        "type": "GLOUM6",
+        "defn_filename": "MetDefnUM6G.txt",
+        "decln_filename": "Use_UM6G.txt",
+        "prefix": "HP",
+        "suffix": "GLOUM6",
+        "archive_dir": "Global/GLOUM6",
+        "start": [2006,  1,  1,  0,  0,  0]
+    },
+    {
+        "mk": 4,
+        "type": "GLOUM6pp",
+        "defn_filename": "MetDefnUM6Gpp.txt",
+        "decln_filename": "Use_UM6Gpp.txt",
+        "prefix": "HP",
+        "suffix": "GLOUM6.pp",
+        "archive_dir": "Global/GLOUM6pp",
+        "start": [2009,  1,  1,  0,  0,  0]
+    },
+    {
+        "mk": 5,
+        "type": "UMG_Mk5",
+        "defn_filename": "MetDefnUMG_Mk5_L52pp.txt",
+        "decln_filename": "Use_UMG_Mk5_L52pp.txt",
+        "prefix": "MO",
+        "suffix": "UMG_Mk5_L52.pp",
+        "archive_dir": "Global/UMG_Mk5",
+        "start": [2009, 11, 10,  0,  0,  0]
+    },
+    {
+        "mk": 6,
+        "type": "UMG_Mk6PT",
+        "defn_filename": "MetDefnUMG_Mk6_L59PTpp.txt",
+        "decln_filename": "Use_UMG_Mk6_L59PTpp.txt",
+        "prefix": "MO",
+        "suffix": "UMG_Mk6_L59PT*.pp",
+        "archive_dir": "Global/UMG_Mk6PT",
+        "start": [2010,  3,  9,  0,  0,  0]
+    },
+    {
+        "mk": 7,
+        "type": "UMG_Mk7PT",
+        "defn_filename": "MetDefnUMG_Mk7_L59PTpp.txt",
+        "decln_filename": "Use_UMG_Mk7_L59PTpp.txt",
+        "prefix": "MO",
+        "suffix": "UMG_Mk7_[IM]_L59PT*.pp",
+        "archive_dir": "Global/UMG_Mk7PT",
+        "start": [2013,  4, 30,  1,  0,  0]
+    },
+    {
+        "mk": 8,
+        "type": "UMG_Mk8PT",
+        "defn_filename": "MetDefnUMG_Mk8_L59PTpp.txt",
+        "decln_filename": "Use_UMG_Mk8_L59PTpp.txt",
+        "prefix": "MO",
+        "suffix": "UMG_Mk8_[IM]_L59PT*.pp",
+        "archive_dir": "Global/UMG_Mk8PT",
+        "start": [2014,  7, 15,  1,  0,  0]
+    },
+    {
+        "mk": 9,
+        "type": "UMG_Mk9PT",
+        "defn_filename": "MetDefnUMG_Mk9_L59PTpp.txt",
+        "decln_filename": "Use_UMG_Mk9_L59PTpp.txt",
+        "prefix": "MO",
+        "suffix": "UMG_Mk9_[IM]_L59PT*.pp",
+        "archive_dir": "Global/UMG_Mk9PT",
+        "start": [2015,  8, 25,  1,  0,  0]
+    },
+    {
+        "mk": 10,
+        "type": "UMG_Mk10PT",
+        "defn_filename": "MetDefnUMG_Mk10_L59PTpp.txt",
+        "decln_filename": "Use_UMG_Mk10_L59PTpp.txt",
+        "prefix": "MO",
+        "suffix": "UMG_Mk10_[IM]_L59PT*.pp",
+        "archive_dir": "Global/UMG_Mk10PT",
+	"start": [2017,  7, 11,  1,  0,  0]
+    }
+]
