@@ -78,13 +78,12 @@ Data_Traj,              ,        Yes,     No,              0,             0,    
 Sets of Dispersion Options:
 Max # Particles, Max # Full Particles, Velocity Memory Time, Mesoscale Velocity Memory Time, Inhomogeneous Time, Skew Time,     Sync Time, DeltaOpt, Time of Fixed Met, Computational Domain, Deep Convection?, Radioactive Decay?, Agent Decay?, Dry Deposition?, Wet Deposition?,  Turbulence?, Mesoscale Motions?, Vertical Velocity?, Chemistry?
            1000,                    2,                00:00,                          00:00,              00:00,     00:00, 00:{{SyncTime}},        1,                  ,    Dispersion Domain,              New,                 No,           No,              No,              No, {{Turbulence}},       {{Turbulence}}, {{VerticalVelocity}},         No
-
-
 {% for ReleaseHeight in ReleaseHeights %}
-
-! Source term {{loop.index}} for release at a height %ReleaseHeight% metres a.g.l.
+! Source term {{loop.index}} for release at a height {{ReleaseHeight}} metres a.g.l.
 
 Sources:
         Name,    Start Time,     Stop Time,   Shape,  H-Coord, Z-Coord,   Set of Locations,         Location, dH-Metres?, dZ-Metres?,                Z,   dX,   dY,   dZ, Angle, Top Hat,           # Particles,    Source Strength, Plume Rise?, Temperature, Volume Flow Rate,  Max Age
 Source_Z{{loop.index}}, {{StartTimeOfRun}}, {{StartTimeOfRun}},  Cuboid, Lat-Long,   m agl, Receptor Locations, {{SourceLoc_Name}},        Yes,        Yes,  {{ReleaseHeight}},  0.0,  0.0,  0.0,   0.0,     Yes, {{nParticlesPerSource}}, INERT-TRACER 1.0 g,          No,         0.0,              0.0, infinity
-{% endfor %}{% include MetDeclnTmpl %}
+{% endfor %}
+{% include MetDeclnTmpl %}
+

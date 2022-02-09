@@ -4,16 +4,18 @@ from util import sanitise_name
 
 
 this_dir = os.path.dirname(os.path.realpath(__file__))
+template_dir = os.path.join(this_dir, 'templates')
 
 _paths = {
-    'gws': '/gws/nopw/j04/name',
-    'scratch_dir': '/work/scratch-pw/............',
-    'usercache_dir': '/work/scratch-pw/............',
-    'work_dir': '....................',
-    'template_file': f'{this_dir}/traj_input.tmpl',
-    'met_decl_dir': f'{this_dir}/met_declarations',
+    'gws': '/gws/nopw/j04/name'
 }
-
+_paths.update({
+    'scratch_dir': '/work/scratch-pw/............', ##CHANGEME
+    'usercache_dir': f'{_paths["gws"]}/cache/users/arjones',  ##CHANGEME
+    'work_dir': '/work/scratch-pw/iwi/work.12345',  ##CHANGEME
+    'template_file': f'{template_dir}/traj_input.tmpl',
+    'met_decl_dir': f'{template_dir}/met_declarations',
+})
 _paths.update({
     'script_dir': f'{_paths["usercache_dir"]}/SimpleTrajectoryRun',
     'utils_dir': f'{_paths["usercache_dir"]}/CommonUtilities',
@@ -22,6 +24,10 @@ _paths.update({
     'topog_dir': f'{_paths["gws"]}/code/NAMEIII_v7_2_lotus/Resources/Topog',
     'met_dir': f'{_paths["work_dir"]}/met_data',    
 })
+_paths.update({
+    'met_restore_script': f'{_paths["utils_dir"]}/MetRestore_JASMIN.sh',
+})
+
 
 input_file_fmt = '{run_label}.txt'
 output_dir_fmt = f'{_paths["usercache_dir"]}/NAME_Results_' '{run_label}'

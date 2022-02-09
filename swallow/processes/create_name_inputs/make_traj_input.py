@@ -1,6 +1,6 @@
 import os
 import datetime
-from math import ceil
+#from math import ceil
 from jinja2 import Template
 from jinja2 import Environment, FileSystemLoader
 
@@ -16,12 +16,12 @@ input_params = {
     'longitude': -9.9,  # ReleaseLoc_X
     'latitude': 53.3167,  # ReleaseLoc_Y
     'trajectory_heights': [100.0, 500.0, 2000.0],  # ReleaseHeights
-    'run_duration': 72.,  # Duration
-    #'run_direction': 'Forward',  # Backwards = 0
-    'run_direction': 'Backward',  # Backwards = 1
+    'run_duration': 72,  # Duration
+    'run_direction': 'Forward',  # Backwards = 0
+    #'run_direction': 'Backward',  # Backwards = 1
     'met_data': 'UM Global',  # NWPMetModel
     'run_name': 'my run name',  # runName from user
-    'release_date_time': datetime.datetime(2014, 7, 11, 0, 0, 0),  # in UTC
+    'release_date_time': datetime.datetime(2018, 1, 1, 0, 0, 0),  # in UTC
     #'release_date_time': datetime.datetime(2014, 7, 16, 0, 0, 0),  # in UTC
 }
 
@@ -93,13 +93,14 @@ def create_inputs(paths, params):
         'Turbulence': bool_to_yesno(params['stochastic_trajectories']),
         'VerticalVelocity': bool_to_yesno(not params['constant_height']),
         'dT': f'{params["t_grid_dt"]:02d}',
-        'nT': ceil(params['run_duration'] * 60 / params['t_grid_dt']),
+        #'nT': ceil(params['run_duration'] * 60 / params['t_grid_dt']),
+        'nT': 1 + (params['run_duration'] * 60 // params['t_grid_dt']),
         'ReleaseHeights': params['trajectory_heights'],
         'nParticlesPerSource': (params['number_stochastic_trajectories']
                                 if params['stochastic_trajectories'] else 1),
         'MetDir': paths['met_dir'],
         'TopogDir': paths['topog_dir'],
-        #'MetRestoreScript': paths['m']
+        'MetRestoreScript': paths['met_restore_script']
     }
 
     template_str = open(paths['template_file']).read()    
