@@ -4,29 +4,10 @@ import datetime
 from jinja2 import Template
 from jinja2 import Environment, FileSystemLoader
 
-from get_met_info import GetMet
-from util import combine_dicts, bool_to_yesno
-from paths import get_paths
+from .get_met_info import GetMet
+from .util import combine_dicts, bool_to_yesno
+from .paths import get_paths
 
-
-#parameters passed from the user - example values
-input_params = {
-    'jobTitle': 'Testing of a NAME trajectory run',
-    'known_location': 'MACE_HEAD',  # ReleaseLoc_Name
-    'longitude': -9.9,  # ReleaseLoc_X
-    'latitude': 53.3167,  # ReleaseLoc_Y
-    'trajectory_heights': [100.0, 500.0, 2000.0],  # ReleaseHeights
-    'run_duration': 72,  # Duration
-    'run_direction': 'Forward',  # Backwards = 0
-    #'run_direction': 'Backward',  # Backwards = 1
-    'met_data': 'UM Global',  # NWPMetModel
-    'run_name': 'my run name',  # runName from user
-    'release_date_time': datetime.datetime(2018, 1, 1, 0, 0, 0),  # in UTC
-    #'release_date_time': datetime.datetime(2014, 7, 16, 0, 0, 0),  # in UTC
-}
-
-# example...
-internal_run_id = '0192326540975'
 
 # parameters which are hard coded but could later
 # be passed from the user
@@ -114,13 +95,33 @@ def create_inputs(paths, params):
     return fn    
 
 
-def main():
+def main(internal_run_id, input_params):
+
     params = combine_dicts(input_params, fixed_params)
     paths = get_paths(params['run_name'], internal_run_id)
 
     fn = create_inputs(paths, params)
-    print(f'wrote NAME input file {fn}')
-    
+    return f'wrote NAME input file {fn}'
     
 if __name__ == '__main__':
-    main()
+    # example...
+    internal_run_id = '0192326540975'
+
+    #parameters passed from the user - example values
+    input_params = {
+        'jobTitle': 'Testing of a NAME trajectory run',
+        'known_location': 'MACE_HEAD',  # ReleaseLoc_Name
+        'longitude': -9.9,  # ReleaseLoc_X
+        'latitude': 53.3167,  # ReleaseLoc_Y
+        'trajectory_heights': [100.0, 500.0, 2000.0],  # ReleaseHeights
+        'run_duration': 72,  # Duration
+        'run_direction': 'Forward',  # Backwards = 0
+        #'run_direction': 'Backward',  # Backwards = 1
+        'met_data': 'UM Global',  # NWPMetModel
+        'run_name': 'my run name',  # runName from user
+        'release_date_time': datetime.datetime(2018, 1, 1, 0, 0, 0),  # in UTC
+        #'release_date_time': datetime.datetime(2014, 7, 16, 0, 0, 0),  # in UTC
+    }
+
+    msg = main(internal_run_id, input_params)
+    print(msg)

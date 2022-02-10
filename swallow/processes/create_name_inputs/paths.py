@@ -1,6 +1,6 @@
 import os
 
-from util import sanitise_name
+from .util import sanitise_name
 
 
 this_dir = os.path.dirname(os.path.realpath(__file__))
@@ -17,6 +17,7 @@ _paths.update({
     'met_decl_dir': f'{template_dir}/met_declarations',
 })
 _paths.update({
+    'name_input_dir': '/tmp', ##CHANGEME  # where to put the input file
     'script_dir': f'{_paths["usercache_dir"]}/SimpleTrajectoryRun',
     'utils_dir': f'{_paths["usercache_dir"]}/CommonUtilities',
     'adaqpython_dir': f'{_paths["gws"]}/code/ADAQ_Python_v6.2',
@@ -40,6 +41,7 @@ def get_paths(run_name, internal_run_id):
     run_label = f'{sanitise_name(run_name)}_{internal_run_id}'
 
     paths['output_dir'] = output_dir_fmt.format(run_label=run_label)
-    paths['input_file'] = input_file_fmt.format(run_label=run_label)
+    paths['input_file'] = os.path.join(paths['name_input_dir'],
+                                       input_file_fmt.format(run_label=run_label))
 
     return paths

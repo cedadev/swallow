@@ -1,8 +1,11 @@
 from pywps import (Process, LiteralInput, LiteralOutput,
                    BoundingBoxInput, BoundingBoxOutput, UOM)
 from pywps.app.Common import Metadata
+
+from .create_name_inputs.make_traj_input import main as make_traj_input
 #from pywps.validator.mode import MODE
 
+import os
 import datetime
 import logging
 LOGGER = logging.getLogger("PYWPS")
@@ -146,8 +149,13 @@ class RunNAMETrajectory(Process):
             
         ]
         outputs = [
-            LiteralOutput('echo', 'Example "echo" output',
+            LiteralOutput('inputs', 'Copy of inputs',
                           abstract='This output just gives a string confirming the inputs used.',
+                          keywords=['output', 'result', 'response'],
+                          data_type='string'),
+
+            LiteralOutput('message', 'Status message',
+                          abstract='This output gives a response from the job submission process.',
                           keywords=['output', 'result', 'response'],
                           data_type='string'),
         ]
@@ -172,37 +180,32 @@ class RunNAMETrajectory(Process):
         )
 
 
-    def _get_input(self, request, key, multi=False):
+    def _get_input(self, request, key, multi=False, default=None):
 
         inputs = request.inputs.get(key)
 
         if inputs == None:
-            return None
+            return default
         
         if multi:
             return [inp.data for inp in inputs]
         else:
             inp, = inputs
             return inp.data
-        
 
-    def _handler(self, request, response):
-        LOGGER.info("run NAME trajectory")
-
+    
+    def _get_processed_inputs(self, request):
+        """
+        returns dictionary of inputs, some of which are used raw, 
+        while others need some processing
+        """
         runID = self._get_input(request, 'RunID')
-        description = self._get_input(request, 'Description')
         known_location = self._get_input(request, 'KnownLocation')
         latitude = self._get_input(request, 'Latitude')
         longitude = self._get_input(request, 'Longitude')
         release_date = self._get_input(request, 'ReleaseDate')
         release_time = self._get_input(request, 'ReleaseTime')
-        run_duration = self._get_input(request, 'RunDuration')
-        run_direction = self._get_input(request, 'RunDirection')
         trajectory_heights = self._get_input(request, 'TrajectoryHeights', multi=True)
-        trajectory_height_units = self._get_input(request, 'TrajectoryHeightUnits')
-        met_data = self._get_input(request, 'MetData')
-        notification_email = self._get_input(request, 'NotificationEmail')
-        image_format = self._get_input(request, 'ImageFormat')
 
         release_date_time = datetime.datetime(release_date.year,
                                               release_date.month,
@@ -214,20 +217,44 @@ class RunNAMETrajectory(Process):
         if known_location != None and known_location != self._null_label:
             longitude, latitude = _stations[known_location]
 
-        response.outputs['echo'].data = (
-            f'runID: {runID}, '
-            f'description: {description}, '
-            f'known_location: {known_location}, '
-            f'latitude: {latitude}, '
-            f'longitude: {longitude}, '
-            f'release_date_time: {release_date_time}, '
-            f'run_duration: {run_duration}, '
-            f'run_direction: {run_direction}, '
-            f'trajectory_heights: {trajectory_heights}, '
-            f'trajectory_height_units: {trajectory_height_units}, '
-            f'met_data: {met_data}, '
-            f'notification_email: {notification_email}, '
-            f'image_format: {image_format}'
-            )
+        return {
+            'jobTitle': self._get_input(request, 'Description', default='NAME trajectory run'),
+            'known_location': known_location,
+            'longitude': longitude,
+            'latitude': latitude,
+            'trajectory_heights': self._get_input(request, 'TrajectoryHeights', multi=True),
+            'run_duration': self._get_input(request, 'RunDuration'),
+            'run_direction': self._get_input(request, 'RunDirection'),
+            'met_data': self._get_input(request, 'MetData'), 
+            'run_name': runID,
+            'release_date_time': release_date_time,
 
+            # the following inputs are unused by make_traj_input
+            'notification_email': self._get_input(request, 'NotificationEmail'),
+            'image_format': self._get_input(request, 'ImageFormat'),
+            'trajectory_height_units': self._get_input(request, 'TrajectoryHeightUnits'),
+        }
+        
+
+    def _get_request_internal_id(self):
+        # FIXME: is there any kind of request ID in the request? 
+        # (I didn't find one.)
+        return f'{datetime.datetime.now().strftime("%Y%m%d%H%M%S")}_{os.getpid()}'
+
+
+    def _handler(self, request, response):
+        LOGGER.info("run NAME trajectory")
+
+        internal_run_id = self._get_request_internal_id()
+        input_params = self._get_processed_inputs(request)
+        msg = make_traj_input(internal_run_id, input_params)
+        response.outputs['message'].data = msg
+
+        d = input_params
+        response.outputs['inputs'].data = ', '.join(f'{k}: {d[k]}'
+                                                    for k in sorted(d))
+
+        # uncomment to show inputs in UI
+        response.outputs['message'].data += f' INPUTS: {response.outputs["inputs"].data}'
+        
         return response
