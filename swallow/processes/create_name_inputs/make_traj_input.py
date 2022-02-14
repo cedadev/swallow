@@ -1,11 +1,9 @@
 import os
 import datetime
 #from math import ceil
-from jinja2 import Template
-from jinja2 import Environment, FileSystemLoader
 
 from .get_met_info import GetMet
-from .util import combine_dicts, bool_to_yesno
+from .util import combine_dicts, bool_to_yesno, render_template, get_times
 from .paths import get_paths
 
 
@@ -24,26 +22,13 @@ fixed_params = {
 }
 
 
-def get_times(params):
-    directions = {'Forward': 1,
-                  'Backward': -1}
-
-    hour = datetime.timedelta(hours=1)
-
-    run_start_time = params['release_date_time']
-    run_stop_time = params['release_date_time'] + directions[params['run_direction']] * hour * params['run_duration']
-    time_after_first_hour = params['release_date_time'] + directions[params['run_direction']] * hour
-
-    return run_start_time, run_stop_time, time_after_first_hour
-    
-
-
 def create_inputs(paths, params):
     """
     Creates the input file for the NAME run, and return its path.
     """
     
-    run_start_time, run_stop_time, time_after_first_hour = get_times(params)
+    run_start_time, run_stop_time, time_after_first_hour = \
+        get_times(params['release_date_time'], params['run_duration'], params['run_direction'])
 
     get_met = GetMet()
     global_met = get_met.get_met2(run_start_time, run_stop_time)
@@ -84,26 +69,22 @@ def create_inputs(paths, params):
         'MetRestoreScript': paths['met_restore_script']
     }
 
-    template_str = open(paths['template_file']).read()    
-    include_paths = [paths["met_decl_dir"]]
-    template = Environment(loader=FileSystemLoader(include_paths)).from_string(template_str)
-    rendered = template.render(**data)
-
-    fn = paths['input_file']
-    with open(fn, 'w') as f:
-        f.write(rendered)
-    return fn    
+    name_input_file = paths['input_file']
+    render_template(paths['template_file'], data, include_paths=[paths["met_decl_dir"]], 
+                    rendered_file=name_input_file)
+    return name_input_file
 
 
 def main(internal_run_id, input_params):
 
     params = combine_dicts(input_params, fixed_params)
-    paths = get_paths(params['run_name'], internal_run_id)
+    paths = get_paths(params['run_name'], internal_run_id, run_type="traj")
 
     fn = create_inputs(paths, params)
     return f'wrote NAME input file {fn}'
     
-if __name__ == '__main__':
+
+def do_example():
     # example...
     internal_run_id = '0192326540975'
 
@@ -125,3 +106,7 @@ if __name__ == '__main__':
 
     msg = main(internal_run_id, input_params)
     print(msg)
+
+
+if __name__ == '__main__':
+    do_example()
