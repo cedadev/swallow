@@ -2,9 +2,7 @@ from pywps import (Process, LiteralInput, LiteralOutput,
                    BoundingBoxInput, BoundingBoxOutput, UOM)
 from pywps.app.Common import Metadata
 
-from name_base_process import NAMEBaseProcess
 from .create_name_inputs.make_traj_input import main as make_traj_input
-
 #from pywps.validator.mode import MODE
 
 import os
@@ -14,7 +12,29 @@ LOGGER = logging.getLogger("PYWPS")
 
 
 
-class RunNAMETrajectory(NAMEBaseProcess):
+_stations = {
+    'Auchencorth Moss': (-3.347222328, 55.88333511),
+    'BT Tower (150m)': (-0.13888, 51.5215),
+    'Bachok: (Malaysia)': (102.425, 6.009),
+    'Beijing Pinggu': (117.0406996, 40.1659),
+    'Beijing Tower': (116.377, 39.975),
+    'Cape Fuguei (Taiwan)': (121.538, 25.297),
+    'Cape Verde': (-24.867222, 16.863611),
+    'Chilbolton Observatory': (-1.438228000, 51.14961700),
+    'Coyhaique': (-72.049977,  -45.578936),
+    'Delhi (Kashmere gate)': (77.23184, 28.6644),
+    'Halley': (26.16667, -75.58333),
+    'Hanoi (Vietnam)': (105.4902, 21.0024),
+    'Harwell': (-1.326666594, 51.57110977),
+    'Ho Chi Minh City (Vietnam)': (106.4057, 10.4544),
+    'Mace Head': (-9.938888550, 53.41388702),
+    'North Kensington': (-0.213333338, 51.52111053),
+    'Penlee (PML)': (-4.1931, 50.3189),
+    'Weybourne': (1.1219, 52.9503)
+}
+
+
+class RunNAMETrajectory(Process):
     """Run the NAME trajectory model."""
 
     _null_label = '(none)'
@@ -63,7 +83,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
                          data_type='string',
                          min_occurs=0,
                          max_occurs=1,
-                         allowed_values=[self._null_label] + sorted(self._stations.keys())),
+                         allowed_values=[self._null_label] + sorted(_stations.keys())),
             LiteralInput('ReleaseDate', 'release date',
                          abstract='* date when particles are released (enter as yyyy-mm-dd or yyyymmdd format)',
                          data_type='date',
@@ -159,6 +179,20 @@ class RunNAMETrajectory(NAMEBaseProcess):
             status_supported=True
         )
 
+
+    def _get_input(self, request, key, multi=False, default=None):
+
+        inputs = request.inputs.get(key)
+
+        if inputs == None:
+            return default
+        
+        if multi:
+            return [inp.data for inp in inputs]
+        else:
+            inp, = inputs
+            return inp.data
+
     
     def _get_processed_inputs(self, request):
         """
@@ -181,7 +215,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
                                               release_time.second)
 
         if known_location != None and known_location != self._null_label:
-            longitude, latitude = self._stations[known_location]
+            longitude, latitude = _stations[known_location]
 
         return {
             'jobTitle': self._get_input(request, 'Description', default='NAME trajectory run'),
@@ -200,6 +234,12 @@ class RunNAMETrajectory(NAMEBaseProcess):
             'image_format': self._get_input(request, 'ImageFormat'),
             'trajectory_height_units': self._get_input(request, 'TrajectoryHeightUnits'),
         }
+        
+
+    def _get_request_internal_id(self):
+        # FIXME: is there any kind of request ID in the request? 
+        # (I didn't find one.)
+        return f'{datetime.datetime.now().strftime("%Y%m%d%H%M%S")}_{os.getpid()}'
 
 
     def _handler(self, request, response):
