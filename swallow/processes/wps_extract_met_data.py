@@ -73,7 +73,7 @@ class ExtractMetData(NAMEBaseProcess):
 
         super().__init__(
             self._handler,
-            identifier='RunNAME1',
+            identifier='NAMEMetExtract',
             title='Extract Met Data',
             abstract='A run which extracts meterological data for specified time periods and locations.',
             keywords=self._keywords,

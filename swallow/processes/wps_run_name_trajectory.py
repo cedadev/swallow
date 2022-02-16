@@ -81,7 +81,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
 
         super().__init__(
             self._handler,
-            identifier='RunNAME1',
+            identifier='NAMERunTrajectory',
             title='Run NAME Trajectory',
             abstract=('A forwards or backwards run of the NAME model outputting '
                       'particle trajectories following the mean flow only.'),
