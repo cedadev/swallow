@@ -1,44 +1,19 @@
 from pywps import (Process, LiteralInput, LiteralOutput,
                    BoundingBoxInput, BoundingBoxOutput, UOM)
-from pywps.app.Common import Metadata
+from pywps.app.exceptions import ProcessError
 
-from .create_name_inputs.make_traj_input import main as make_traj_input
-#from pywps.validator.mode import MODE
+from .name_base_process import NAMEBaseProcess
+from .create_name_inputs.make_met_extract_input import main as make_met_extract_input
 
-import os
 import datetime
-import logging
-LOGGER = logging.getLogger("PYWPS")
 
 
 
-_stations = {
-    'Auchencorth Moss': (-3.347222328, 55.88333511),
-    'BT Tower (150m)': (-0.13888, 51.5215),
-    'Bachok: (Malaysia)': (102.425, 6.009),
-    'Beijing Pinggu': (117.0406996, 40.1659),
-    'Beijing Tower': (116.377, 39.975),
-    'Cape Fuguei (Taiwan)': (121.538, 25.297),
-    'Cape Verde': (-24.867222, 16.863611),
-    'Chilbolton Observatory': (-1.438228000, 51.14961700),
-    'Coyhaique': (-72.049977,  -45.578936),
-    'Delhi (Kashmere gate)': (77.23184, 28.6644),
-    'Halley': (26.16667, -75.58333),
-    'Hanoi (Vietnam)': (105.4902, 21.0024),
-    'Harwell': (-1.326666594, 51.57110977),
-    'Ho Chi Minh City (Vietnam)': (106.4057, 10.4544),
-    'Mace Head': (-9.938888550, 53.41388702),
-    'North Kensington': (-0.213333338, 51.52111053),
-    'Penlee (PML)': (-4.1931, 50.3189),
-    'Weybourne': (1.1219, 52.9503)
-}
-
-
-class RunNAMETrajectory(Process):
+class ExtractMetData(NAMEBaseProcess):
     """Run the NAME trajectory model."""
 
-    _null_label = '(none)'
-
+    _description = "extract met data for NAME"
+    
     def __init__(self):
 
         #-----------------------------------------
@@ -50,129 +25,60 @@ class RunNAMETrajectory(Process):
         #   print(LITERAL_DATA_TYPES)
         #-----------------------------------------
 
-        current_year = datetime.datetime.now().year
-
         inputs = [
-            LiteralInput('RunID', 'run identifier',
-                         abstract='* short text string to describe task',
-                         data_type='string',
-                         min_occurs=1,
-                         max_occurs=1),
+            self._get_run_id_process_input(),
+            self._get_description_process_input(),
 
-            LiteralInput('Description', 'description',
-                         abstract='longer text description',
+            LiteralInput('Coordinates', 'coordinates',
+                         abstract=('Strings of format lon,lat. '
+                                   'Separate pairs with pipe symbols (vertical bar). '
+                                   'Optional whitespace is permitted. '
+                                   'Longitudes may use -180 to 180 or 0 to 360. '
+                                   'EXAMPLE: you could enter "-1.3, 51.6 | 1,-2" for 1.3W,51.6N and 1E,2S. '
+                                   '(This input may be omitted if known locations are selected.)'),
                          data_type='string',
                          min_occurs=0,
                          max_occurs=1),
-
-            LiteralInput('Latitude', 'latitude',
-                         abstract='latitude of trajectory start/end-point',
-                         data_type='float',
-                         min_occurs=0,
-                         max_occurs=1),
+                         #max_occurs=999),
             
-            LiteralInput('Longitude', 'longitude',
-                         abstract='longitude of trajectory start/end-point',
-                         data_type='float',
-                         min_occurs=0,
-                         max_occurs=1),
-
-            LiteralInput('KnownLocation', 
-                         'standard location name (alternative to lon/lat)',
-                         abstract='known location',
+            LiteralInput('PredefinedLocations', 'predefined locations',
+                         abstract=('Optional additional locations chosen from predefined list '
+                                   '(ctrl-click for multiple selection)'),
                          data_type='string',
                          min_occurs=0,
-                         max_occurs=1,
-                         allowed_values=[self._null_label] + sorted(_stations.keys())),
-            LiteralInput('ReleaseDate', 'release date',
-                         abstract='* date when particles are released (enter as yyyy-mm-dd or yyyymmdd format)',
-                         data_type='date',
-                         min_occurs=1,
-                         max_occurs=1,
-                         default=f'{current_year}-01-01'),
-
-            LiteralInput('ReleaseTime', 'release time',
-                         abstract='* time when particles are released (enter as hh:mm or hh:mm:ss format)',
-                         data_type='time',
-                         min_occurs=1,
-                         max_occurs=1,
-                         default='00:00'),
-            
-            LiteralInput('RunDuration', 'run duration',
-                         abstract='duration of trajectory run, in hours',
-                         data_type='integer',
-                         allowed_values=[12, 24, 36, 48, 72, 96, 120, 144, 168, 240, 360, 480],
-                         min_occurs=1,
-                         max_occurs=1),
-
-            LiteralInput('RunDirection', 'run direction',
-                         abstract='whether to run forward or backward trajectories',
-                         data_type='string',
-                         allowed_values=['Forward', 'Backward'],
-                         min_occurs=1,
-                         max_occurs=1),
-
-            LiteralInput('TrajectoryHeights', 'trajectory heights',
-                         abstract='array of start/end heights of particles',
-                         data_type='float',
-                         min_occurs=1,
                          max_occurs=999,
+                         allowed_values=sorted(self._stations.keys())),
+            
+            self._get_start_date_process_input(),
+            self._get_start_time_process_input(),
+            self._get_run_duration_process_input(),
+            
+            LiteralInput('MetHeight', 'met data height',
+                         abstract='* height at which to extract met data',
+                         data_type='float',
+                         min_occurs=1,
+                         max_occurs=1,
                          ),
 
-            LiteralInput('TrajectoryHeightUnits', 'trajectory height units',
-                         abstract='units for the TrajectoryHeights array',
-                         data_type='string',
-                         allowed_values=['metres above ground level (m agl)', 'metres above sea level (m asl)'],
-                         min_occurs=1,
-                         max_occurs=1),
-
-            LiteralInput('MetData', 'met data',
-                         abstract='which forcing dataset to use to drive the trajectory model',
-                         data_type='string',
-                         allowed_values=["Global", "UK 1.5km", "Global + UK 1.5km"],
-                         min_occurs=1,
-                         max_occurs=1),
-
-            LiteralInput('NotificationEmail', 'notification email',
-                         abstract='which email address to send notifications to',
-                         data_type='string',
-                         min_occurs=0,
-                         max_occurs=1),
-
-            LiteralInput('ImageFormat', 'image format',
-                         abstract='format of output image file',
-                         data_type='string',
-                         default='PNG',
-                         allowed_values=['PNG', 'JPG', 'PDF'],
-                         min_occurs=1,
-                         max_occurs=1),
-            
+            self._get_height_units_process_input(),
+            self._get_met_data_process_input(),
+            self._get_notification_email_process_input(),
+            self._get_image_format_process_input(),
         ]
+        
         outputs = [
-            LiteralOutput('inputs', 'Copy of inputs',
-                          abstract='This output just gives a string confirming the inputs used.',
-                          keywords=['output', 'result', 'response'],
-                          data_type='string'),
-
-            LiteralOutput('message', 'Status message',
-                          abstract='This output gives a response from the job submission process.',
-                          keywords=['output', 'result', 'response'],
-                          data_type='string'),
+            self._get_inputs_process_output(),
+            self._get_message_process_output(),
         ]
 
         super().__init__(
             self._handler,
             identifier='RunNAME1',
-            title='Run NAME Trajectory',
-            abstract='A forwards or backwards run of the NAME model outputting particle trajectories following the mean flow only.',
-            keywords=["name", "model", "atmospheric", "dispersion", "trajectory", "forward", "backward", "air", "pollution", "transport"],
-            metadata=[
-                Metadata('PyWPS', 'https://pywps.org/'),
-                Metadata('Birdhouse', 'http://bird-house.github.io/'),
-                Metadata('PyWPS Demo', 'https://pywps-demo.readthedocs.io/en/latest/'),
-                Metadata('Emu: PyWPS examples', 'https://emu.readthedocs.io/en/latest/'),
-            ],
-            version='1.5',
+            title='Extract Met Data',
+            abstract='A run which extracts meterological data for specified time periods and locations.',
+            keywords=self._keywords,
+            metadata=self._metadata,
+            version=self._version,
             inputs=inputs,
             outputs=outputs,
             store_supported=True,
@@ -180,81 +86,88 @@ class RunNAMETrajectory(Process):
         )
 
 
-    def _get_input(self, request, key, multi=False, default=None):
+    def _coords_to_lon_lat(self, coords_string):
 
-        inputs = request.inputs.get(key)
-
-        if inputs == None:
-            return default
+        if coords_string is None:
+            return ([], [])
         
-        if multi:
-            return [inp.data for inp in inputs]
-        else:
-            inp, = inputs
-            return inp.data
+        longitudes = []
+        latitudes = []
 
-    
+        allowed_chars = '0123456789,.-+| '
+        for c in coords_string:
+            if c not in allowed_chars:
+                raise ValueError(f'unexpected character {c} in coordinates string {coords_string}')
+        
+        s = coords_string.replace(' ', '')
+
+        for point_str in s.split('|'):
+            if point_str:
+                try:
+                    lon_str, lat_str = point_str.split(',')
+                except ValueError:
+                    raise ValueError(f'location specification {point_str} not in format lon,lat')
+                lon = float(lon_str)
+                lat = float(lat_str)
+                if not (-180 <= lon < 360):
+                    raise ValueError(f'longitude {lon} out of range')
+                if not (-90 <= lat <= 90):
+                    raise ValueError(f'latitude {lat} out of range')                
+                longitudes.append(lon)
+                latitudes.append(lat)
+            
+        return longitudes, latitudes
+        
+        
     def _get_processed_inputs(self, request):
         """
         returns dictionary of inputs, some of which are used raw, 
         while others need some processing
         """
         runID = self._get_input(request, 'RunID')
-        known_location = self._get_input(request, 'KnownLocation')
-        latitude = self._get_input(request, 'Latitude')
-        longitude = self._get_input(request, 'Longitude')
-        release_date = self._get_input(request, 'ReleaseDate')
-        release_time = self._get_input(request, 'ReleaseTime')
-        trajectory_heights = self._get_input(request, 'TrajectoryHeights', multi=True)
+        
+        predef_locations = self._get_input(request, 'PredefinedLocations', multi=True)
+        coordinates = self._get_input(request, 'Coordinates')
 
-        release_date_time = datetime.datetime(release_date.year,
-                                              release_date.month,
-                                              release_date.day,
-                                              release_time.hour,
-                                              release_time.minute,
-                                              release_time.second)
+        try:
+            longitudes, latitudes = self._coords_to_lon_lat(coordinates)
+        except ValueError as exc:
+            raise ProcessError(str(exc))
+            
+        location_names = ['(none)'] * len(longitudes)
 
-        if known_location != None and known_location != self._null_label:
-            longitude, latitude = _stations[known_location]
+        if predef_locations != None:
+            for location in predef_locations:
+                longitude, latitude = self._stations[location]
+                longitudes.append(longitude)
+                latitudes.append(latitude)
+                location_names.append(location)
 
+        longitudes = [lon % 360 for lon in longitudes]
+        start_date_time = self._get_start_date_time(request)
+
+        if not longitudes:
+            raise ProcessError('process inputs for coordinates and" '
+                               'predefined locations are both empty')
+        
         return {
-            'jobTitle': self._get_input(request, 'Description', default='NAME trajectory run'),
-            'known_location': known_location,
-            'longitude': longitude,
-            'latitude': latitude,
-            'trajectory_heights': self._get_input(request, 'TrajectoryHeights', multi=True),
-            'run_duration': self._get_input(request, 'RunDuration'),
-            'run_direction': self._get_input(request, 'RunDirection'),
-            'met_data': self._get_input(request, 'MetData'), 
-            'run_name': runID,
-            'release_date_time': release_date_time,
 
-            # the following inputs are unused by make_traj_input
+            'jobTitle': self._get_input(request, 'Description', default='NAME met data extraction run'),
+            'location_names': location_names,
+            'longitudes': longitudes,
+            'latitudes': latitudes,
+            'met_height': self._get_input(request, 'MetHeight'),
+            'run_duration': self._get_input(request, 'RunDuration'),
+            'met_data': self._get_input(request, 'MetData'), 
+            'run_name': self._get_input(request, 'RunID'),
+            'start_date_time': start_date_time,
+            
+            # the following inputs are unused by make_met_extract_input
             'notification_email': self._get_input(request, 'NotificationEmail'),
             'image_format': self._get_input(request, 'ImageFormat'),
-            'trajectory_height_units': self._get_input(request, 'TrajectoryHeightUnits'),
+            'met_height_units': self._get_input(request, 'HeightUnits'),
         }
-        
-
-    def _get_request_internal_id(self):
-        # FIXME: is there any kind of request ID in the request? 
-        # (I didn't find one.)
-        return f'{datetime.datetime.now().strftime("%Y%m%d%H%M%S")}_{os.getpid()}'
 
 
-    def _handler(self, request, response):
-        LOGGER.info("run NAME trajectory")
-
-        internal_run_id = self._get_request_internal_id()
-        input_params = self._get_processed_inputs(request)
-        msg = make_traj_input(internal_run_id, input_params)
-        response.outputs['message'].data = msg
-
-        d = input_params
-        response.outputs['inputs'].data = ', '.join(f'{k}: {d[k]}'
-                                                    for k in sorted(d))
-
-        # uncomment to show inputs in UI
-        response.outputs['message'].data += f' INPUTS: {response.outputs["inputs"].data}'
-        
-        return response
+    def _handler_backend(self, internal_run_id, input_params):
+        return make_met_extract_input(internal_run_id, input_params)

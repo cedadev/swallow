@@ -1,24 +1,17 @@
 from pywps import (Process, LiteralInput, LiteralOutput,
                    BoundingBoxInput, BoundingBoxOutput, UOM)
-from pywps.app.Common import Metadata
 
-from name_base_process import NAMEBaseProcess
+from .name_base_process import NAMEBaseProcess
 from .create_name_inputs.make_traj_input import main as make_traj_input
 
-#from pywps.validator.mode import MODE
-
-import os
 import datetime
-import logging
-LOGGER = logging.getLogger("PYWPS")
-
 
 
 class RunNAMETrajectory(NAMEBaseProcess):
     """Run the NAME trajectory model."""
 
-    _null_label = '(none)'
-
+    _description = "run NAME trajectory"
+    
     def __init__(self):
 
         #-----------------------------------------
@@ -33,17 +26,9 @@ class RunNAMETrajectory(NAMEBaseProcess):
         current_year = datetime.datetime.now().year
 
         inputs = [
-            LiteralInput('RunID', 'run identifier',
-                         abstract='* short text string to describe task',
-                         data_type='string',
-                         min_occurs=1,
-                         max_occurs=1),
-
-            LiteralInput('Description', 'description',
-                         abstract='longer text description',
-                         data_type='string',
-                         min_occurs=0,
-                         max_occurs=1),
+            
+            self._get_run_id_process_input(),
+            self._get_description_process_input(),
 
             LiteralInput('Latitude', 'latitude',
                          abstract='latitude of trajectory start/end-point',
@@ -64,27 +49,11 @@ class RunNAMETrajectory(NAMEBaseProcess):
                          min_occurs=0,
                          max_occurs=1,
                          allowed_values=[self._null_label] + sorted(self._stations.keys())),
-            LiteralInput('ReleaseDate', 'release date',
-                         abstract='* date when particles are released (enter as yyyy-mm-dd or yyyymmdd format)',
-                         data_type='date',
-                         min_occurs=1,
-                         max_occurs=1,
-                         default=f'{current_year}-01-01'),
 
-            LiteralInput('ReleaseTime', 'release time',
-                         abstract='* time when particles are released (enter as hh:mm or hh:mm:ss format)',
-                         data_type='time',
-                         min_occurs=1,
-                         max_occurs=1,
-                         default='00:00'),
+            self._get_start_date_process_input(),
+            self._get_start_time_process_input(),
+            self._get_run_duration_process_input(),
             
-            LiteralInput('RunDuration', 'run duration',
-                         abstract='duration of trajectory run, in hours',
-                         data_type='integer',
-                         allowed_values=[12, 24, 36, 48, 72, 96, 120, 144, 168, 240, 360, 480],
-                         min_occurs=1,
-                         max_occurs=1),
-
             LiteralInput('RunDirection', 'run direction',
                          abstract='whether to run forward or backward trajectories',
                          data_type='string',
@@ -99,60 +68,26 @@ class RunNAMETrajectory(NAMEBaseProcess):
                          max_occurs=999,
                          ),
 
-            LiteralInput('TrajectoryHeightUnits', 'trajectory height units',
-                         abstract='units for the TrajectoryHeights array',
-                         data_type='string',
-                         allowed_values=['metres above ground level (m agl)', 'metres above sea level (m asl)'],
-                         min_occurs=1,
-                         max_occurs=1),
-
-            LiteralInput('MetData', 'met data',
-                         abstract='which forcing dataset to use to drive the trajectory model',
-                         data_type='string',
-                         allowed_values=["Global", "UK 1.5km", "Global + UK 1.5km"],
-                         min_occurs=1,
-                         max_occurs=1),
-
-            LiteralInput('NotificationEmail', 'notification email',
-                         abstract='which email address to send notifications to',
-                         data_type='string',
-                         min_occurs=0,
-                         max_occurs=1),
-
-            LiteralInput('ImageFormat', 'image format',
-                         abstract='format of output image file',
-                         data_type='string',
-                         default='PNG',
-                         allowed_values=['PNG', 'JPG', 'PDF'],
-                         min_occurs=1,
-                         max_occurs=1),
+            self._get_height_units_process_input(),
+            self._get_met_data_process_input(),
+            self._get_notification_email_process_input(),
+            self._get_image_format_process_input(),
             
         ]
         outputs = [
-            LiteralOutput('inputs', 'Copy of inputs',
-                          abstract='This output just gives a string confirming the inputs used.',
-                          keywords=['output', 'result', 'response'],
-                          data_type='string'),
-
-            LiteralOutput('message', 'Status message',
-                          abstract='This output gives a response from the job submission process.',
-                          keywords=['output', 'result', 'response'],
-                          data_type='string'),
+            self._get_inputs_process_output(),
+            self._get_message_process_output(),
         ]
 
         super().__init__(
             self._handler,
             identifier='RunNAME1',
             title='Run NAME Trajectory',
-            abstract='A forwards or backwards run of the NAME model outputting particle trajectories following the mean flow only.',
-            keywords=["name", "model", "atmospheric", "dispersion", "trajectory", "forward", "backward", "air", "pollution", "transport"],
-            metadata=[
-                Metadata('PyWPS', 'https://pywps.org/'),
-                Metadata('Birdhouse', 'http://bird-house.github.io/'),
-                Metadata('PyWPS Demo', 'https://pywps-demo.readthedocs.io/en/latest/'),
-                Metadata('Emu: PyWPS examples', 'https://emu.readthedocs.io/en/latest/'),
-            ],
-            version='1.5',
+            abstract=('A forwards or backwards run of the NAME model outputting '
+                      'particle trajectories following the mean flow only.'),
+            keywords=self._keywords,
+            metadata=self._metadata,
+            version=self._version,
             inputs=inputs,
             outputs=outputs,
             store_supported=True,
@@ -169,16 +104,8 @@ class RunNAMETrajectory(NAMEBaseProcess):
         known_location = self._get_input(request, 'KnownLocation')
         latitude = self._get_input(request, 'Latitude')
         longitude = self._get_input(request, 'Longitude')
-        release_date = self._get_input(request, 'ReleaseDate')
-        release_time = self._get_input(request, 'ReleaseTime')
         trajectory_heights = self._get_input(request, 'TrajectoryHeights', multi=True)
-
-        release_date_time = datetime.datetime(release_date.year,
-                                              release_date.month,
-                                              release_date.day,
-                                              release_time.hour,
-                                              release_time.minute,
-                                              release_time.second)
+        release_date_time = self._get_start_date_time(request)
 
         if known_location != None and known_location != self._null_label:
             longitude, latitude = self._stations[known_location]
@@ -198,23 +125,9 @@ class RunNAMETrajectory(NAMEBaseProcess):
             # the following inputs are unused by make_traj_input
             'notification_email': self._get_input(request, 'NotificationEmail'),
             'image_format': self._get_input(request, 'ImageFormat'),
-            'trajectory_height_units': self._get_input(request, 'TrajectoryHeightUnits'),
+            'trajectory_height_units': self._get_input(request, 'HeightUnits'),
         }
 
 
-    def _handler(self, request, response):
-        LOGGER.info("run NAME trajectory")
-
-        internal_run_id = self._get_request_internal_id()
-        input_params = self._get_processed_inputs(request)
-        msg = make_traj_input(internal_run_id, input_params)
-        response.outputs['message'].data = msg
-
-        d = input_params
-        response.outputs['inputs'].data = ', '.join(f'{k}: {d[k]}'
-                                                    for k in sorted(d))
-
-        # uncomment to show inputs in UI
-        response.outputs['message'].data += f' INPUTS: {response.outputs["inputs"].data}'
-        
-        return response
+    def _handler_backend(self, internal_run_id, input_params):
+        return make_traj_input(internal_run_id, input_params)

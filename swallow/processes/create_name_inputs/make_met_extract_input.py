@@ -24,7 +24,7 @@ def create_inputs(paths, params):
     timeformat = '%d/%m/%Y %H:%M'
     data = {
         'EndTimeOfRun': run_stop_time.strftime(timeformat),
-        'LocationNames': params['known_locations'],
+        'LocationNames': params['location_names'],
         'LocationX': params['longitudes'],
         'LocationY': params['latitudes'],
         'MetDeclnTmpl': met_decln_file,
@@ -59,7 +59,7 @@ def do_example():
     #parameters passed from the user - example values
     input_params = {
         'jobTitle': 'Testing of a NAME met extract run',
-        'known_locations': ['MACE_HEAD', 'EXETER', 'HALLEY'],
+        'location_names': ['MACE_HEAD', 'EXETER', 'HALLEY'],
         'longitudes': [-9.90, -3.47, -25.50],
         'latitudes': [53.32, 50.73, -75.50],
         'met_height': 10.0,
