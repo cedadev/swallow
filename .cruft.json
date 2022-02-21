@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/bird-house/cookiecutter-birdhouse",
-  "commit": "601efdb56bda16491d43170d69d9bae7d699b8cc",
+  "commit": "a5d7e28ce0d66afc3ae73c483d5457e4ac808743",
   "context": {
     "cookiecutter": {
       "full_name": "Ag Stephens",
@@ -19,13 +19,9 @@
       "_copy_without_render": [
         "{{cookiecutter.project_slug}}/templates/*.cfg"
       ],
-      "skip": [
-        "tests", 
-        "swallow",
-        ".travis.yml"
-      ],
       "_template": "https://github.com/bird-house/cookiecutter-birdhouse"
     }
   },
-  "directory": null
+  "directory": null,
+  "checkout": null
 }
