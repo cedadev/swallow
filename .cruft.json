@@ -1,0 +1,27 @@
+{
+  "template": "https://github.com/bird-house/cookiecutter-birdhouse",
+  "commit": "a5d7e28ce0d66afc3ae73c483d5457e4ac808743",
+  "context": {
+    "cookiecutter": {
+      "full_name": "Ag Stephens",
+      "email": "ag.stephens@stfc.ac.uk",
+      "github_username": "agstephens",
+      "project_name": "swallow",
+      "project_slug": "swallow",
+      "project_repo_name": "swallow",
+      "project_readthedocs_name": "swallow",
+      "project_short_description": "Swallow is a WPS to run the Met Office NAME model",
+      "version": "0.1.0",
+      "open_source_license": "BSD license",
+      "http_port": "5000",
+      "use_pytest": "y",
+      "create_author_file": "n",
+      "_copy_without_render": [
+        "{{cookiecutter.project_slug}}/templates/*.cfg"
+      ],
+      "_template": "https://github.com/bird-house/cookiecutter-birdhouse"
+    }
+  },
+  "directory": null,
+  "checkout": null
+}
