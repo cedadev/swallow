@@ -1,17 +1,21 @@
 import datetime
+import string
 
 #from jinja2 import Template
 from jinja2 import Environment, FileSystemLoader
 
 
-def sanitise_name(name,
-                  charset=('abcdefghijklmnopqrstuvwxyz'
-                           'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-                           '0123456789'
-                           '_-.')):
+def sanitise_string(s, charset, filler='_'):
+    return ''.join(c if c in charset else filler
+                   for c in s)
+    
+def sanitise_description(description):
+    charset = set(string.printable).difference(',\t')
+    return sanitise_string(description, charset)
 
-    return ''.join(c if c in charset else '_'
-                   for c in name)
+def sanitise_name(name):
+    charset=(string.ascii_letters + string.digits + '_-.')
+    return sanitise_string(name, charset)
 
 
 def combine_dicts(*dicts):

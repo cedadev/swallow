@@ -3,7 +3,8 @@ import datetime
 #from math import ceil
 
 from .get_met_info import GetMet
-from .util import combine_dicts, bool_to_yesno, render_template, get_times
+from .util import (combine_dicts, bool_to_yesno, render_template, get_times,
+                   sanitise_name, sanitise_description)
 from .paths import get_paths
 
 
@@ -28,7 +29,8 @@ def create_inputs(paths, params):
     """
     
     run_start_time, run_stop_time, time_after_first_hour = \
-        get_times(params['release_date_time'], params['run_duration'], params['run_direction'])
+        get_times(params['release_date_time'], params['run_duration'],
+                  params['run_direction'])
 
     get_met = GetMet()
     global_met = get_met.get_met2(run_start_time, run_stop_time)
@@ -49,7 +51,8 @@ def create_inputs(paths, params):
         #'MetDeclnFile': (met_decln_path),
         'MetDeclnTmpl': met_decln_file,
         'RunDuration': params['run_duration'],
-        'Run_Name': params['run_name'],
+        #'Run_Name': sanitise_description(params['description']),
+        'Run_Name': sanitise_name(params['run_name']),
         'SourceLoc_Name': params['known_location'],
         'SourceLoc_X': params['longitude'],
         'SourceLoc_Y': params['latitude'],
@@ -70,7 +73,8 @@ def create_inputs(paths, params):
     }
 
     name_input_file = paths['input_file']
-    render_template(paths['template_file'], data, include_paths=[paths["met_decl_dir"]], 
+    render_template(paths['template_file'], data,
+                    include_paths=[paths["met_decl_dir"]], 
                     rendered_file=name_input_file)
     return name_input_file
 
@@ -90,7 +94,6 @@ def do_example():
 
     #parameters passed from the user - example values
     input_params = {
-        'jobTitle': 'Testing of a NAME trajectory run',
         'known_location': 'MACE_HEAD',  # ReleaseLoc_Name
         'longitude': -9.9,  # ReleaseLoc_X
         'latitude': 53.3167,  # ReleaseLoc_Y
@@ -100,6 +103,7 @@ def do_example():
         #'run_direction': 'Backward',  # Backwards = 1
         'met_data': 'UM Global',  # NWPMetModel
         'run_name': 'my run name',  # runName from user
+        'description': 'Testing of a NAME trajectory run', # description from user
         'release_date_time': datetime.datetime(2018, 1, 1, 0, 0, 0),  # in UTC
         #'release_date_time': datetime.datetime(2014, 7, 16, 0, 0, 0),  # in UTC
     }

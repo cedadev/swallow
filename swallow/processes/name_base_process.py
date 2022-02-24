@@ -8,7 +8,6 @@ from pywps.app.Common import Metadata
 LOGGER = logging.getLogger("PYWPS")
 
 
-
 class NAMEBaseProcess(Process):
 
     _logger = LOGGER
@@ -51,7 +50,8 @@ class NAMEBaseProcess(Process):
     def _get_request_internal_id(self):
         # FIXME: is there any kind of request ID in the request? 
         # (I didn't find one.)
-        return f'{datetime.datetime.now().strftime("%Y%m%d%H%M%S")}_{os.getpid()}'
+        return (f'{datetime.datetime.now().strftime("%Y%m%d%H%M%S")}_'
+                f'{os.getpid()}')
 
 
     def _get_input(self, request, key, multi=False, default=None):
@@ -67,6 +67,7 @@ class NAMEBaseProcess(Process):
             inp, = inputs
             return inp.data
 
+        
     def _get_start_date_time(self, request):
         date = self._get_input(request, 'StartDate')
         tme = self._get_input(request, 'StartTime')
@@ -77,21 +78,27 @@ class NAMEBaseProcess(Process):
                                  tme.minute,
                                  tme.second)
 
+    #================= INPUTS ======================
     
     def _get_met_data_process_input(self):
         return LiteralInput('MetData', 'met data',
                             abstract='which forcing dataset to use',
                             data_type='string',
-                            allowed_values=["Global", "UK 1.5km", "Global + UK 1.5km"],
+                            allowed_values=["Global",
+                                            "UK 1.5km",
+                                            "Global + UK 1.5km"],
                             min_occurs=1,
                             max_occurs=1)
 
+    
     def _get_notification_email_process_input(self):
         return LiteralInput('NotificationEmail', 'notification email',
-                            abstract='which email address to send notifications to',
+                            abstract=('which email address to send '
+                                      'notifications to'),
                             data_type='string',
                             min_occurs=0,
                             max_occurs=1)
+
     
     def _get_image_format_process_input(self):
         return LiteralInput('ImageFormat', 'image format',
@@ -102,38 +109,48 @@ class NAMEBaseProcess(Process):
                             min_occurs=1,
                             max_occurs=1)
 
+    
     def _get_run_duration_process_input(self):
         return LiteralInput('RunDuration', 'run duration',
                             abstract='duration of run, in hours',
                             data_type='integer',
-                            allowed_values=[12, 24, 36, 48, 72, 96, 120, 144, 168, 240, 360, 480],
+                            allowed_values=[12, 24, 36, 48, 72, 96, 120,
+                                            144, 168, 240, 360, 480],
                             min_occurs=1,
                             max_occurs=1)
 
+    
     def _get_height_units_process_input(self):
         return LiteralInput('HeightUnits', 'height units',
-                            abstract='units for the height value',
+                            abstract=('units for the height value '
+                                      '(currently only m agl supported)'),
                             data_type='string',
-                            allowed_values=['metres above ground level (m agl)', 'metres above sea level (m asl)'],
+                            #allowed_values=['metres above ground level (m agl)', 'metres above sea level (m asl)'],
+                            allowed_values=['metres above ground level (m agl)'],
                             min_occurs=1,
                             max_occurs=1)
             
+
     def _get_start_date_process_input(self):        
         current_year = datetime.datetime.now().year
         return LiteralInput('StartDate', 'start date',
-                            abstract='* date of start of run (enter as yyyy-mm-dd or yyyymmdd format)',
+                            abstract=('* date of start of run (enter as '
+                                      'yyyy-mm-dd or yyyymmdd format)'),
                             data_type='date',
                             min_occurs=1,
                             max_occurs=1,
                             default=f'{current_year}-01-01')
 
+    
     def _get_start_time_process_input(self):        
         return LiteralInput('StartTime', 'start time',
-                            abstract='* time of start of run (enter as hh:mm or hh:mm:ss format)',
+                            abstract=('* time of start of run (enter as hh:mm '
+                                      'or hh:mm:ss format)'),
                             data_type='time',
                             min_occurs=1,
                             max_occurs=1,
                             default='00:00')
+
 
     def _get_run_id_process_input(self):
         return LiteralInput('RunID', 'run identifier',
@@ -142,6 +159,7 @@ class NAMEBaseProcess(Process):
                             min_occurs=1,
                             max_occurs=1)
 
+    
     def _get_description_process_input(self):
         return LiteralInput('Description', 'description',
                             abstract='longer text description',
@@ -149,18 +167,24 @@ class NAMEBaseProcess(Process):
                             min_occurs=0,
                             max_occurs=1)
 
+    #================ OUTPUTS =======================
+
     def _get_inputs_process_output(self):
         return LiteralOutput('inputs', 'Copy of inputs',
-                             abstract='This output just gives a string confirming the inputs used.',
+                             abstract=('This output just gives a string '
+                                       'confirming the inputs used.'),
                              keywords=['output', 'result', 'response'],
                              data_type='string')
+
 
     def _get_message_process_output(self):
         return LiteralOutput('message', 'Status message',
-                             abstract='This output gives a response from the job submission process.',
+                             abstract=('This output gives a response from '
+                                       'the job submission process.'),
                              keywords=['output', 'result', 'response'],
                              data_type='string')
 
+    #=======================================
     
     def _handler(self, request, response):
         self._logger.info(self._description)
@@ -175,6 +199,7 @@ class NAMEBaseProcess(Process):
                                                     for k in sorted(d))
 
         # uncomment to show inputs in UI
-        response.outputs['message'].data += f' INPUTS: {response.outputs["inputs"].data}'
+        response.outputs['message'].data += \
+            f' INPUTS: {response.outputs["inputs"].data}'
         
         return response

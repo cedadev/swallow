@@ -3,14 +3,15 @@ from pywps import (Process, LiteralInput, LiteralOutput,
 from pywps.app.exceptions import ProcessError
 
 from .name_base_process import NAMEBaseProcess
-from .create_name_inputs.make_met_extract_input import main as make_met_extract_input
+from .create_name_inputs.make_met_extract_input \
+    import main as make_met_extract_input
 
 import datetime
 
 
 
 class ExtractMetData(NAMEBaseProcess):
-    """Run the NAME trajectory model."""
+    """Run the NAME model to extract met data."""
 
     _description = "extract met data for NAME"
     
@@ -25,24 +26,29 @@ class ExtractMetData(NAMEBaseProcess):
         #   print(LITERAL_DATA_TYPES)
         #-----------------------------------------
 
+        coords_abstract = (
+            'Strings of format lon,lat. '
+            'Separate pairs with pipe symbols (vertical bar). '
+            'Optional whitespace is permitted. '
+            'Longitudes may use -180 to 180 or 0 to 360. '
+            'EXAMPLE: you could enter "-1.3, 51.6 | 1,-2" '
+            'for 1.3W,51.6N and 1E,2S. '
+            '(This input may be omitted if known locations are selected.)')
+        
         inputs = [
             self._get_run_id_process_input(),
             self._get_description_process_input(),
 
             LiteralInput('Coordinates', 'coordinates',
-                         abstract=('Strings of format lon,lat. '
-                                   'Separate pairs with pipe symbols (vertical bar). '
-                                   'Optional whitespace is permitted. '
-                                   'Longitudes may use -180 to 180 or 0 to 360. '
-                                   'EXAMPLE: you could enter "-1.3, 51.6 | 1,-2" for 1.3W,51.6N and 1E,2S. '
-                                   '(This input may be omitted if known locations are selected.)'),
+                         abstract=coords_abstract,
                          data_type='string',
                          min_occurs=0,
                          max_occurs=1),
                          #max_occurs=999),
             
             LiteralInput('PredefinedLocations', 'predefined locations',
-                         abstract=('Optional additional locations chosen from predefined list '
+                         abstract=('Optional additional locations chosen from '
+                                   'predefined list '
                                    '(ctrl-click for multiple selection)'),
                          data_type='string',
                          min_occurs=0,
@@ -75,7 +81,8 @@ class ExtractMetData(NAMEBaseProcess):
             self._handler,
             identifier='NAMEMetExtract',
             title='Extract Met Data',
-            abstract='A run which extracts meterological data for specified time periods and locations.',
+            abstract=('A run which extracts meterological data for specified '
+                      'time periods and locations.'),
             keywords=self._keywords,
             metadata=self._metadata,
             version=self._version,
@@ -97,7 +104,8 @@ class ExtractMetData(NAMEBaseProcess):
         allowed_chars = '0123456789,.-+| '
         for c in coords_string:
             if c not in allowed_chars:
-                raise ValueError(f'unexpected character {c} in coordinates string {coords_string}')
+                raise ValueError(f'unexpected character {c} '
+                                 f'in coordinates string {coords_string}')
         
         s = coords_string.replace(' ', '')
 
@@ -106,7 +114,8 @@ class ExtractMetData(NAMEBaseProcess):
                 try:
                     lon_str, lat_str = point_str.split(',')
                 except ValueError:
-                    raise ValueError(f'location specification {point_str} not in format lon,lat')
+                    raise ValueError(f'location specification {point_str} '
+                                     'not in format lon,lat')
                 lon = float(lon_str)
                 lat = float(lat_str)
                 if not (-180 <= lon < 360):
@@ -126,7 +135,8 @@ class ExtractMetData(NAMEBaseProcess):
         """
         runID = self._get_input(request, 'RunID')
         
-        predef_locations = self._get_input(request, 'PredefinedLocations', multi=True)
+        predef_locations = self._get_input(request, 'PredefinedLocations',
+                                           multi=True)
         coordinates = self._get_input(request, 'Coordinates')
 
         try:
@@ -151,8 +161,8 @@ class ExtractMetData(NAMEBaseProcess):
                                'predefined locations are both empty')
         
         return {
-
-            'jobTitle': self._get_input(request, 'Description', default='NAME met data extraction run'),
+            'description': self._get_input(request, 'Description',
+                                           default='NAME met data extraction run'),
             'location_names': location_names,
             'longitudes': longitudes,
             'latitudes': latitudes,

@@ -111,7 +111,8 @@ class RunNAMETrajectory(NAMEBaseProcess):
             longitude, latitude = self._stations[known_location]
 
         return {
-            'jobTitle': self._get_input(request, 'Description', default='NAME trajectory run'),
+            'description': self._get_input(request, 'Description',
+                                           default='NAME trajectory run'),
             'known_location': known_location,
             'longitude': longitude,
             'latitude': latitude,
