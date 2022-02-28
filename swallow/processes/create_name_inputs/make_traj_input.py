@@ -36,7 +36,7 @@ def create_inputs(paths, params):
     global_met = get_met.get_met2(run_start_time, run_stop_time)
 
     met_decln_file = global_met['decln_filename'].replace('.txt', '.tmpl')
-    met_defn_path = os.path.join(paths['utils_dir'], global_met['defn_filename'])
+    met_defn_path = os.path.join(paths['defns_dir'], global_met['defn_filename'])
     
     timeformat = '%d/%m/%Y %H:%M'
     data = {
@@ -83,9 +83,10 @@ def main(internal_run_id, input_params):
 
     params = combine_dicts(input_params, fixed_params)
     paths = get_paths(params['run_name'], internal_run_id, run_type="traj")
-
+    output_dir = paths['output_dir']
+    
     fn = create_inputs(paths, params)
-    return f'wrote NAME input file {fn}'
+    return f'wrote NAME input file {fn}, to use output path {output_dir}'
     
 
 def do_example():
