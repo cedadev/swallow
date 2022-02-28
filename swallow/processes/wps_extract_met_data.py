@@ -144,8 +144,8 @@ class ExtractMetData(NAMEBaseProcess):
         except ValueError as exc:
             raise ProcessError(str(exc))
             
-        location_names = ['(none)'] * len(longitudes)
-
+        location_names = [f'user defined {i+1}' for i in range(len(longitudes))]
+        
         if predef_locations != None:
             for location in predef_locations:
                 longitude, latitude = self._stations[location]
