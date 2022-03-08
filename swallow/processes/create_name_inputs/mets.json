@@ -7,7 +7,8 @@
         "prefix": "HP",
         "suffix": "GLOUM6",
         "archive_dir": "Global/GLOUM6",
-        "start": [2006,  1,  1,  0,  0,  0]
+        "start": [2006,  1,  1,  0,  0,  0],
+	"end": [2009,  2,  1,  0,  0,  0]
     },
     {
         "mk": 4,
@@ -17,7 +18,8 @@
         "prefix": "HP",
         "suffix": "GLOUM6.pp",
         "archive_dir": "Global/GLOUM6pp",
-        "start": [2009,  1,  1,  0,  0,  0]
+        "start": [2009,  1,  1,  0,  0,  0],
+	"end": [2009, 12, 10,  0,  0,  0]
     },
     {
         "mk": 5,
@@ -27,7 +29,8 @@
         "prefix": "MO",
         "suffix": "UMG_Mk5_L52.pp",
         "archive_dir": "Global/UMG_Mk5",
-        "start": [2009, 11, 10,  0,  0,  0]
+        "start": [2009, 11, 10,  0,  0,  0],
+	"end": [2010,  4,  9,  0,  0,  0]
     },
     {
         "mk": 6,
@@ -37,7 +40,8 @@
         "prefix": "MO",
         "suffix": "UMG_Mk6_L59PT*.pp",
         "archive_dir": "Global/UMG_Mk6PT",
-        "start": [2010,  3,  9,  0,  0,  0]
+        "start": [2010,  3,  9,  0,  0,  0],
+	"end": [2013,  5, 30,  1,  0,  0]
     },
     {
         "mk": 7,
@@ -47,7 +51,8 @@
         "prefix": "MO",
         "suffix": "UMG_Mk7_[IM]_L59PT*.pp",
         "archive_dir": "Global/UMG_Mk7PT",
-        "start": [2013,  4, 30,  1,  0,  0]
+        "start": [2013,  4, 30,  1,  0,  0],
+	"end": [2014,  8, 15,  1,  0,  0]
     },
     {
         "mk": 8,
@@ -57,7 +62,8 @@
         "prefix": "MO",
         "suffix": "UMG_Mk8_[IM]_L59PT*.pp",
         "archive_dir": "Global/UMG_Mk8PT",
-        "start": [2014,  7, 15,  1,  0,  0]
+        "start": [2014,  7, 15,  1,  0,  0],
+	"end": [2015,  9, 25,  1,  0,  0]
     },
     {
         "mk": 9,
@@ -67,7 +73,8 @@
         "prefix": "MO",
         "suffix": "UMG_Mk9_[IM]_L59PT*.pp",
         "archive_dir": "Global/UMG_Mk9PT",
-        "start": [2015,  8, 25,  1,  0,  0]
+        "start": [2015,  8, 25,  1,  0,  0],
+	"end": [2017,  8, 11,  1,  0,  0]
     },
     {
         "mk": 10,

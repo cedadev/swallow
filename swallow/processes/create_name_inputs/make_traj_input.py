@@ -33,7 +33,7 @@ def create_inputs(paths, params):
                   params['run_direction'])
 
     get_met = GetMet()
-    global_met = get_met.get_met2(run_start_time, run_stop_time)
+    global_met = get_met.get_met(run_start_time, run_stop_time)
 
     met_decln_file = global_met['decln_filename'].replace('.txt', '.tmpl')
     met_defn_path = os.path.join(paths['defns_dir'], global_met['defn_filename'])
