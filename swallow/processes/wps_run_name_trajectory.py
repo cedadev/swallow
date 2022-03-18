@@ -1,5 +1,4 @@
-from pywps import (Process, LiteralInput, LiteralOutput,
-                   BoundingBoxInput, BoundingBoxOutput, UOM)
+from pywps import LiteralInput
 
 from .name_base_process import NAMEBaseProcess
 from .create_name_inputs.make_traj_input import main as make_traj_input
@@ -29,27 +28,9 @@ class RunNAMETrajectory(NAMEBaseProcess):
             
             self._get_run_id_process_input(),
             self._get_description_process_input(),
-
-            LiteralInput('Latitude', 'latitude',
-                         abstract='latitude of trajectory start/end-point',
-                         data_type='float',
-                         min_occurs=0,
-                         max_occurs=1),
-            
-            LiteralInput('Longitude', 'longitude',
-                         abstract='longitude of trajectory start/end-point',
-                         data_type='float',
-                         min_occurs=0,
-                         max_occurs=1),
-
-            LiteralInput('KnownLocation', 
-                         'standard location name (alternative to lon/lat)',
-                         abstract='known location',
-                         data_type='string',
-                         min_occurs=0,
-                         max_occurs=1,
-                         allowed_values=[self._null_label] + sorted(self._stations.keys())),
-
+            self._get_latitude_process_input(),
+            self._get_longitude_process_input(),
+            self._get_known_location_process_input(),
             self._get_start_date_process_input(),
             self._get_start_time_process_input(),
             self._get_run_duration_process_input(),
@@ -61,13 +42,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
                          min_occurs=1,
                          max_occurs=1),
 
-            LiteralInput('TrajectoryHeights', 'trajectory heights',
-                         abstract='array of start/end heights of particles',
-                         data_type='float',
-                         min_occurs=1,
-                         max_occurs=999,
-                         ),
-
+            self._get_trajectory_heights_process_input(),
             self._get_height_units_process_input(),
             self._get_met_data_process_input(),
             self._get_notification_email_process_input(),

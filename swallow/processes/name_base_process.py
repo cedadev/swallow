@@ -2,7 +2,8 @@ import os
 import datetime
 import logging
 
-from pywps import (Process, LiteralInput, LiteralOutput)
+from pywps import (Process, LiteralInput, LiteralOutput,
+                   BoundingBoxInput, BoundingBoxOutput)
 from pywps.app.Common import Metadata
 
 LOGGER = logging.getLogger("PYWPS")
@@ -166,6 +167,44 @@ class NAMEBaseProcess(Process):
                             data_type='string',
                             min_occurs=0,
                             max_occurs=1)
+
+
+    def _get_latitude_process_input(self):
+        return LiteralInput('Latitude', 'latitude',
+                            abstract='latitude of trajectory start/end-point',
+                            data_type='float',
+                            min_occurs=0,
+                            max_occurs=1)
+
+    def _get_longitude_process_input(self):
+        return LiteralInput('Longitude', 'longitude',
+                            abstract='longitude of trajectory start/end-point',
+                            data_type='float',
+                            min_occurs=0,
+                            max_occurs=1)
+
+    def _get_known_location_process_input(self):
+        return LiteralInput('KnownLocation', 
+                            'standard location name (alternative to lon/lat)',
+                            abstract='known location',
+                            data_type='string',
+                            min_occurs=0,
+                            max_occurs=1,
+                            allowed_values=[self._null_label] + sorted(self._stations.keys()))
+
+    
+    def _get_trajectory_heights_process_input(self):
+        return LiteralInput('TrajectoryHeights', 'trajectory heights',
+                            abstract='array of start/end heights of particles',
+                            data_type='float',
+                            min_occurs=1,
+                            max_occurs=999,
+        )
+
+    def _get_bounding_box_input(self, name, description):
+        return BoundingBoxInput(name, description,
+                                crss=['epsg:4326'],
+                                dimensions=2)
 
     #================ OUTPUTS =======================
 

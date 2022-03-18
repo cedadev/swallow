@@ -20,6 +20,7 @@ _paths.update({
     'defns_dir': f'{_paths["gws"]}/cache/users/arjones/FCM/vn8.0_jasmin/Resources/Defns',
     'adaqpython_dir': f'{_paths["gws"]}/code/ADAQ_Python_v6.2',
     'met_dir': f'{_paths["work_dir"]}/met_data',
+    'met_defns_dir': f'{_paths["gws"]}/code/NAME_v8_3/Resources/Defns/',
 })
 _paths.update({
     'met_restore_script': f'{_paths["utils_dir"]}/MetRestore_JASMIN.sh',
@@ -35,7 +36,10 @@ _paths_by_run_type = {
         'template_file': f'{template_dir}/met_extract_input.tmpl',
         'nameiii_dir': f'{_paths["gws"]}/code/NAME_v8_3',
         'topog_dir': f'{_paths["gws"]}/data/UMTopogData',
-        'met_defns_dir': f'{_paths["gws"]}/code/NAME_v8_3/Resources/Defns/',
+    },
+    'gen_forward': {
+        'template_file': f'{template_dir}/gen_forward_input.tmpl',
+        'topog_dir': f'{_paths["gws"]}/data/UMTopogData',
     },
 }
 
