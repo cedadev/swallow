@@ -112,7 +112,7 @@ def do_example():
         'HGrid_Xmin': -25.,
         'HGrid_Ymax': 70.,
         'HGrid_Ymin': 30.,
-        'JobTitle': 'NAME forwards run',
+        #'JobTitle': 'NAME forwards run',
         'MainTGrid_dT': 6,
         'ReleaseBottom': 0.,
         'ReleaseLoc_Name': 'MACE_HEAD',
@@ -122,7 +122,6 @@ def do_example():
         'ReleaseStop': datetime.datetime(2018, 1, 1, 6, 0, 0),
         'ReleaseTop': 500.,
         'RunName': 'Testing of a NAME general forward run',
-        #'RunName': 'General_20220318_154530',
         'RunStart': datetime.datetime(2018, 1, 1, 0, 0, 0),
         'ZGrid': [0., 500., 2000., 5000.],
     }

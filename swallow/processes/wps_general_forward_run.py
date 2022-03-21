@@ -5,47 +5,25 @@ from .name_base_process import NAMEBaseProcess
 from .create_name_inputs.make_gen_forward_input \
     import main as make_gen_forward_input
 
-import datetime
 
+class GenForwardRun(NAMEBaseProcess):
+    """Run the NAME general forward model."""
 
-
-class ExtractMetData(NAMEBaseProcess):
-    """Run the NAME model to extract met data."""
-
-    _description = "extract met data for NAME"
+    _description = "run the general forward model"
     
-    def __init__(self):
-
-        #-----------------------------------------
-        # Note: docs at
-        # https://pywps.readthedocs.io/en/latest/api.html
-        #
-        # and to see allowed values of data_type:
-        #   from pywps.inout.literaltypes import LITERAL_DATA_TYPES
-        #   print(LITERAL_DATA_TYPES)
-        #-----------------------------------------
-
-        coords_abstract = (
-            'Strings of format lon,lat. '
-            'Separate pairs with pipe symbols (vertical bar). '
-            'Optional whitespace is permitted. '
-            'Longitudes may use -180 to 180 or 0 to 360. '
-            'EXAMPLE: you could enter "-1.3, 51.6 | 1,-2" '
-            'for 1.3W,51.6N and 1E,2S. '
-            '(This input may be omitted if known locations are selected.)'
-        )
-
-        _domains = {
-            '(none)': None,
-            'European domain (30W-40E, 25N-75N)': [-30., 25., 40., 75.],
-            'global': [-180., -90., 180., 90.],
-        }
+    _domains = {
+        '(none)': None,
+        'European domain (30W-40E, 25N-75N)': [-30., 25., 40., 75.],
+        'global': [-180., -90., 180., 90.],
+    }
         
-        _output_grids = {
-            '(none)': None,
-            'European output grid (25W-35E, 30N-70N) 300x300': [-30, 25, 40, 75, 300, 300],
-            'global (720x360)': [-179.75, -89.75, 179.75, 89.75, 720, 360],
-        }
+    _output_grids = {
+        '(none)': None,
+        'European output grid (25W-35E, 30N-70N) 300x300': [-25, 30, 35, 70, 300, 300],
+        'global (720x360)': [-179.75, -89.75, 179.75, 89.75, 720, 360],
+    }
+
+    def __init__(self):
 
         inputs = [
             self._get_run_id_process_input(),
@@ -53,7 +31,6 @@ class ExtractMetData(NAMEBaseProcess):
             self._get_latitude_process_input(),
             self._get_longitude_process_input(),
             self._get_known_location_process_input(),
-
             
             LiteralInput('ReleaseBottom', 'release bottom',
                          abstract='height at the bottom of the release',
@@ -69,71 +46,64 @@ class ExtractMetData(NAMEBaseProcess):
                          min_occurs=1,
                          max_occurs=1),
 
-            self._get_start_date_process_input(),
-            self._get_start_time_process_input(),
+        ] + self._get_start_date_time_process_inputs() + [
             self._get_run_duration_process_input(),
-
             
+        ] + (self._get_date_time_process_inputs('ReleaseStart', 'release start',
+                                                'start of species release') +
+             self._get_date_time_process_inputs('ReleaseStop', 'release stop',
+                                                'end of species release')
+        ) + [
             LiteralInput('PredefDomain', 'predefined domain',
                          abstract=('predefined model computational domain '
                                    '(alternative to choosing bounding box)'),
                          data_type='string',
                          allowed_values=list(self._domains.keys()),                         
                          min_occurs=1,
-                         max_occurs=1)
+                         max_occurs=1),
 
             self._get_bounding_box_input('Domain',
-                                         'computational domain (if not using predefined domain)')
+                                         'computational domain (if no predefined domain selected)'),
             
             LiteralInput('PredefOutputGrid', 'predefined output grid',
                          abstract=('predefined output grid '
                                    '(alternative to choosing bounding box and resolution)'),
                          data_type='string',
-                         allowed_values=list(self._domains.keys()),                         
+                         allowed_values=list(self._output_grids.keys()),                         
                          min_occurs=1,
-                         max_occurs=1)
-
+                         max_occurs=1),
+                                                    
             self._get_bounding_box_input('OutputGridExtent',
-                                         'output grid extent (if not using predefined domain)')
+                                         'output grid extent (if no predefined output grid selected)'),
 
-            LiteralInput('OutputGridNumLon', 'output grid nx', 
-                         abstract=('number of longitudes in output grid '
-                                   '(if not using predefined domain)'),
-                         data_type='int',
+            LiteralInput('OutputGridNumLon', 'output grid nx (if no predefined output grid selected)', 
+                         abstract=('enter number of longitudes in output grid '
+                                   'unless you have chosen a predefined output grid'),
+                         data_type='integer',
                          min_occurs=1,
                          max_occurs=1,
                          default=300),
 
-            LiteralInput('OutputGridNumLon', 'output grid ny', 
-                         abstract=('number of latitudes in output grid '
-                                   '(if not using predefined domain)'),
-                         data_type='int',
+            LiteralInput('OutputGridNumLat', 'output grid ny (if no predefined output grid selected)', 
+                         abstract=('enter number of latitudes in output grid '
+                                   'unless you have chosen a predefined output grid'),
+                         data_type='integer',
                          min_occurs=1,
                          max_occurs=1,
                          default=300),
-
-            self._get_latitude_process_input(),
-            self._get_longitude_process_input(),
-            self._get_known_location_process_input(),
 
             self._get_trajectory_heights_process_input(),
             self._get_height_units_process_input(),
 
-            
-            
-            #==================================================
-            
-            
-            
-            LiteralInput('MetHeight', 'met data height',
-                         abstract='* height at which to extract met data',
-                         data_type='float',
+            LiteralInput('MainTGrid_dT', 'timestep', 
+                         abstract='main computational grid time resolution (hours)',
+                         data_type='integer',
                          min_occurs=1,
                          max_occurs=1,
-                         ),
-
-            self._get_height_units_process_input(),
-            self._get_met_data_process_input(),
+                         default=6),
+            
+            #==================================================
+ 
             self._get_notification_email_process_input(),
             self._get_image_format_process_input(),
         ]
@@ -145,8 +115,8 @@ class ExtractMetData(NAMEBaseProcess):
 
         super().__init__(
             self._handler,
-            identifier='NAMEMetExtract',
-            title='General forward run',
+            identifier='NAMEGenForward',
+            title='General Forward Run',
             abstract=('A forward run of the NAME model.'),
             keywords=self._keywords,
             metadata=self._metadata,
@@ -200,44 +170,53 @@ class ExtractMetData(NAMEBaseProcess):
         """
         runID = self._get_input(request, 'RunID')
         
-        predef_locations = self._get_input(request, 'PredefinedLocations',
-                                           multi=True)
-        coordinates = self._get_input(request, 'Coordinates')
+        known_location = self._get_input(request, 'KnownLocation')
+        latitude = self._get_input(request, 'Latitude')
+        longitude = self._get_input(request, 'Longitude')
 
-        try:
-            longitudes, latitudes = self._coords_to_lon_lat(coordinates)
-        except ValueError as exc:
-            raise ProcessError(str(exc))
-            
-        location_names = [f'user defined {i+1}' for i in range(len(longitudes))]
-        
-        if predef_locations != None:
-            for location in predef_locations:
-                longitude, latitude = self._stations[location]
-                longitudes.append(longitude)
-                latitudes.append(latitude)
-                location_names.append(location)
+        if known_location != None and known_location != self._null_label:
+            longitude, latitude = self._stations[known_location]
 
-        longitudes = [lon % 360 for lon in longitudes]
-        start_date_time = self._get_start_date_time(request)
+        domain = self._get_input(request, 'Domain')
+        predef_domain_name = self._get_input(request, 'PredefDomain')
+        predef_domain = self._domains[predef_domain_name]
+        if predef_domain is not None:
+            domain = predef_domain
 
-        if not longitudes:
-            raise ProcessError('process inputs for coordinates and" '
-                               'predefined locations are both empty')
-        
+        hgrid_nx = self._get_input(request, 'OutputGridNumLon')
+        hgrid_ny = self._get_input(request, 'OutputGridNumLat')
+        hgrid_extent = self._get_input(request, 'OutputGridExtent')
+        predef_output_grid_name = self._get_input(request, 'PredefOutputGrid')
+        predef_output_grid = self._output_grids[predef_output_grid_name]
+        if predef_output_grid is not None:
+            hgrid_nx, hgrid_ny = predef_output_grid[4:6]
+            hgrid_extent = predef_output_grid[0:4]
+                    
         return {
-            'description': self._get_input(request, 'Description',
-                                           default='NAME met data extraction run'),
-            'location_names': location_names,
-            'longitudes': longitudes,
-            'latitudes': latitudes,
-            'met_height': self._get_input(request, 'MetHeight'),
-            'run_duration': self._get_input(request, 'RunDuration'),
-            'met_data': self._get_input(request, 'MetData'), 
-            'run_name': self._get_input(request, 'RunID'),
-            'start_date_time': start_date_time,
-            
-            # the following inputs are unused by make_met_extract_input
+            'Domain_Xmax': domain[2],
+            'Domain_Xmin': domain[0],
+            'Domain_Ymax': domain[3],
+            'Domain_Ymin': domain[1],
+            'Duration': self._get_input(request, 'RunDuration'),
+            'HGrid_nX': hgrid_nx,
+            'HGrid_nY': hgrid_ny,
+            'HGrid_Xmax': hgrid_extent[2],
+            'HGrid_Xmin': hgrid_extent[0],
+            'HGrid_Ymax': hgrid_extent[3],
+            'HGrid_Ymin': hgrid_extent[1],
+            'MainTGrid_dT': self._get_input(request, 'MainTGrid_dT'),
+            'ReleaseBottom': self._get_input(request, 'ReleaseBottom'),
+            'ReleaseLoc_Name': known_location,
+            'ReleaseLoc_X': longitude,
+            'ReleaseLoc_Y': latitude,
+            'ReleaseStart': self._get_date_time(request, 'ReleaseStart'),
+            'ReleaseStop': self._get_date_time(request, 'ReleaseStop'),
+            'ReleaseTop': self._get_input(request, 'ReleaseTop'),
+            'RunName': runID,
+            'RunStart': self._get_start_date_time(request),
+            'ZGrid': self._get_input(request, 'TrajectoryHeights', multi=True),
+
+            # the following inputs are unused by make_wps_general_forward_input
             'notification_email': self._get_input(request, 'NotificationEmail'),
             'image_format': self._get_input(request, 'ImageFormat'),
             'met_height_units': self._get_input(request, 'HeightUnits'),
@@ -245,4 +224,4 @@ class ExtractMetData(NAMEBaseProcess):
 
 
     def _handler_backend(self, internal_run_id, input_params):
-        return make_met_extract_input(internal_run_id, input_params)
+        return make_gen_forward_input(internal_run_id, input_params)

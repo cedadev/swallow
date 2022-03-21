@@ -3,8 +3,6 @@ from pywps import LiteralInput
 from .name_base_process import NAMEBaseProcess
 from .create_name_inputs.make_traj_input import main as make_traj_input
 
-import datetime
-
 
 class RunNAMETrajectory(NAMEBaseProcess):
     """Run the NAME trajectory model."""
@@ -22,8 +20,6 @@ class RunNAMETrajectory(NAMEBaseProcess):
         #   print(LITERAL_DATA_TYPES)
         #-----------------------------------------
 
-        current_year = datetime.datetime.now().year
-
         inputs = [
             
             self._get_run_id_process_input(),
@@ -31,8 +27,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
             self._get_latitude_process_input(),
             self._get_longitude_process_input(),
             self._get_known_location_process_input(),
-            self._get_start_date_process_input(),
-            self._get_start_time_process_input(),
+        ] + self._get_start_date_time_process_inputs() + [
             self._get_run_duration_process_input(),
             
             LiteralInput('RunDirection', 'run direction',

@@ -69,15 +69,18 @@ class NAMEBaseProcess(Process):
             return inp.data
 
         
-    def _get_start_date_time(self, request):
-        date = self._get_input(request, 'StartDate')
-        tme = self._get_input(request, 'StartTime')
+    def _get_date_time(self, request, name):
+        date = self._get_input(request, f'{name}Date')
+        tme = self._get_input(request, f'{name}Time')
         return datetime.datetime(date.year,
                                  date.month,
                                  date.day,
                                  tme.hour,
                                  tme.minute,
                                  tme.second)
+
+    def _get_start_date_time(self, request):
+        return self._get_date_time(request, 'Start')
 
     #================= INPUTS ======================
     
@@ -132,10 +135,10 @@ class NAMEBaseProcess(Process):
                             max_occurs=1)
             
 
-    def _get_start_date_process_input(self):        
+    def _get_date_process_input(self, name, label, description):
         current_year = datetime.datetime.now().year
-        return LiteralInput('StartDate', 'start date',
-                            abstract=('* date of start of run (enter as '
+        return LiteralInput(name, label,
+                            abstract=(f'* date of {description} (enter as '
                                       'yyyy-mm-dd or yyyymmdd format)'),
                             data_type='date',
                             min_occurs=1,
@@ -143,15 +146,21 @@ class NAMEBaseProcess(Process):
                             default=f'{current_year}-01-01')
 
     
-    def _get_start_time_process_input(self):        
-        return LiteralInput('StartTime', 'start time',
-                            abstract=('* time of start of run (enter as hh:mm '
+    def _get_time_process_input(self, name, label, description):
+        return LiteralInput(name, label,
+                            abstract=(f'* time of {description} (enter as hh:mm '
                                       'or hh:mm:ss format)'),
                             data_type='time',
                             min_occurs=1,
                             max_occurs=1,
                             default='00:00')
 
+    def _get_date_time_process_inputs(self, name, label, description):
+        return [self._get_date_process_input(f'{name}Date', f'{label} date', description),
+                self._get_time_process_input(f'{name}Time', f'{label} time', description)]        
+
+    def _get_start_date_time_process_inputs(self):
+        return self._get_date_time_process_inputs('Start', 'start', 'start of run')
 
     def _get_run_id_process_input(self):
         return LiteralInput('RunID', 'run identifier',

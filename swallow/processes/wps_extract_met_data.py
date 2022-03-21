@@ -5,9 +5,6 @@ from .name_base_process import NAMEBaseProcess
 from .create_name_inputs.make_met_extract_input \
     import main as make_met_extract_input
 
-import datetime
-
-
 
 class ExtractMetData(NAMEBaseProcess):
     """Run the NAME model to extract met data."""
@@ -54,8 +51,7 @@ class ExtractMetData(NAMEBaseProcess):
                          max_occurs=999,
                          allowed_values=sorted(self._stations.keys())),
             
-            self._get_start_date_process_input(),
-            self._get_start_time_process_input(),
+        ] + self._get_start_date_time_process_inputs() + [
             self._get_run_duration_process_input(),
             
             LiteralInput('MetHeight', 'met data height',
