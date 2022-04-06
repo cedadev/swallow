@@ -36,7 +36,7 @@ def create_inputs(paths, params):
     global_met = get_met.get_met(run_start_time, run_stop_time)
 
     met_decln_file = global_met['decln_filename'].replace('.txt', '.tmpl')
-    met_defn_path = os.path.join(paths['defns_dir'], global_met['defn_filename'])
+    met_defn_path = os.path.join(paths['met_defns_dir'], global_met['defn_filename'])
     
     timeformat = '%d/%m/%Y %H:%M'
     data = {
@@ -79,10 +79,10 @@ def create_inputs(paths, params):
     return name_input_file
 
 
-def main(internal_run_id, input_params):
+def main(internal_run_id, input_params, work_dir):
 
     params = combine_dicts(input_params, fixed_params)
-    paths = get_paths(params['run_name'], internal_run_id, run_type="traj")
+    paths = get_paths(params['run_name'], internal_run_id, work_dir, run_type="traj")
     output_dir = paths['output_dir']
     
     fn = create_inputs(paths, params)
@@ -108,8 +108,9 @@ def do_example():
         'release_date_time': datetime.datetime(2018, 1, 1, 0, 0, 0),  # in UTC
         #'release_date_time': datetime.datetime(2014, 7, 16, 0, 0, 0),  # in UTC
     }
+    work_dir = '/tmp/'
 
-    msg = main(internal_run_id, input_params)
+    msg = main(internal_run_id, input_params, work_dir)
     print(msg)
 
 

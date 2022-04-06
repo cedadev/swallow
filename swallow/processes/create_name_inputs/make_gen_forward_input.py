@@ -86,10 +86,10 @@ def create_inputs(paths, params):
     return name_input_file
 
 
-def main(internal_run_id, input_params):
+def main(internal_run_id, input_params, work_dir):
 
     params = combine_dicts(input_params, fixed_params)
-    paths = get_paths(params['RunName'], internal_run_id,
+    paths = get_paths(params['RunName'], internal_run_id, work_dir,
                       run_type='gen_forward')
     fn = create_inputs(paths, params)
     return f'wrote NAME general forward run input file {fn}'
@@ -126,7 +126,9 @@ def do_example():
         'ZGrid': [0., 500., 2000., 5000.],
     }
 
-    msg = main(internal_run_id, input_params)
+    work_dir = '/tmp'
+    
+    msg = main(internal_run_id, input_params, work_dir)
     print(msg)
 
 

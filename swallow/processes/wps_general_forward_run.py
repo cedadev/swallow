@@ -223,5 +223,5 @@ class GenForwardRun(NAMEBaseProcess):
         }
 
 
-    def _handler_backend(self, internal_run_id, input_params):
-        return make_gen_forward_input(internal_run_id, input_params)
+    def _handler_backend(self, *args):
+        return make_gen_forward_input(*args)

@@ -239,7 +239,7 @@ class NAMEBaseProcess(Process):
 
         internal_run_id = self._get_request_internal_id()
         input_params = self._get_processed_inputs(request)
-        msg = self._handler_backend(internal_run_id, input_params)
+        msg = self._handler_backend(internal_run_id, input_params, self.workdir)
         response.outputs['message'].data = msg
 
         d = input_params

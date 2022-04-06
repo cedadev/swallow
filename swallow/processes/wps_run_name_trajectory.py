@@ -100,5 +100,5 @@ class RunNAMETrajectory(NAMEBaseProcess):
         }
 
 
-    def _handler_backend(self, internal_run_id, input_params):
-        return make_traj_input(internal_run_id, input_params)
+    def _handler_backend(self, *args):
+        return make_traj_input(*args)

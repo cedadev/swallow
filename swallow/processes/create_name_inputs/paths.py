@@ -6,49 +6,37 @@ from .util import sanitise_name
 this_dir = os.path.dirname(os.path.realpath(__file__))
 template_dir = os.path.join(this_dir, 'templates')
 
+base_dir = '/gws/smf/j04/cedaproc/cedawps/swallow/files/20220406_1/'
+
 _paths = {
-    'gws': '/gws/nopw/j04/name'
-}
-_paths.update({
-    'work_dir': '/work/scratch-nopw/iwi/work.12345',  ##CHANGEME
     'met_decl_dir': f'{template_dir}/met_declarations',
-})
-_paths.update({
-    'name_input_dir': '/tmp', ##CHANGEME  # where to put the input file
-    'script_dir': f'{_paths["gws"]}/cache/users/arjones/SimpleTrajectoryRun',
-    'utils_dir': f'{_paths["gws"]}/cache/users/arjones/CommonUtilities',    
-    'defns_dir': f'{_paths["gws"]}/cache/users/arjones/FCM/vn8.0_jasmin/Resources/Defns',
-    'adaqpython_dir': f'{_paths["gws"]}/code/ADAQ_Python_v6.2',
-    'met_dir': f'{_paths["work_dir"]}/met_data',
-    'met_defns_dir': f'{_paths["gws"]}/code/NAME_v8_3/Resources/Defns/',
-})
-_paths.update({
-    'met_restore_script': f'{_paths["utils_dir"]}/MetRestore_JASMIN.sh',
-})
+    'utils_dir': f'{base_dir}/utils',
+    'met_defns_dir': f'{base_dir}/src/name/Resources/Defns',
+    'adaqpython_dir': f'{base_dir}/adaq',
+    'topog_dir': f'{base_dir}/topog',
+    'model_dir': f'{base_dir}/model',
+    'met_dir': '{work_dir}/met_data',
+    'input_file': '{work_dir}/{run_label}.txt',
+    'output_dir': '{work_dir}/NAME_Results_{run_label}',
+}
+_paths['met_restore_script'] = f'{_paths["utils_dir"]}/MetRestore_JASMIN.sh'
+
 
 _paths_by_run_type = {
     'traj': {
         'template_file': f'{template_dir}/traj_input.tmpl',
-        'nameiii_dir': f'{_paths["gws"]}/code/NAMEIII_v7_2_lotus',
-        'topog_dir': f'{_paths["gws"]}/code/NAMEIII_v7_2_lotus/Resources/Topog',
     },
     'met_extract': {
         'template_file': f'{template_dir}/met_extract_input.tmpl',
-        'nameiii_dir': f'{_paths["gws"]}/code/NAME_v8_3',
-        'topog_dir': f'{_paths["gws"]}/data/UMTopogData',
     },
     'gen_forward': {
         'template_file': f'{template_dir}/gen_forward_input.tmpl',
-        'topog_dir': f'{_paths["gws"]}/data/UMTopogData',
     },
 }
 
 
-input_file_fmt = '{run_label}.txt'
-output_dir_fmt = f'{_paths["work_dir"]}/NAME_Results_' '{run_label}'
 
-
-def get_paths(run_name, internal_run_id, run_type=None):
+def get_paths(run_name, internal_run_id, work_dir, run_type=None):
 
     paths = _paths.copy()
     
@@ -57,10 +45,15 @@ def get_paths(run_name, internal_run_id, run_type=None):
 
     run_label = f'{sanitise_name(run_name)}_{internal_run_id}'
 
-    paths['output_dir'] = output_dir_fmt.format(run_label=run_label)
-    paths['input_file'] = os.path.join(paths['name_input_dir'],
-                                       input_file_fmt.format(run_label=run_label))
-
+    substs = {
+        'run_label': run_label,
+        'work_dir': work_dir,
+        }
+    
     paths.update(_paths_by_run_type.get(run_type, {}))
+
+    for k, v in paths.items():
+        if '{' in v:
+            paths[k] = v.format(**substs)
 
     return paths

@@ -174,5 +174,5 @@ class ExtractMetData(NAMEBaseProcess):
         }
 
 
-    def _handler_backend(self, internal_run_id, input_params):
-        return make_met_extract_input(internal_run_id, input_params)
+    def _handler_backend(self, *args):
+        return make_met_extract_input(*args)
