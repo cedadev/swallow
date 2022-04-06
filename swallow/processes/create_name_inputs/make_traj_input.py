@@ -86,7 +86,7 @@ def main(internal_run_id, input_params, work_dir):
     output_dir = paths['output_dir']
     
     fn = create_inputs(paths, params)
-    return f'wrote NAME input file {fn}, to use output path {output_dir}'
+    return fn
     
 
 def do_example():

@@ -223,5 +223,5 @@ class GenForwardRun(NAMEBaseProcess):
         }
 
 
-    def _handler_backend(self, *args):
+    def _make_name_input(self, *args):
         return make_gen_forward_input(*args)

@@ -174,5 +174,5 @@ class ExtractMetData(NAMEBaseProcess):
         }
 
 
-    def _handler_backend(self, *args):
+    def _make_name_input(self, *args):
         return make_met_extract_input(*args)

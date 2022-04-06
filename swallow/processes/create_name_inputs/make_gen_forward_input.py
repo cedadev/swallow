@@ -92,7 +92,7 @@ def main(internal_run_id, input_params, work_dir):
     paths = get_paths(params['RunName'], internal_run_id, work_dir,
                       run_type='gen_forward')
     fn = create_inputs(paths, params)
-    return f'wrote NAME general forward run input file {fn}'
+    return fn
     
 
 def do_example():

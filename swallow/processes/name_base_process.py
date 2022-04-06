@@ -2,8 +2,8 @@ import os
 import datetime
 import logging
 
-from pywps import (Process, LiteralInput, LiteralOutput,
-                   BoundingBoxInput, BoundingBoxOutput)
+from pywps import (Process, LiteralInput, LiteralOutput, ComplexOutput,
+                   BoundingBoxInput, BoundingBoxOutput, FORMATS)
 from pywps.app.Common import Metadata
 
 LOGGER = logging.getLogger("PYWPS")
@@ -48,6 +48,22 @@ class NAMEBaseProcess(Process):
 
     _null_label = '(none)'
 
+    
+    def __init__(self, *args, **kwargs):
+        key = 'outputs'
+        if key in kwargs:
+            outputs = kwargs[key].copy()
+            outputs.extend(self._get_common_outputs())
+            kwargs[key] = outputs
+        super().__init__(*args, **kwargs)
+        
+
+    def _get_common_outputs(self):
+        return [ComplexOutput('name_input_file', 'Copy of NAME model input file',
+                              as_reference=True,
+                              supported_formats=[FORMATS.TEXT])]
+        
+        
     def _get_request_internal_id(self):
         # FIXME: is there any kind of request ID in the request? 
         # (I didn't find one.)
@@ -239,15 +255,17 @@ class NAMEBaseProcess(Process):
 
         internal_run_id = self._get_request_internal_id()
         input_params = self._get_processed_inputs(request)
-        msg = self._handler_backend(internal_run_id, input_params, self.workdir)
-        response.outputs['message'].data = msg
+        name_input_file = self._make_name_input(internal_run_id, input_params, self.workdir)
+
+        response.outputs['message'].data = f'made input file {name_input_file}'
 
         d = input_params
         response.outputs['inputs'].data = ', '.join(f'{k}: {d[k]}'
                                                     for k in sorted(d))
 
+        response.outputs['name_input_file'].file = name_input_file
         # uncomment to show inputs in UI
         response.outputs['message'].data += \
-            f' INPUTS: {response.outputs["inputs"].data}'
+            f' INPUTS: {response.outputs["inputs"].data} WORKDIR {self.workdir} FILES {os.listdir(self.workdir)}'
         
         return response

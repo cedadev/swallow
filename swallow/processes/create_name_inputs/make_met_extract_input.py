@@ -55,7 +55,7 @@ def main(internal_run_id, params, work_dir):
     paths = get_paths(params['run_name'], internal_run_id, work_dir,
                       run_type='met_extract')
     fn = create_inputs(paths, params)
-    return f'wrote NAME met extract input file {fn}'
+    return fn
     
 
 def do_example():
