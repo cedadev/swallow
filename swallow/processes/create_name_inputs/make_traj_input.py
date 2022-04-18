@@ -83,10 +83,11 @@ def main(internal_run_id, input_params, work_dir):
 
     params = combine_dicts(input_params, fixed_params)
     paths = get_paths(params['run_name'], internal_run_id, work_dir, run_type="traj")
-    output_dir = paths['output_dir']
-    
+        
     fn = create_inputs(paths, params)
-    return fn
+    output_dir = paths['output_dir']
+    dirs_to_create = [output_dir, paths['met_dir']]
+    return fn, output_dir, dirs_to_create
     
 
 def do_example():
@@ -110,8 +111,7 @@ def do_example():
     }
     work_dir = '/tmp/'
 
-    msg = main(internal_run_id, input_params, work_dir)
-    print(msg)
+    print(main(internal_run_id, input_params, work_dir))
 
 
 if __name__ == '__main__':

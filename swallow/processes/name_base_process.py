@@ -1,10 +1,14 @@
 import os
 import datetime
 import logging
+import time
 
 from pywps import (Process, LiteralInput, LiteralOutput, ComplexOutput,
                    BoundingBoxInput, BoundingBoxOutput, FORMATS)
+from pywps.inout.outputs import MetaLink4, MetaFile
 from pywps.app.Common import Metadata
+
+from .run_name_model import run_name_model
 
 LOGGER = logging.getLogger("PYWPS")
 
@@ -53,15 +57,45 @@ class NAMEBaseProcess(Process):
         key = 'outputs'
         if key in kwargs:
             outputs = kwargs[key].copy()
-            outputs.extend(self._get_common_outputs())
-            kwargs[key] = outputs
+        else:
+            outputs = []
+        outputs.extend(self._get_common_outputs())
+        kwargs[key] = outputs
         super().__init__(*args, **kwargs)
         
 
     def _get_common_outputs(self):
-        return [ComplexOutput('name_input_file', 'Copy of NAME model input file',
-                              as_reference=True,
-                              supported_formats=[FORMATS.TEXT])]
+        #
+        # Outputs which are common to all run types.
+        # In principle, individual run types can specify other output by passing
+        # outputs=[....] to the base class init (see above), but currently
+        # none of them need to do so.
+        #
+        return [
+            ComplexOutput('model_output_files',
+                          'METALINK v4 output',
+                          abstract='Metalink v4 document with references to output files.',
+                          as_reference=True,
+                          supported_formats=[FORMATS.META4],
+            ),
+            ComplexOutput('name_input_file', 'Copy of NAME model input file',
+                          as_reference=True,
+                          supported_formats=[FORMATS.TEXT]
+            ),
+            ComplexOutput('name_stdout', 'NAME model standard output',
+                          as_reference=True,
+                          supported_formats=[FORMATS.TEXT]
+            ),
+            ComplexOutput('name_stderr', 'NAME model standard error',
+                          as_reference=True,
+                          supported_formats=[FORMATS.TEXT]
+            ),
+            LiteralOutput('message', 'Status message',
+                          abstract=('This output gives a response from '
+                                    'the job submission process.'),
+                          keywords=['output', 'result', 'response'],
+                          data_type='string'),
+        ]
         
         
     def _get_request_internal_id(self):
@@ -231,41 +265,59 @@ class NAMEBaseProcess(Process):
                                 crss=['epsg:4326'],
                                 dimensions=2)
 
-    #================ OUTPUTS =======================
-
-    def _get_inputs_process_output(self):
-        return LiteralOutput('inputs', 'Copy of inputs',
-                             abstract=('This output just gives a string '
-                                       'confirming the inputs used.'),
-                             keywords=['output', 'result', 'response'],
-                             data_type='string')
-
-
-    def _get_message_process_output(self):
-        return LiteralOutput('message', 'Status message',
-                             abstract=('This output gives a response from '
-                                       'the job submission process.'),
-                             keywords=['output', 'result', 'response'],
-                             data_type='string')
-
-    #=======================================
     
     def _handler(self, request, response):
         self._logger.info(self._description)
 
         internal_run_id = self._get_request_internal_id()
         input_params = self._get_processed_inputs(request)
-        name_input_file = self._make_name_input(internal_run_id, input_params, self.workdir)
 
-        response.outputs['message'].data = f'made input file {name_input_file}'
+        name_input_file, output_dir, dirs_to_create = \
+            self._make_name_input(internal_run_id, input_params, self.workdir)
+
+        for path in dirs_to_create:
+            if not os.path.isdir(path):
+                os.makedirs(path)
+
+        t_start = time.time()
+        rtn_code, stdout_path, stderr_path = run_name_model(name_input_file, logdir=self.workdir)
+        run_time = time.time() - t_start
+        
+        response.outputs['name_input_file'].file = name_input_file
+        response.outputs['name_stdout'].file = stdout_path
+        response.outputs['name_stderr'].file = stderr_path
+        
+        ml4 = MetaLink4('name-result',
+                        "NAME model output file(s)",
+                        self.workdir)
+
+        filenames = os.listdir(output_dir)
+        n = len(filenames)
+        for i, fname in enumerate(filenames, start=1):
+            path = os.path.join(output_dir, fname)
+            mf = MetaFile(fname, f'NAME model output file {i}/{n} ({fname})', fmt=FORMATS.TEXT)
+            ml4.append(mf)
+
+        response.outputs['model_output_files'].data = ml4.xml
 
         d = input_params
-        response.outputs['inputs'].data = ', '.join(f'{k}: {d[k]}'
-                                                    for k in sorted(d))
+        inputs = ', '.join(f'\n  {k}: {d[k]}' for k in sorted(d))
 
-        response.outputs['name_input_file'].file = name_input_file
-        # uncomment to show inputs in UI
-        response.outputs['message'].data += \
-            f' INPUTS: {response.outputs["inputs"].data} WORKDIR {self.workdir} FILES {os.listdir(self.workdir)}'
+        message = f'''
+NAME model run type: {self._description}.
+WPS inputs: {inputs}
+Using working directory: {self.workdir} .
+The following output files were created: {filenames} .
+Process status code was: {rtn_code}.
+Run time was {run_time} seconds.
+Stdout path was {stdout_path} .
+Stderr path was {stderr_path} .
+'''
+        response.outputs['message'].data = message
+
+        
+        #os.system(f'cp {stdout_path} /tmp/')  # debug...
+        #os.system(f'cp {stderr_path} /tmp/')  # debug...
         
         return response
+

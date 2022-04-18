@@ -44,10 +44,6 @@ class RunNAMETrajectory(NAMEBaseProcess):
             self._get_image_format_process_input(),
             
         ]
-        outputs = [
-            self._get_inputs_process_output(),
-            self._get_message_process_output(),
-        ]
 
         super().__init__(
             self._handler,
@@ -59,7 +55,6 @@ class RunNAMETrajectory(NAMEBaseProcess):
             metadata=self._metadata,
             version=self._version,
             inputs=inputs,
-            outputs=outputs,
             store_supported=True,
             status_supported=True
         )

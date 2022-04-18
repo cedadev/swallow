@@ -35,7 +35,7 @@ def create_inputs(paths, params):
         'MetDir': paths['met_dir'],
         'MetHeight': params['met_height'],
         'MetRestoreScript': paths['met_restore_script'],
-        'OutputDir': paths['work_dir'],
+        'OutputDir': paths['output_dir'],
         'Run_Name': sanitise_name(params['run_name']),
         #'Run_Name': sanitise_description(params['description']),
         'StartTimeOfRun': run_start_time.strftime(timeformat),
@@ -54,8 +54,11 @@ def main(internal_run_id, params, work_dir):
 
     paths = get_paths(params['run_name'], internal_run_id, work_dir,
                       run_type='met_extract')
+
     fn = create_inputs(paths, params)
-    return fn
+    output_dir = paths['output_dir']
+    dirs_to_create = [output_dir, paths['met_dir']]
+    return fn, output_dir, dirs_to_create
     
 
 def do_example():
@@ -77,8 +80,7 @@ def do_example():
 
     work_dir = '/tmp'
     
-    msg = main(internal_run_id, input_params, work_dir)
-    print(msg)
+    print(main(internal_run_id, input_params, work_dir))
 
 
 if __name__ == '__main__':
