@@ -71,6 +71,11 @@ docs/html/
 docs/build/
 docs/source/output-sanitize.cfg
 
+# outputs of install_conda_env.sh
+setup-swallow.sh
+swallow_initial.yml
+swallow_full.yml
+
 # External Sources
 #src/external
 src/
