@@ -51,6 +51,7 @@ coverage/
 bin
 develop-eggs
 eggs
+.eggs
 parts
 build
 dist
@@ -84,6 +85,7 @@ src/
 *.log
 *.lock
 testdata.json
+scratch
 
 # IPython
 .ipynb_checkpoints
