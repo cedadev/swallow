@@ -8,7 +8,8 @@ from pywps import (Process, LiteralInput, LiteralOutput, ComplexOutput,
 from pywps.inout.outputs import MetaLink4, MetaFile
 from pywps.app.Common import Metadata
 
-from .run_name_model import run_name_model
+from ._run_name_model import run_name_model
+from ._plot_output import run_adaq_scripts
 
 LOGGER = logging.getLogger("PYWPS")
 
@@ -75,6 +76,12 @@ class NAMEBaseProcess(Process):
             ComplexOutput('model_output_files',
                           'METALINK v4 output',
                           abstract='Metalink v4 document with references to output files.',
+                          as_reference=True,
+                          supported_formats=[FORMATS.META4],
+            ),
+            ComplexOutput('plotting_files',
+                          'METALINK v4 output',
+                          abstract='Metalink v4 document with references to plots.',
                           as_reference=True,
                           supported_formats=[FORMATS.META4],
             ),
@@ -265,6 +272,37 @@ class NAMEBaseProcess(Process):
                                 crss=['epsg:4326'],
                                 dimensions=2)
 
+
+    def _create_metalink(self, dir_path, identity, description):
+        
+        ml4 = MetaLink4(identity=identity,
+                        description=f'{description} file(s)',
+                        workdir=self.workdir,
+                        publisher='swallow WPS')
+
+        filenames = os.listdir(dir_path)
+        n = len(filenames)
+        for i, fname in enumerate(filenames, start=1):
+            path = os.path.join(dir_path, fname)
+            file_desc = f'{description} file {i}/{n} ({fname})'
+            mf = MetaFile(file_desc, file_desc, fmt=FORMATS.TEXT)
+            mf.file = path
+            ml4.append(mf)
+
+        return ml4.xml
+
+
+    def _get_adaq_scripts_and_args(self, *args):
+        # to override in subclasses
+        return []
+    
+
+    def _make_work_file(self, contents, filename):
+        path = os.path.join(self.workdir, filename)
+        with open(path, 'w') as fout:
+            fout.write(contents)
+        return path
+
     
     def _handler(self, request, response):
         self._logger.info(self._description)
@@ -275,6 +313,9 @@ class NAMEBaseProcess(Process):
         name_input_file, output_dir, dirs_to_create = \
             self._make_name_input(internal_run_id, input_params, self.workdir)
 
+        plots_dir = os.path.join(self.workdir, 'plots')
+        dirs_to_create.append(plots_dir)
+        
         for path in dirs_to_create:
             if not os.path.isdir(path):
                 os.makedirs(path)
@@ -282,23 +323,18 @@ class NAMEBaseProcess(Process):
         t_start = time.time()
         rtn_code, stdout_path, stderr_path = run_name_model(name_input_file, logdir=self.workdir)
         run_time = time.time() - t_start
+
+        adaq_message = run_adaq_scripts(
+            self._get_adaq_scripts_and_args(input_params, output_dir, plots_dir))
         
         response.outputs['name_input_file'].file = name_input_file
         response.outputs['name_stdout'].file = stdout_path
         response.outputs['name_stderr'].file = stderr_path
         
-        ml4 = MetaLink4('name-result',
-                        "NAME model output file(s)",
-                        self.workdir)
-
-        filenames = os.listdir(output_dir)
-        n = len(filenames)
-        for i, fname in enumerate(filenames, start=1):
-            path = os.path.join(output_dir, fname)
-            mf = MetaFile(fname, f'NAME model output file {i}/{n} ({fname})', fmt=FORMATS.TEXT)
-            ml4.append(mf)
-
-        response.outputs['model_output_files'].data = ml4.xml
+        response.outputs['model_output_files'].data = \
+            self._create_metalink(output_dir, 'name-result', 'NAME model output')
+        response.outputs['plotting_files'].data = \
+            self._create_metalink(plots_dir, 'name-plots', 'NAME output plot')
 
         d = input_params
         inputs = ', '.join(f'\n  {k}: {d[k]}' for k in sorted(d))
@@ -307,17 +343,18 @@ class NAMEBaseProcess(Process):
 NAME model run type: {self._description}.
 WPS inputs: {inputs}
 Using working directory: {self.workdir} .
-The following output files were created: {filenames} .
 Process status code was: {rtn_code}.
 Run time was {run_time} seconds.
 Stdout path was {stdout_path} .
 Stderr path was {stderr_path} .
+
+Messages from plotting routines (if any):
+{adaq_message}
 '''
         response.outputs['message'].data = message
-
         
         #os.system(f'cp {stdout_path} /tmp/')  # debug...
         #os.system(f'cp {stderr_path} /tmp/')  # debug...
+        os.system(f'cp -r {self.workdir} /tmp/copy/')  # debug...
         
         return response
-

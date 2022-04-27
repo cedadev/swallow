@@ -1,7 +1,8 @@
 from pywps import LiteralInput
 
-from .name_base_process import NAMEBaseProcess
+from ._name_base_process import NAMEBaseProcess
 from .create_name_inputs.make_traj_input import main as make_traj_input
+from ._util import lon_to_str, lat_to_str
 
 
 class RunNAMETrajectory(NAMEBaseProcess):
@@ -56,7 +57,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
             version=self._version,
             inputs=inputs,
             store_supported=True,
-            status_supported=True
+            status_supported=True,
         )
 
     
@@ -97,3 +98,28 @@ class RunNAMETrajectory(NAMEBaseProcess):
 
     def _make_name_input(self, *args):
         return make_traj_input(*args)
+
+
+    def _get_adaq_scripts_and_args(self, input_params, outputs_dir, plots_dir):
+
+        lonstr = lon_to_str(input_params['longitude'])
+        latstr = lat_to_str(input_params['latitude'])
+        timestr = input_params['release_date_time'].strftime('%d/%m/%Y %H:%M')
+        plot_trajectory_ini_contents=f'''
+# plot configuration file for plotting NAME particle trajectories
+
+models_dir_list = ["{outputs_dir}/Data_Traj_C1_*.txt"]
+plot_dir        = "{plots_dir}"
+
+marker_interval = 3  # Marker interval in hours
+title = "{input_params['description']}"
+plotname = 'TrajectoryPlot.png'
+mo_branding = False
+release_info_list = [ '{lonstr}', '{latstr}', '{timestr}']
+mapping = 'countries'
+'''
+        plot_traj_args = [self._make_work_file(plot_trajectory_ini_contents, 'plot_trajectory.ini')]
+        
+        return [
+            ('plot_trajectory.py', plot_traj_args),
+        ]

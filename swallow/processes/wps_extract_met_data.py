@@ -1,7 +1,7 @@
 from pywps import LiteralInput
 from pywps.app.exceptions import ProcessError
 
-from .name_base_process import NAMEBaseProcess
+from ._name_base_process import NAMEBaseProcess
 from .create_name_inputs.make_met_extract_input \
     import main as make_met_extract_input
 
