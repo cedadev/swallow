@@ -7,9 +7,9 @@ Processes
     :local:
     :depth: 1
 
-Say Hello
----------
+Run NAME Trajecgtory
+--------------------
 
-.. autoprocess:: swallow.processes.wps_say_hello.SayHello
+.. autoprocess:: swallow.processes.wps_run_name_trajectory:RunNAMETrajectory
    :docstring:
    :skiplines: 1
