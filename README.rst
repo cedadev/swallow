@@ -34,6 +34,18 @@ To test the WPS, run:
 python -m pytest -W ignore tests
 ```
 
+Development and maintenance
+---------------------------
+
+To keep up-to-date with the birdhouse cookicutter, just run:
+
+```
+cruft update
+```
+
+It will pull in changes from the latest cookiecutter commit and merge them 
+in (maybe seamlessly).
+
 Credits
 -------
 
@@ -46,3 +58,4 @@ STFC Licence
 ------------
 
 `LICENCE <https://github.com/cedadev/swallow/blob/master/LICENSE>`_
+

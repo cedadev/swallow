@@ -50,9 +50,11 @@ coverage/
 # buildout
 bin
 develop-eggs
+.eggs
 eggs
 .eggs
 parts
+venv
 build
 dist
 downloads
