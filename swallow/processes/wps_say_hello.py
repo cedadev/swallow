@@ -54,7 +54,7 @@ class SayHello(Process):
 
         super(SayHello, self).__init__(
             self._handler,
-            identifier='hello',
+            identifier='SayHello',
             title='Say Hello',
             abstract='Just says a friendly Hello.'
                      'Returns literal string output based on the inputs.',

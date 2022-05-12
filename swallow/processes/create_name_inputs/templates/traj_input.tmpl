@@ -1,0 +1,89 @@
+! ******************************************************************************
+!
+! Project: Demo scripts and templates for research users on NAME-on-JASMIN
+!
+! File:    Input file template for NAME trajectory run from a single location
+!
+! Author:  Andrew Jones, Atmospheric Dispersion, UK Met Office
+!
+! Date:    07/07/2020
+!
+! For NAME Version: 7.2
+!
+! ******************************************************************************
+
+Main Options:
+Absolute or Relative Time?, Fixed Met?, Flat Earth?,    Run Name,      Random Seed, Max # Sources,  Backwards?
+                  Absolute,         No,          No,  {{Run_Name}}, Fixed (Parallel),            24, {{Backwards}}
+
+Restart File Options:
+# Cases Between Writes, Time Between Writes, Delete Old Files?, Write On Suspend?,
+                      ,                    ,                  ,                  ,
+
+Multiple Case Options:
+Dispersion Options Ensemble Size, Met Ensemble Size,
+                               1,                 1,
+
+OpenMP Options:
+Use OpenMP?,    Threads, Parallel MetRead, Parallel MetProcess,
+         No,          1,               No,                  No,
+
+Output Options:
+Folder
+{{OutputDir}}
+
+Input Files:
+File names
+{{MetDefnFile}}
+
+Horizontal Coordinate Systems:
+Name
+Lat-Long
+
+Vertical Coordinate Systems:
+Name
+m agl
+m asl
+
+Locations: Receptor Locations
+Name,              H-Coord,             X,             Y,
+{{SourceLoc_Name}}, Lat-Long, {{SourceLoc_X}}, {{SourceLoc_Y}},
+
+Temporal Grids:
+Name,                          nt,      dt,                t0,
+TGrid_Trajectories,          {{nT}}, 00:{{dT}},  {{StartTimeOfRun}},
+TGridHourly,        {{RunDuration}},   01:00, {{TimeAtFirstHour}},
+
+Domains:
+Name,              H Unbounded?,  H-Coord,          X Min,          X Max,          Y Min,          Y Max, Z Unbounded?, Z-Coord,   Z Max, T Unbounded?,       Start Time,       End Time,  Max Travel Time,
+Dispersion Domain,           No, Lat-Long, {{CompDom_Xmin}}, {{CompDom_Xmax}}, {{CompDom_Ymin}}, {{CompDom_Ymax}},           No,   m asl, 19000.0,           No, {{StartTimeOfRun}}, {{EndTimeOfRun}},         infinity,
+
+Species:
+        Name, Category, Half Life, UV Loss Rate, Surface Resistance, Deposition Velocity,  Molecular Weight, Material Unit,
+INERT-TRACER,    INERT,    Stable,     0.00E+00,                   ,                 0.0,                 0,             g,
+
+Species Uses:
+Species,     On Particles?, On Fields?, Advect Field?
+INERT-TRACER,          Yes,         No,            No
+
+Output Requirements - Fields:
+Name,                   Quantity, Species,      T-Grid, T Av Or Int, Sync?, Output Route, Output Format, Output Group
+% of run completed, Progress (%),        , TGridHourly,          No,   Yes,            D,            AF,      Numbers
+Count of particles,  # Particles,        , TGridHourly,          No,   Yes,            D,            AF,      Numbers
+
+Output Requirements - Sets of Particle/Puff Information:
+Output Name,      Source, Particles?, Puffs?, First Particle, Last Particle, First Puff, Last Puff, Met?, Mass?, Plume Rise?, Dispersion Scheme?, Puff Family?,  H-Coord, Z-Coord,             T-Grid, Sync?, Output Route, Output Format
+Data_Traj,              ,        Yes,     No,              0,             0,          0,         0,  Yes,    No,          No,                 No,           No, Lat-Long,   m agl, TGrid_Trajectories,    No,            D,             P
+
+Sets of Dispersion Options:
+Max # Particles, Max # Full Particles, Velocity Memory Time, Mesoscale Velocity Memory Time, Inhomogeneous Time, Skew Time,     Sync Time, DeltaOpt, Time of Fixed Met, Computational Domain, Deep Convection?, Radioactive Decay?, Agent Decay?, Dry Deposition?, Wet Deposition?,  Turbulence?, Mesoscale Motions?, Vertical Velocity?, Chemistry?
+           1000,                    2,                00:00,                          00:00,              00:00,     00:00, 00:{{SyncTime}},        1,                  ,    Dispersion Domain,              New,                 No,           No,              No,              No, {{Turbulence}},       {{Turbulence}}, {{VerticalVelocity}},         No
+{% for ReleaseHeight in ReleaseHeights %}
+! Source term {{loop.index}} for release at a height {{ReleaseHeight}} metres a.g.l.
+
+Sources:
+        Name,    Start Time,     Stop Time,   Shape,  H-Coord, Z-Coord,   Set of Locations,         Location, dH-Metres?, dZ-Metres?,                Z,   dX,   dY,   dZ, Angle, Top Hat,           # Particles,    Source Strength, Plume Rise?, Temperature, Volume Flow Rate,  Max Age
+Source_Z{{loop.index}}, {{StartTimeOfRun}}, {{StartTimeOfRun}},  Cuboid, Lat-Long,   m agl, Receptor Locations, {{SourceLoc_Name}},        Yes,        Yes,  {{ReleaseHeight}},  0.0,  0.0,  0.0,   0.0,     Yes, {{nParticlesPerSource}}, INERT-TRACER 1.0 g,          No,         0.0,              0.0, infinity
+{% endfor %}
+{% include MetDeclnTmpl %}
+

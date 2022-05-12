@@ -1,0 +1,85 @@
+! ******************************************************************************
+!
+! Project: Demo scripts and templates for research users on NAME-on-JASMIN
+!
+! File:    Input file template for NAME met extraction for multiple locations
+!
+! Author:  Andrew Jones, Atmospheric Dispersion, UK Met Office
+!
+! Date:    08/02/2022
+!
+! For NAME Version: 8.3
+!
+! ******************************************************************************
+
+Main Options: 
+Absolute or Relative Time?, Fixed Met?, Flat Earth?,   Run Name, Random Seed, Max # Sources
+                  Absolute,         No,          No, {{Run_Name}},       Fixed,             1
+
+Restart File Options:
+# Cases Between Writes, Time Between Writes, Delete Old Files?, Write On Suspend?,
+                      ,                    ,                  ,                  ,
+
+Multiple Case Options:
+Dispersion Options Ensemble Size, Met Ensemble Size,
+                               1,                 1,
+
+OpenMP Options:
+Use OpenMP?,    Threads, Parallel MetRead, Parallel MetProcess,
+         No,          1,               No,                  No,
+
+Output Options:
+Folder
+{{OutputDir}}
+
+Input Files:
+File names
+{{MetDefnFile}}
+
+Horizontal Coordinate Systems:
+Name
+Lat-Long
+
+Vertical Coordinate Systems:
+Name
+m agl
+m asl
+
+Horizontal Grids:
+Name,  Set of Locations,  dx,  dy
+HGrid,    Met Locations, 0.1, 0.1
+
+Vertical Grids:
+Name,  Z-Coord, nz,  dz,   z0
+ZGrid,   m agl,  1, 0.0, {{MetHeight}} 
+
+Temporal Grids:
+Name,                    nt,    dt,               t0,
+TGridHourly, {{nOutputTimes}}, 01:00, {{StartTimeOfRun}},
+
+Domains: 
+Name,              H Unbounded?,  H-Coord, X Min, X Max, Y Min, Y Max, Z Unbounded?, Z-Coord, Z Max, T Unbounded?,       Start Time,         End Time, Max Travel Time,
+Dispersion Domain,          Yes,         ,      ,      ,      ,      ,          Yes,        ,      ,           No, {{StartTimeOfRun}}, {{EndTimeOfRun}},        infinity,
+
+Output Requirements - Fields: 
+Name,  Quantity,                   H-Grid, Z-Grid,      T-Grid,  H-Coord, Z-Coord, BL Average, T Av Or Int, Av Time, # Av Times, Sync?, Output Route, Across, Separate File, Output Format, Output Group
+Req 1, Wind speed,                  HGrid,  ZGrid, TGridHourly,         ,        ,           ,          No,        ,           ,   Yes,            D,    XYZ,            XY,            ZA,    MetOutput
+Req 2, Wind direction (degrees),    HGrid,  ZGrid, TGridHourly, Lat-Long,        ,           ,          No,        ,           ,   Yes,            D,    XYZ,            XY,            ZA,    MetOutput
+Req 3, Cloud Amount (oktas),        HGrid,  ZGrid, TGridHourly,         ,        ,           ,          No,        ,           ,   Yes,            D,    XYZ,            XY,            ZA,    MetOutput
+Req 4, Temperature (C),             HGrid,  ZGrid, TGridHourly,         ,        ,           ,          No,        ,           ,   Yes,            D,    XYZ,            XY,            ZA,    MetOutput
+Req 5, Sensible heat flux,          HGrid,  ZGrid, TGridHourly,         ,        ,           ,          No,        ,           ,   Yes,            D,    XYZ,            XY,            ZA,    MetOutput
+Req 6, Boundary layer depth,        HGrid,  ZGrid, TGridHourly,         ,        ,           ,          No,        ,           ,   Yes,            D,    XYZ,            XY,            ZA,    MetOutput
+Req 7, Precipitation rate (mm/hr),  HGrid,  ZGrid, TGridHourly,         ,        ,           ,          No,        ,           ,   Yes,            D,    XYZ,            XY,            ZA,    MetOutput
+Req 8, Relative Humidity (%),       HGrid,  ZGrid, TGridHourly,         ,        ,           ,          No,        ,           ,   Yes,            D,    XYZ,            XY,            ZA,    MetOutput
+Req 9, Pasquill Stability,          HGrid,  ZGrid, TGridHourly,         ,        ,           ,          No,        ,           ,   Yes,            D,    XYZ,            XY,            ZA,    MetOutput
+
+Sets of Dispersion Options:
+Max # Particles, Max # Full Particles, Velocity Memory Time, Mesoscale Velocity Memory Time, Inhomogeneous Time, Skew Time, Sync Time, DeltaOpt, Time of Fixed Met, Computational Domain, Deep Convection?, Radioactive Decay?, Agent Decay?, Dry Deposition?, Wet Deposition?, Turbulence?, Mesoscale Motions?, Chemistry?
+              2,                    2,                00:00,                          00:00,              00:00,     00:00,     01:00,        1,                  ,    Dispersion Domain,               No,                 No,           No,              No,              No,          No,                 No,         No
+
+Locations: Met Locations
+Name,        H-Coord,       X,       Y
+{% for LocationName in LocationNames %}{{LocationName}}, Lat-Long, {{"%.2f"|format(LocationX[loop.index0])}}, {{"%.2f"|format(LocationY[loop.index0])}}
+{% endfor %}
+{% include MetDeclnTmpl %}
+
