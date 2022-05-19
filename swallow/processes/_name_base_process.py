@@ -79,12 +79,6 @@ class NAMEBaseProcess(Process):
                           as_reference=True,
                           supported_formats=[FORMATS.META4],
             ),
-            ComplexOutput('plotting_files',
-                          'METALINK v4 output',
-                          abstract='Metalink v4 document with references to plots.',
-                          as_reference=True,
-                          supported_formats=[FORMATS.META4],
-            ),
             ComplexOutput('name_input_file', 'Copy of NAME model input file',
                           as_reference=True,
                           supported_formats=[FORMATS.TEXT]
@@ -273,21 +267,22 @@ class NAMEBaseProcess(Process):
                                 dimensions=2)
 
 
-    def _create_metalink(self, dir_path, identity, description):
+    def _create_metalink(self, dir_paths, identity, description):
         
         ml4 = MetaLink4(identity=identity,
                         description=f'{description} file(s)',
                         workdir=self.workdir,
                         publisher='swallow WPS')
 
-        filenames = os.listdir(dir_path)
-        n = len(filenames)
-        for i, fname in enumerate(filenames, start=1):
-            path = os.path.join(dir_path, fname)
-            file_desc = f'{description} file {i}/{n} ({fname})'
-            mf = MetaFile(file_desc, file_desc, fmt=FORMATS.TEXT)
-            mf.file = path
-            ml4.append(mf)
+        for dir_path in dir_paths:
+            filenames = os.listdir(dir_path)
+            n = len(filenames)
+            for i, fname in enumerate(filenames, start=1):
+                path = os.path.join(dir_path, fname)
+                file_desc = f'{description} file {i}/{n} ({fname})'
+                mf = MetaFile(file_desc, file_desc, fmt=FORMATS.TEXT)
+                mf.file = path
+                ml4.append(mf)
 
         return ml4.xml
 
@@ -332,9 +327,7 @@ class NAMEBaseProcess(Process):
         response.outputs['name_stderr'].file = stderr_path
         
         response.outputs['model_output_files'].data = \
-            self._create_metalink(output_dir, 'name-result', 'NAME model output')
-        response.outputs['plotting_files'].data = \
-            self._create_metalink(plots_dir, 'name-plots', 'NAME output plot')
+            self._create_metalink([output_dir, plots_dir], 'name-result', 'NAME model output and plots')
 
         d = input_params
         inputs = ', '.join(f'\n  {k}: {d[k]}' for k in sorted(d))
