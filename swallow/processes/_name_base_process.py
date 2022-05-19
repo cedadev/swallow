@@ -30,7 +30,7 @@ class NAMEBaseProcess(Process):
         Metadata('Emu: PyWPS examples', 'https://emu.readthedocs.io/en/latest/'),
     ]
 
-    _stations = _stations = {
+    _stations = {
         'Auchencorth Moss': (-3.347222328, 55.88333511),
         'BT Tower (150m)': (-0.13888, 51.5215),
         'Bachok: (Malaysia)': (102.425, 6.009),
