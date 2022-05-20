@@ -8,6 +8,7 @@ dependencies:
 - pywps>=4.5.1,<4.6
 - iris
 - cartopy
+- pandas
 - jinja2
 - click
 - psutil
