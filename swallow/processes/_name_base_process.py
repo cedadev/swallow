@@ -270,19 +270,23 @@ class NAMEBaseProcess(Process):
     def _create_metalink(self, dir_paths, identity, description):
         
         ml4 = MetaLink4(identity=identity,
-                        description=f'{description} file(s)',
+                        description=description,
                         workdir=self.workdir,
                         publisher='swallow WPS')
 
+        outputs = []
         for dir_path in dir_paths:
             filenames = os.listdir(dir_path)
-            n = len(filenames)
-            for i, fname in enumerate(filenames, start=1):
+            for fname in filenames:
                 path = os.path.join(dir_path, fname)
-                file_desc = f'{description} file {i}/{n} ({fname})'
-                mf = MetaFile(file_desc, file_desc, fmt=FORMATS.TEXT)
-                mf.file = path
-                ml4.append(mf)
+                outputs.append((fname, path))
+            
+        n = len(outputs)
+        for i, (fname, path) in enumerate(outputs, start=1):
+            file_desc = f'{description} (file {i}/{n}: {fname})'
+            mf = MetaFile(file_desc, file_desc, fmt=FORMATS.TEXT)
+            mf.file = path
+            ml4.append(mf)
 
         return ml4.xml
 
@@ -327,7 +331,7 @@ class NAMEBaseProcess(Process):
         response.outputs['name_stderr'].file = stderr_path
         
         response.outputs['model_output_files'].data = \
-            self._create_metalink([output_dir, plots_dir], 'name-result', 'NAME model output and plots')
+            self._create_metalink([output_dir, plots_dir], 'name-result', 'NAME model output and plots files')
 
         d = input_params
         inputs = ', '.join(f'\n  {k}: {d[k]}' for k in sorted(d))
