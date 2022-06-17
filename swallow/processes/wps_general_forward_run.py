@@ -266,5 +266,5 @@ annote              = ''
         plot_field_args = [self._make_work_file(plot_field_ini_contents, 'plot_field.ini')]
         
         return [
-            ('plot_field.py', plot_field_args),
+            ('name_field_plot.py', plot_field_args),
         ]
