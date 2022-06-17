@@ -137,7 +137,7 @@ class NAMEBaseProcess(Process):
     #================= INPUTS ======================
     
     def _get_met_data_process_input(self):
-        return LiteralInput('MetData', 'met data',
+        return LiteralInput('MetData', 'Met Data',
                             abstract='which forcing dataset to use',
                             data_type='string',
                             allowed_values=["Global",
@@ -148,7 +148,7 @@ class NAMEBaseProcess(Process):
 
     
     def _get_notification_email_process_input(self):
-        return LiteralInput('NotificationEmail', 'notification email',
+        return LiteralInput('NotificationEmail', 'Notification Email',
                             abstract=('which email address to send '
                                       'notifications to'),
                             data_type='string',
@@ -157,7 +157,7 @@ class NAMEBaseProcess(Process):
 
     
     def _get_image_format_process_input(self):
-        return LiteralInput('ImageFormat', 'image format',
+        return LiteralInput('ImageFormat', 'Image Format',
                             abstract='format of output image file',
                             data_type='string',
                             default='PNG',
@@ -167,7 +167,7 @@ class NAMEBaseProcess(Process):
 
     
     def _get_run_duration_process_input(self):
-        return LiteralInput('RunDuration', 'run duration',
+        return LiteralInput('RunDuration', 'Run Duration',
                             abstract='duration of run, in hours',
                             data_type='integer',
                             allowed_values=[12, 24, 36, 48, 72, 96, 120,
@@ -177,7 +177,7 @@ class NAMEBaseProcess(Process):
 
     
     def _get_height_units_process_input(self):
-        return LiteralInput('HeightUnits', 'height units',
+        return LiteralInput('HeightUnits', 'Height Units',
                             abstract=('units for the height value '
                                       '(currently only m agl supported)'),
                             data_type='string',
@@ -208,14 +208,14 @@ class NAMEBaseProcess(Process):
                             default='00:00')
 
     def _get_date_time_process_inputs(self, name, label, description):
-        return [self._get_date_process_input(f'{name}Date', f'{label} date', description),
-                self._get_time_process_input(f'{name}Time', f'{label} time', description)]        
+        return [self._get_date_process_input(f'{name}Date', f'{label} Date', description),
+                self._get_time_process_input(f'{name}Time', f'{label} Time', description)]        
 
     def _get_start_date_time_process_inputs(self):
-        return self._get_date_time_process_inputs('Start', 'start', 'start of run')
+        return self._get_date_time_process_inputs('Start', 'Start', 'start of run')
 
     def _get_run_id_process_input(self):
-        return LiteralInput('RunID', 'run identifier',
+        return LiteralInput('RunID', 'Run Identifier',
                             abstract='* short text string to describe task',
                             data_type='string',
                             min_occurs=1,
@@ -223,7 +223,7 @@ class NAMEBaseProcess(Process):
 
     
     def _get_description_process_input(self):
-        return LiteralInput('Description', 'description',
+        return LiteralInput('Description', 'Description',
                             abstract='longer text description',
                             data_type='string',
                             min_occurs=0,
@@ -231,14 +231,14 @@ class NAMEBaseProcess(Process):
 
 
     def _get_latitude_process_input(self):
-        return LiteralInput('Latitude', 'latitude',
+        return LiteralInput('Latitude', 'Latitude',
                             abstract='latitude of trajectory start/end-point',
                             data_type='float',
                             min_occurs=0,
                             max_occurs=1)
 
     def _get_longitude_process_input(self):
-        return LiteralInput('Longitude', 'longitude',
+        return LiteralInput('Longitude', 'Longitude',
                             abstract='longitude of trajectory start/end-point',
                             data_type='float',
                             min_occurs=0,
@@ -246,7 +246,7 @@ class NAMEBaseProcess(Process):
 
     def _get_known_location_process_input(self):
         return LiteralInput('KnownLocation', 
-                            'standard location name (alternative to lon/lat)',
+                            'Standard Location Name (alternative to lon/lat)',
                             abstract='known location',
                             data_type='string',
                             min_occurs=0,
@@ -254,9 +254,9 @@ class NAMEBaseProcess(Process):
                             allowed_values=[self._null_label] + sorted(self._stations.keys()))
 
     
-    def _get_trajectory_heights_process_input(self):
-        return LiteralInput('TrajectoryHeights', 'trajectory heights',
-                            abstract='array of start/end heights of particles',
+    def _get_heights_process_input(self, label):
+        return LiteralInput('Heights', label,
+                            abstract='array of heights',
                             data_type='float',
                             min_occurs=1,
                             max_occurs=999,
@@ -335,7 +335,7 @@ class NAMEBaseProcess(Process):
         response.outputs['name_stderr'].file = stderr_path
         
         response.outputs['model_output_files'].data = \
-            self._create_metalink([output_dir, plots_dir], 'name-result', 'NAME model output and plots files')
+            self._create_metalink([output_dir, plots_dir], 'name-result', 'NAME model output files')
 
         d = input_params
         inputs = ', '.join(f'\n  {k}: {d[k]}' for k in sorted(d))

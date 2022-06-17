@@ -31,14 +31,14 @@ class RunNAMETrajectory(NAMEBaseProcess):
         ] + self._get_start_date_time_process_inputs() + [
             self._get_run_duration_process_input(),
             
-            LiteralInput('RunDirection', 'run direction',
+            LiteralInput('RunDirection', 'Run Direction',
                          abstract='whether to run forward or backward trajectories',
                          data_type='string',
                          allowed_values=['Forward', 'Backward'],
                          min_occurs=1,
                          max_occurs=1),
 
-            self._get_trajectory_heights_process_input(),
+            self._get_heights_process_input('Trajectory Heights'),
             self._get_height_units_process_input(),
             self._get_met_data_process_input(),
             self._get_notification_email_process_input(),
@@ -70,7 +70,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
         known_location = self._get_input(request, 'KnownLocation')
         latitude = self._get_input(request, 'Latitude')
         longitude = self._get_input(request, 'Longitude')
-        trajectory_heights = self._get_input(request, 'TrajectoryHeights', multi=True)
+        trajectory_heights = self._get_input(request, 'Heights', multi=True)
         release_date_time = self._get_start_date_time(request)
 
         if known_location != None and known_location != self._null_label:
@@ -82,7 +82,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
             'known_location': known_location,
             'longitude': longitude,
             'latitude': latitude,
-            'trajectory_heights': self._get_input(request, 'TrajectoryHeights', multi=True),
+            'trajectory_heights': trajectory_heights,
             'run_duration': self._get_input(request, 'RunDuration'),
             'run_direction': self._get_input(request, 'RunDirection'),
             'met_data': self._get_input(request, 'MetData'), 

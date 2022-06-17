@@ -32,14 +32,14 @@ class GenForwardRun(NAMEBaseProcess):
             self._get_longitude_process_input(),
             self._get_known_location_process_input(),
             
-            LiteralInput('ReleaseBottom', 'release bottom',
+            LiteralInput('ReleaseBottom', 'Release Bottom',
                          abstract='height at the bottom of the release',
                          data_type='float',
                          default=0.,
                          min_occurs=1,
                          max_occurs=1),
 
-            LiteralInput('ReleaseTop', 'release top',
+            LiteralInput('ReleaseTop', 'Release Top',
                          abstract='height at the top of the release',
                          data_type='float',
                          default=500.,
@@ -49,12 +49,12 @@ class GenForwardRun(NAMEBaseProcess):
         ] + self._get_start_date_time_process_inputs() + [
             self._get_run_duration_process_input(),
             
-        ] + (self._get_date_time_process_inputs('ReleaseStart', 'release start',
+        ] + (self._get_date_time_process_inputs('ReleaseStart', 'Release Start',
                                                 'start of species release') +
-             self._get_date_time_process_inputs('ReleaseStop', 'release stop',
+             self._get_date_time_process_inputs('ReleaseStop', 'Release Stop',
                                                 'end of species release')
         ) + [
-            LiteralInput('PredefDomain', 'predefined domain',
+            LiteralInput('PredefDomain', 'Predefined Domain',
                          abstract=('predefined model computational domain '
                                    '(alternative to choosing bounding box)'),
                          data_type='string',
@@ -63,9 +63,9 @@ class GenForwardRun(NAMEBaseProcess):
                          max_occurs=1),
 
             self._get_bounding_box_input('Domain',
-                                         'computational domain (if no predefined domain selected)'),
+                                         'Computational Domain (if no predefined domain selected)'),
             
-            LiteralInput('PredefOutputGrid', 'predefined output grid',
+            LiteralInput('PredefOutputGrid', 'Predefined Output Grid',
                          abstract=('predefined output grid '
                                    '(alternative to choosing bounding box and resolution)'),
                          data_type='string',
@@ -74,9 +74,9 @@ class GenForwardRun(NAMEBaseProcess):
                          max_occurs=1),
                                                     
             self._get_bounding_box_input('OutputGridExtent',
-                                         'output grid extent (if no predefined output grid selected)'),
+                                         'Output Grid Extent (if no predefined output grid selected)'),
 
-            LiteralInput('OutputGridNumLon', 'output grid nx (if no predefined output grid selected)', 
+            LiteralInput('OutputGridNumLon', 'Output Grid nx (if no predefined output grid selected)', 
                          abstract=('enter number of longitudes in output grid '
                                    'unless you have chosen a predefined output grid'),
                          data_type='integer',
@@ -84,7 +84,7 @@ class GenForwardRun(NAMEBaseProcess):
                          max_occurs=1,
                          default=300),
 
-            LiteralInput('OutputGridNumLat', 'output grid ny (if no predefined output grid selected)', 
+            LiteralInput('OutputGridNumLat', 'Output Grid ny (if no predefined output grid selected)', 
                          abstract=('enter number of latitudes in output grid '
                                    'unless you have chosen a predefined output grid'),
                          data_type='integer',
@@ -92,10 +92,10 @@ class GenForwardRun(NAMEBaseProcess):
                          max_occurs=1,
                          default=300),
 
-            self._get_trajectory_heights_process_input(),
+            self._get_heights_process_input('Grid Levels'),
             self._get_height_units_process_input(),
 
-            LiteralInput('MainTGrid_dT', 'timestep', 
+            LiteralInput('MainTGrid_dT', 'Timestep', 
                          abstract='main computational grid time resolution (hours)',
                          data_type='integer',
                          min_occurs=1,
@@ -210,7 +210,7 @@ class GenForwardRun(NAMEBaseProcess):
             'ReleaseTop': self._get_input(request, 'ReleaseTop'),
             'RunName': runID,
             'RunStart': self._get_start_date_time(request),
-            'ZGrid': self._get_input(request, 'TrajectoryHeights', multi=True),
+            'ZGrid': self._get_input(request, 'Heights', multi=True),
 
             # the following inputs are unused by make_wps_general_forward_input
             'notification_email': self._get_input(request, 'NotificationEmail'),

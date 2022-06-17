@@ -35,14 +35,14 @@ class ExtractMetData(NAMEBaseProcess):
             self._get_run_id_process_input(),
             self._get_description_process_input(),
 
-            LiteralInput('Coordinates', 'coordinates',
+            LiteralInput('Coordinates', 'Coordinates',
                          abstract=coords_abstract,
                          data_type='string',
                          min_occurs=0,
                          max_occurs=1),
                          #max_occurs=999),
             
-            LiteralInput('PredefinedLocations', 'predefined locations',
+            LiteralInput('PredefinedLocations', 'Predefined Locations',
                          abstract=('Optional additional locations chosen from '
                                    'predefined list '
                                    '(ctrl-click for multiple selection)'),
@@ -54,7 +54,7 @@ class ExtractMetData(NAMEBaseProcess):
         ] + self._get_start_date_time_process_inputs() + [
             self._get_run_duration_process_input(),
             
-            LiteralInput('MetHeight', 'met data height',
+            LiteralInput('MetHeight', 'Met Data Height',
                          abstract='* height at which to extract met data',
                          data_type='float',
                          min_occurs=1,
