@@ -105,7 +105,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
         lonstr = lon_to_str(input_params['longitude'])
         latstr = lat_to_str(input_params['latitude'])
         timestr = input_params['release_date_time'].strftime('%d/%m/%Y %H:%M')
-        plot_trajectory_ini_contents=f'''
+        plot_trajectory_ini_contents = f'''
 # plot configuration file for plotting NAME particle trajectories
 
 models_dir_list = ["{outputs_dir}/Data_Traj_C1_*.txt"]
