@@ -7,7 +7,7 @@ from pywps import (Process, LiteralInput, LiteralOutput, ComplexOutput,
                    BoundingBoxInput, BoundingBoxOutput, FORMATS)
 from pywps.inout.outputs import MetaLink4, MetaFile
 from pywps.app.Common import Metadata
-from pywps.response.status import WPS_STATUS
+from pywps.app.exceptions import ProcessError
 
 from ._run_name_model import run_name_model
 from ._plot_output import run_adaq_scripts
@@ -306,7 +306,6 @@ class NAMEBaseProcess(Process):
     
     def _handler(self, request, response):
         self._logger.info(self._description)
-        failed = False
 
         internal_run_id = self._get_request_internal_id()
         input_params = self._get_processed_inputs(request)
@@ -325,21 +324,18 @@ class NAMEBaseProcess(Process):
         rtn_code, stdout_path, stderr_path = run_name_model(name_input_file, logdir=self.workdir)
         run_time = time.time() - t_start
 
-        if rtn_code == 0:
-            adaq_message = run_adaq_scripts(
-                self._get_adaq_scripts_and_args(input_params, output_dir, plots_dir))
-            files_descrip = 'NAME model output and plots files'
-        else:
-            adaq_message = 'Because FORTRAN code gave non-zero exit code, skipping call to plotting.'
-            files_descrip = 'NAME model output (if any) from failed run'
-            failed = True
+        if rtn_code != 0:
+            raise ProcessError(f"NAME Fortran code exited abnormally (status={rtn_code})")
             
+        adaq_message = run_adaq_scripts(
+            self._get_adaq_scripts_and_args(input_params, output_dir, plots_dir))
+                        
         response.outputs['name_input_file'].file = name_input_file
         response.outputs['name_stdout'].file = stdout_path
         response.outputs['name_stderr'].file = stderr_path
         
         response.outputs['model_output_files'].data = \
-            self._create_metalink([output_dir, plots_dir], 'name-result', files_descrip)
+            self._create_metalink([output_dir, plots_dir], 'name-result', 'NAME model output and plots files')
 
         d = input_params
         inputs = ', '.join(f'\n  {k}: {d[k]}' for k in sorted(d))
@@ -348,7 +344,6 @@ class NAMEBaseProcess(Process):
 NAME model run type: {self._description}.
 WPS inputs: {inputs}
 Using working directory: {self.workdir} .
-Process status code was: {rtn_code}.
 Run time was {run_time} seconds.
 Stdout path was {stdout_path} .
 Stderr path was {stderr_path} .
@@ -361,8 +356,5 @@ Messages from plotting routines (if any):
         #os.system(f'cp {stdout_path} /tmp/')  # debug...
         #os.system(f'cp {stderr_path} /tmp/')  # debug...
         #os.system(f'cp -r {self.workdir} /tmp/copy/')  # debug...
-        
-        #if failed:
-        #    response.status = WPS_STATUS.FAILED
-        
+               
         return response
