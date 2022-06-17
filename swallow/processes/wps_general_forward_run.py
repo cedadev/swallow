@@ -187,6 +187,8 @@ class GenForwardRun(NAMEBaseProcess):
             hgrid_extent = predef_output_grid[0:4]
                     
         return {
+            'Description': self._get_input(request, 'Description',
+                                           default='NAME general forward run'),
             'Domain_Xmax': domain[2],
             'Domain_Xmin': domain[0],
             'Domain_Ymax': domain[3],
@@ -219,3 +221,50 @@ class GenForwardRun(NAMEBaseProcess):
 
     def _make_name_input(self, *args):
         return make_gen_forward_input(*args)
+
+
+    def _get_adaq_scripts_and_args(self, input_params, outputs_dir, plots_dir):
+
+        plot_field_ini_contents = f'''
+
+# plot configuration file for plotting NAME field output
+
+# NAME output fields
+field_attribute_dict = {{'Species':'TRACER'}}
+# z level choices - optional
+z_level_list = [50]
+z_leveltype = 'height'
+
+short_name_list = ["TRACER_AIR_CONCENTRATION"]
+
+models_list     = ["name"]
+models_fmt_list = ["name"]
+models_dir_list = ["{outputs_dir}/Fields_grid1_C1_*.txt"]
+
+plot_dir        = "{plots_dir}"
+
+# Style options
+#levels_list = [1.0e-8, 3.2e-8, 1.0e-7, 3.2e-7, 1.0e-6, 3.2e-6, 1.0e-5, 3.2e-5]
+extent_list = [-30, 40, 25, 75]
+cmap        = 'YlGnBu'
+mapping     = 'countries'
+projection  = 'PlateCarree'
+plottype    = 'pcolormesh'
+cbar        = True
+#cbar_label  = 'Concentration'
+title       = 'name_verbose'
+suptitle    = "{input_params['Description']}"
+mobrand     = False
+back        = False
+
+annote_location     = 'right'
+#annote              = 'Here are a few lines of text\n intended to test the annotation feature.\n\n \
+#You can replace this with your own text or\nchoose one of the default annotation options.'
+annote              = ''
+
+'''
+        plot_field_args = [self._make_work_file(plot_field_ini_contents, 'plot_field.ini')]
+        
+        return [
+            ('plot_field.py', plot_field_args),
+        ]
