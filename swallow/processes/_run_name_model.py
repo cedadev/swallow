@@ -1,6 +1,7 @@
 import os
 import subprocess
 
+# Define paths
 install_root = "/gws/smf/j04/cedaproc/cedawps/swallow/files/"
 exe_rel_path = "model/run_name.sh"
 
