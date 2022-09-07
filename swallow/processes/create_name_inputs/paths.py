@@ -32,6 +32,9 @@ _paths_by_run_type = {
     'gen_forward': {
         'template_file': f'{template_dir}/gen_forward_input.tmpl',
     },
+    'air_history': {
+        'template_file': f'{template_dir}/air_history_input.tmpl',
+    },
 }
 
 

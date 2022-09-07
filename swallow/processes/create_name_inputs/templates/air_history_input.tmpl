@@ -14,7 +14,7 @@
 
 Main Options:
 Absolute or Relative Time?, Fixed Met?, Flat Earth?,    Run Name, Random Seed, Max # Sources, Backwards?
-                  Absolute,         No,          No,  %Run_Name%,       Fixed,             1,        Yes
+                  Absolute,         No,          No,  {{Run_Name}},       Fixed,             1,        Yes
 
 Restart File Options:
 # Cases Between Writes, Time Between Writes, Delete Old Files?, Write On Suspend?,
@@ -30,11 +30,11 @@ Use OpenMP?, Threads, Particle Update Threads, Output Group Threads
 
 Output Options:
 Folder
-%OutputDir%
+{{OutputDir}}
 
 Input Files:
 File names
-%MetDefnFile%
+{{MetDefnFile}}
 
 Horizontal Coordinate Systems:
 Name
@@ -47,11 +47,11 @@ m asl
 
 Locations: Receptor Locations
 Name,                H-Coord,               X,               Y,
-%ReceptorLoc_Name%, Lat-Long, %ReceptorLoc_X%, %ReceptorLoc_Y%,
+{{ReceptorLoc_Name}}, Lat-Long, {{ReceptorLoc_X}}, {{ReceptorLoc_Y}},
 
 Horizontal Grids:
 Name,            H-Coord,         nX,         nY,        X Min,        Y Min,        X Max,        Y Max,
-HGridForFields, Lat-Long, %HGrid_nX%, %HGrid_nY%, %HGrid_Xmin%, %HGrid_Xmax%, %HGrid_Ymin%, %HGrid_Ymax%,
+HGridForFields, Lat-Long, {{HGrid_nX}}, {{HGrid_nY}}, {{HGrid_Xmin}}, {{HGrid_Xmax}}, {{HGrid_Ymin}}, {{HGrid_Ymax}},
 
 Vertical Grids:
 Name,           Z-Coord,        Z-Array,      Av Z-Array,
@@ -59,13 +59,13 @@ ZGridForFields,   m agl, ZGridForFields, Z on Boundaries,
 
 Temporal Grids:
 Name,                         nT,                dT,               T0,
-TGridForFields,   %MainTGrid_nT%, %MainTGrid_dT%:00,   %MainTGrid_T0%,
-TGridHourly,    %HourlyTGrid_nT%,             01:00, %HourlyTGrid_T0%,
-TGridEndOfRun,                 1,     %Duration%:00,   %EndTimeOfRun%,
+TGridForFields,   {{MainTGrid_nT}}, {{"%02d"|format(MainTGrid_dT)}}:00,   {{MainTGrid_T0}},
+TGridHourly,    {{HourlyTGrid_nT}},             01:00, {{HourlyTGrid_T0}},
+TGridEndOfRun,                 1,     {{Duration}}:00,   {{EndTimeOfRun}},
 
 Domains:
 Name,              H Unbounded?,  H-Coord,          X Min,          X Max,          Y Min,          Y Max, Z Unbounded?, Z-Coord,   Z Max, T Unbounded?,       Start Time,       End Time, Max Travel Time,
-Dispersion Domain,           No, Lat-Long, %CompDom_Xmin%, %CompDom_Xmax%, %CompDom_Ymin%, %CompDom_Ymax%,           No,   m asl, 30000.0,           No, %StartTimeOfRun%, %EndTimeOfRun%,        infinity,
+Dispersion Domain,           No, Lat-Long, {{CompDom_Xmin}}, {{CompDom_Xmax}}, {{CompDom_Ymin}}, {{CompDom_Ymax}},           No,   m asl, 30000.0,           No, {{StartTimeOfRun}}, {{EndTimeOfRun}},        infinity,
 
 Species:
 Name,         Category, Half Life, UV Loss Rate, Surface Resistance, Deposition Velocity, Mean aerosol diameter, A rain - BC, B rain - BC, A snow - BC, B snow - BC, A rain - IC, B rain - IC, A snow - IC, B snow - IC, Molecular Weight, Material Unit,
@@ -77,12 +77,12 @@ INERT-TRACER,           Yes,         No,            No
 
 Sources:
       Name,     Start Time,     Stop Time,   Shape,  H-Coord, Z-Coord,   Set of Locations,           Location, dH-Metres?, dZ-Metres?,          Z,          dZ,  dX,  dY, Angle, Top Hat,          # Particles,       Source Strength, Plume Rise?, Temperature, Volume Flow Rate,  Max Age
-Receptor_1, %ReleaseStart%, %ReleaseStop%,  Cuboid, Lat-Long,   m agl, Receptor Locations, %ReceptorLoc_Name%,        Yes,        Yes, %ReleaseZ%, %ReleaseDZ%, 0.0, 0.0,   0.0,     Yes, %nParticlesPerHr%/hr, INERT-TRACER 1.0 g/hr,          No,         0.0,              0.0, infinity
+Receptor_1, {{ArrivalStart}}, {{ArrivalStop}},  Cuboid, Lat-Long,   m agl, Receptor Locations, {{ReceptorLoc_Name}},        Yes,        Yes, {{"%.3f"|format(ArrivalZ)}}, {{ArrivalDZ}}, 0.0, 0.0,   0.0,     Yes, {{nParticlesPerHr}}/hr, INERT-TRACER 1.0 g/hr,          No,         0.0,              0.0, infinity
 
 Output Requirements - Fields:
 Quantity,          Decay deposition?,      Species, Source,         H-Grid,          Z-Grid,         T-Grid, BL Average, T Av or Int,           Av Time,    # Av Times, Sync?, Across, Separate File, Output Route, Output Format,  Output Group
-Air Concentration,                  , INERT-TRACER,       , HGridForFields,  ZGridForFields, TGridForFields,         No,         Int, %MainTGrid_dT%:00, %AvTimesMain%,    No,     TZ,             T,            D,            IA,  Fields_grid1
-Air Concentration,                  , INERT-TRACER,       , HGridForFields,  ZGridForFields,  TGridEndOfRun,         No,         Int,     %Duration%:00,  %AvTimesAll%,    No,     TZ,             T,            D,            IA,  Fields_grid2
+Air Concentration,                  , INERT-TRACER,       , HGridForFields,  ZGridForFields, TGridForFields,         No,         Int, {{"%02d"|format(MainTGrid_dT)}}:00, {{AvTimesMain}},    No,     TZ,             T,            D,            IA,  Fields_grid1
+Air Concentration,                  , INERT-TRACER,       , HGridForFields,  ZGridForFields,  TGridEndOfRun,         No,         Int,     {{Duration}}:00,  {{AvTimesAll}},    No,     TZ,             T,            D,            IA,  Fields_grid2
 
 Output Requirements - Fields:
 Name,                   Quantity, Species,      T-Grid, T Av Or Int, Sync?, Output Route, Output Format, Output Group
@@ -91,4 +91,11 @@ Count of particles,  # Particles,        , TGridHourly,          No,   Yes,     
 
 Sets of Dispersion Options:
 Max # Particles, Max # Full Particles, Velocity Memory Time, Mesoscale Velocity Memory Time, Inhomogeneous Time, Skew Time,     Sync Time, DeltaOpt, Time of Fixed Met, Computational Domain, Deep Convection?, Radioactive Decay?, Agent Decay?, Dry Deposition?, Wet Deposition?, Turbulence?, Mesoscale Motions?, Vertical Velocity?, Chemistry?
-        1000000,                    2,                00:00,                          00:00,              00:00,     00:00, 00:%SyncTime%,        1,                  ,    Dispersion Domain,              New,                Yes,           No,             Yes,             Yes,         Yes,                Yes,                Yes,         No
+        1000000,                    2,                00:00,                          00:00,              00:00,     00:00, 00:{{"%02d"|format(SyncTime)}},        1,                  ,    Dispersion Domain,              New,                Yes,           No,             Yes,             Yes,         Yes,                Yes,                Yes,         No
+
+Array: ZGridForFields
+Array Values
+{% for Height in ZGrid %}{{Height}}
+{% endfor %}
+{% include MetDeclnTmpl %}
+
