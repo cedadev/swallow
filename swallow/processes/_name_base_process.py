@@ -324,8 +324,8 @@ class NAMEBaseProcess(Process):
         rtn_code, stdout_path, stderr_path = run_name_model(name_input_file, logdir=self.workdir)
         run_time = time.time() - t_start
 
-        if rtn_code != 0:
-            raise ProcessError(f"NAME Fortran code exited abnormally (status={rtn_code})")
+        #if rtn_code != 0:
+        #    raise ProcessError(f"NAME Fortran code exited abnormally (status={rtn_code})")
             
         adaq_message = run_adaq_scripts(
             self._get_adaq_scripts_and_args(input_params, output_dir, plots_dir))
@@ -340,17 +340,22 @@ class NAMEBaseProcess(Process):
         d = input_params
         inputs = ', '.join(f'\n  {k}: {d[k]}' for k in sorted(d))
 
+#        message = f'''
+#NAME model run type: {self._description}.
+#WPS inputs: {inputs}
+#Using working directory: {self.workdir} .
+#Run time was {run_time} seconds.
+#Stdout path was {stdout_path} .
+#Stderr path was {stderr_path} .
+#
+#Messages from plotting routines (if any):
+#{adaq_message}
+#'''
         message = f'''
-NAME model run type: {self._description}.
-WPS inputs: {inputs}
-Using working directory: {self.workdir} .
-Run time was {run_time} seconds.
-Stdout path was {stdout_path} .
-Stderr path was {stderr_path} .
-
-Messages from plotting routines (if any):
-{adaq_message}
+NAME model run type: {self._description} completed.
 '''
+
+
         response.outputs['message'].data = message
                 
         #os.system(f'cp {stdout_path} /tmp/')  # debug...
