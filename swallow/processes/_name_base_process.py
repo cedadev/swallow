@@ -2,6 +2,7 @@ import os
 import datetime
 import logging
 import time
+import sys
 
 from pywps import (Process, LiteralInput, LiteralOutput, ComplexOutput,
                    BoundingBoxInput, BoundingBoxOutput, FORMATS)
@@ -303,15 +304,29 @@ class NAMEBaseProcess(Process):
             fout.write(contents)
         return path
 
+
+    def _update_status(self, message, percentage):
+        self.response.update_status(message, float(percentage))
+        sys.stderr.write(f"UPDATE STATUS: {message} {percentage}\n")
+        
     
     def _handler(self, request, response):
         self._logger.info(self._description)
-
+        model_start_pc = 10
+        model_end_pc = 90
+        
+        # Set self.response so it can be modified in other methods
+        self.response = response
+        
+        self._update_status('Job is now running', 0)
+        
         internal_run_id = self._get_request_internal_id()
         input_params = self._get_processed_inputs(request)
 
         name_input_file, output_dir, dirs_to_create = \
             self._make_name_input(internal_run_id, input_params, self.workdir)
+
+        self._update_status('Input file for Model model created', model_start_pc)
 
         plots_dir = os.path.join(self.workdir, 'plots')
         dirs_to_create.append(plots_dir)
@@ -321,15 +336,23 @@ class NAMEBaseProcess(Process):
                 os.makedirs(path)
 
         t_start = time.time()
-        rtn_code, stdout_path, stderr_path = run_name_model(name_input_file, logdir=self.workdir)
+        rtn_code, stdout_path, stderr_path = run_name_model(name_input_file,
+                                                            logdir=self.workdir,
+                                                            update_status_callback=self._update_status,
+                                                            start_percent=model_start_pc,
+                                                            end_percent=model_end_pc)
         run_time = time.time() - t_start
 
         if rtn_code != 0:
             raise ProcessError(f"NAME Fortran code exited abnormally (status={rtn_code})")
             
+        self._update_status('Model code completed - starting plotting', model_end_pc)
+
         adaq_message = run_adaq_scripts(
             self._get_adaq_scripts_and_args(input_params, output_dir, plots_dir))
                         
+        self._update_status('Plots completed', 100)  # basically 100% done at this point
+
         response.outputs['name_input_file'].file = name_input_file
         response.outputs['name_stdout'].file = stdout_path
         response.outputs['name_stderr'].file = stderr_path
