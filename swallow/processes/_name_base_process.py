@@ -306,8 +306,11 @@ class NAMEBaseProcess(Process):
 
 
     def _update_status(self, message, percentage):
-        self.response.update_status(message, float(percentage))
-        sys.stderr.write(f"UPDATE STATUS: {message} {percentage}\n")
+        pc = round(percentage)
+        pc = max(pc, 0)
+        pc = min(pc, 100)
+        self.response.update_status(message, pc)
+        sys.stderr.write(f"UPDATE STATUS: {message} {pc}\n")
         
     
     def _handler(self, request, response):
