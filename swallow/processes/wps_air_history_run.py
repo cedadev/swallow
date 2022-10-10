@@ -52,7 +52,8 @@ class AirHistoryRun(NAMEBaseProcess):
         ] + (self._get_date_time_process_inputs('ArrivalStart', 'Arrival Start',
                                                 'start of arrival period') +
              self._get_date_time_process_inputs('ArrivalStop', 'Arrival Stop',
-                                                'end of arrival period')
+                                                'end of arrival period [NOTE: EARLIER than ArrivalStart, as backwards-running model]',
+                                                default_add_hours=-3)
         ) + [
             LiteralInput('PredefDomain', 'Predefined Domain',
                          abstract=('predefined model computational domain '
