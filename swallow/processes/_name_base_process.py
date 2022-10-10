@@ -366,15 +366,18 @@ class NAMEBaseProcess(Process):
         if rtn_code != 0:
             raise ProcessError(f"NAME Fortran code exited abnormally (status={rtn_code})")
             
-        self._update_status('Model code completed - starting plotting', model_end_pc)
-
+        self._update_status('Model code completed - starting plotting', model_end_pc)        
 
         image_extension = self._get_image_extension(input_params)
-        adaq_message = run_adaq_scripts(
-            self._get_adaq_scripts_and_args(input_params, output_dir, plots_dir, image_extension))
-                        
-        self._update_status('Plots completed', 100)  # basically 100% done at this point
-
+        adaq_scripts_and_args = self._get_adaq_scripts_and_args(
+            input_params, output_dir, plots_dir, image_extension)
+        if adaq_scripts_and_args:
+            adaq_message = run_adaq_scripts(adaq_scripts_and_args)                        
+            self._update_status('Plots completed', 100)  # basically 100% done at this point
+        else:
+            adaq_message = '(plots not produced for this run type)'
+            self._update_status('Run completed', 100)
+            
         response.outputs['name_input_file'].file = name_input_file
         response.outputs['name_stdout'].file = stdout_path
         response.outputs['name_stderr'].file = stderr_path
