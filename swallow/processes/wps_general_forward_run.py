@@ -105,7 +105,7 @@ class GenForwardRun(NAMEBaseProcess):
             #==================================================
  
             self._get_notification_email_process_input(),
-            self._get_image_format_process_input(),
+            #self._get_image_format_process_input(),
         ]
         
         super().__init__(
@@ -214,7 +214,7 @@ class GenForwardRun(NAMEBaseProcess):
 
             # the following inputs are unused by make_wps_general_forward_input
             'notification_email': self._get_input(request, 'NotificationEmail'),
-            'image_format': self._get_input(request, 'ImageFormat'),
+            #'image_format': self._get_input(request, 'ImageFormat'),
             'met_height_units': self._get_input(request, 'HeightUnits'),
         }
 
@@ -223,7 +223,10 @@ class GenForwardRun(NAMEBaseProcess):
         return make_gen_forward_input(*args)
 
 
-    def _get_adaq_scripts_and_args(self, input_params, outputs_dir, plots_dir):
+    def _get_adaq_scripts_and_args(self, input_params, outputs_dir, plots_dir, image_extension):
+        # image_extension not used as does not seem to be supported in name_field_plot.py
+        # so also commented out above the call to self._get_image_format_process_input
+        # and the inclusion in the dictionary returned by _get_processed_inputs
 
         plot_field_ini_contents = f'''
 
