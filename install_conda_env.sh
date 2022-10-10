@@ -32,7 +32,14 @@ fi
 
 rm -fr $initial_yml_file $full_yml_file $setup_file
 
-echo "source $mc_path/bin/activate" > $setup_file
+cat >> $setup_file <<EOF
+if [ -z "\$CONDA_PREFIX" ]
+then
+    . $mc_path/bin/activate
+else
+    echo "Miniconda already set up"
+fi
+EOF
 
 cat > $initial_yml_file <<EOF
 name: $mc_env
