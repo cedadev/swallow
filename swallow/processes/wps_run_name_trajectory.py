@@ -89,11 +89,9 @@ class RunNAMETrajectory(NAMEBaseProcess):
             'run_name': runID,
             'release_date_time': release_date_time,
 
-            # used by _get_adaq_scripts_and_args
-            'image_format': self._get_input(request, 'ImageFormat'),
-
-            # the following inputs are currently unused
+            # the following inputs are unused by make_traj_input
             'notification_email': self._get_input(request, 'NotificationEmail'),
+            'image_format': self._get_input(request, 'ImageFormat'),
             'trajectory_height_units': self._get_input(request, 'HeightUnits'),
         }
 
@@ -102,8 +100,8 @@ class RunNAMETrajectory(NAMEBaseProcess):
         return make_traj_input(*args)
 
 
-    def _get_adaq_scripts_and_args(self, input_params, outputs_dir, plots_dir, image_extension):
-        
+    def _get_adaq_scripts_and_args(self, input_params, outputs_dir, plots_dir):
+
         lonstr = lon_to_str(input_params['longitude'])
         latstr = lat_to_str(input_params['latitude'])
         timestr = input_params['release_date_time'].strftime('%d/%m/%Y %H:%M')
@@ -115,7 +113,7 @@ plot_dir        = "{plots_dir}"
 
 marker_interval = 3  # Marker interval in hours
 title = "{input_params['description']}"
-plotname = 'TrajectoryPlot.{image_extension}'
+plotname = 'TrajectoryPlot.png'
 mo_branding = False
 release_info_list = [ '{lonstr}', '{latstr}', '{timestr}']
 mapping = 'countries'
