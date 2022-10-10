@@ -306,8 +306,11 @@ class NAMEBaseProcess(Process):
 
 
     def _update_status(self, message, percentage):
-        self.response.update_status(message, float(percentage))
-        sys.stderr.write(f"UPDATE STATUS: {message} {percentage}\n")
+        pc = round(percentage)
+        pc = max(pc, 0)
+        pc = min(pc, 100)
+        self.response.update_status(message, pc)
+        sys.stderr.write(f"UPDATE STATUS: {message} {pc}\n")
         
     
     def _handler(self, request, response):
@@ -348,8 +351,10 @@ class NAMEBaseProcess(Process):
             
         self._update_status('Model code completed - starting plotting', model_end_pc)
 
+
+        image_extension = self._get_image_extension(input_params)
         adaq_message = run_adaq_scripts(
-            self._get_adaq_scripts_and_args(input_params, output_dir, plots_dir))
+            self._get_adaq_scripts_and_args(input_params, output_dir, plots_dir, image_extension))
                         
         self._update_status('Plots completed', 100)  # basically 100% done at this point
 
@@ -381,3 +386,19 @@ Messages from plotting routines (if any):
         #os.system(f'cp -r {self.workdir} /tmp/copy/')  # debug...
                
         return response
+
+    
+    def _get_image_extension(self, input_params):
+        """
+        Convert selected filename extension to image format.  It so happens that for the recognised
+        formats it is just a matter of lower case equivalent, but this will force it to default to png
+        if it is anything else (or if the input is not provided by the form).
+        """
+        image_format = input_params.get('image_format')
+
+        # dictionary keys should match the allowed values in _get_image_format_process_input above
+        lookup = {'PNG': 'png',
+                  'JPG': 'jpg',
+                  'PDF': 'pdf'}
+
+        return lookup.get(image_format, 'png')
