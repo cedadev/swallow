@@ -103,10 +103,9 @@ class RunNAMETrajectory(NAMEBaseProcess):
 
 
     def _get_adaq_scripts_and_args(self, input_params, outputs_dir, plots_dir, image_extension):
-        
-        lonstr = lon_to_str(input_params['longitude'])
-        latstr = lat_to_str(input_params['latitude'])
-        timestr = input_params['release_date_time'].strftime('%d/%m/%Y %H:%M')
+
+        location = input_params['known_location']
+        site = f'"{location}"' if location not in (None, self._null_label) else None
         plot_trajectory_ini_contents = f'''
 # plot configuration file for plotting NAME particle trajectories
 
@@ -117,7 +116,7 @@ marker_interval = 3  # Marker interval in hours
 title = "{input_params['description']}"
 plotname = 'TrajectoryPlot.{image_extension}'
 mo_branding = False
-release_info_list = [ '{lonstr}', '{latstr}', '{timestr}']
+release_info_list = [ {site} ]
 mapping = 'countries'
 '''
         plot_traj_args = [self._make_work_file(plot_trajectory_ini_contents, 'plot_trajectory.ini')]
