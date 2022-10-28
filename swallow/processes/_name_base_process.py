@@ -147,14 +147,16 @@ class NAMEBaseProcess(Process):
                             min_occurs=1,
                             max_occurs=1)
 
-    
-    def _get_notification_email_process_input(self):
-        return LiteralInput('NotificationEmail', 'Notification Email',
-                            abstract=('which email address to send '
-                                      'notifications to'),
-                            data_type='string',
-                            min_occurs=0,
-                            max_occurs=1)
+    ## Notification Email - we have decided to take this from user database rather
+    ##                      than form input - should not need this input any more
+    #
+    # def _get_notification_email_process_input(self):
+    #     return LiteralInput('NotificationEmail', 'Notification Email',
+    #                         abstract=('which email address to send '
+    #                                   'notifications to'),
+    #                         data_type='string',
+    #                         min_occurs=0,
+    #                         max_occurs=1)
 
     
     def _get_image_format_process_input(self):

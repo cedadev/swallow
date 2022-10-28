@@ -41,7 +41,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
             self._get_heights_process_input('Trajectory Heights'),
             self._get_height_units_process_input(),
             self._get_met_data_process_input(),
-            self._get_notification_email_process_input(),
+            #self._get_notification_email_process_input(),
             self._get_image_format_process_input(),
             
         ]
@@ -93,7 +93,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
             'image_format': self._get_input(request, 'ImageFormat'),
 
             # the following inputs are currently unused
-            'notification_email': self._get_input(request, 'NotificationEmail'),
+            #'notification_email': self._get_input(request, 'NotificationEmail'),
             'trajectory_height_units': self._get_input(request, 'HeightUnits'),
         }
 

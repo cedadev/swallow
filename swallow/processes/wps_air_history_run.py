@@ -105,7 +105,7 @@ class AirHistoryRun(NAMEBaseProcess):
             
             #==================================================
  
-            self._get_notification_email_process_input(),
+            #self._get_notification_email_process_input(),
             #self._get_image_format_process_input(),
         ]
         
@@ -214,7 +214,7 @@ class AirHistoryRun(NAMEBaseProcess):
             'ZGrid': self._get_input(request, 'Heights', multi=True),
 
             # the following inputs are unused by make_wps_air_history_input
-            'notification_email': self._get_input(request, 'NotificationEmail'),
+            #'notification_email': self._get_input(request, 'NotificationEmail'),
             #'image_format': self._get_input(request, 'ImageFormat'),
             'met_height_units': self._get_input(request, 'HeightUnits'),
         }
