@@ -11,7 +11,7 @@ from pywps.app.Common import Metadata
 from pywps.app.exceptions import ProcessError
 
 from ._run_name_model import run_name_model
-from ._plot_output import run_adaq_scripts
+from ._plot_output import run_adaq_scripts, convert_plots
 
 LOGGER = logging.getLogger("PYWPS")
 
@@ -55,7 +55,6 @@ class NAMEBaseProcess(Process):
 
     _null_label = '(none)'
 
-    
     def __init__(self, *args, **kwargs):
         key = 'outputs'
         if key in kwargs:
@@ -312,6 +311,8 @@ class NAMEBaseProcess(Process):
         return ml4.xml
 
 
+    _adaq_scripts_use_image_extension = False
+
     def _get_adaq_scripts_and_args(self, *args):
         # to override in subclasses
         return []
@@ -371,10 +372,21 @@ class NAMEBaseProcess(Process):
         self._update_status('Model code completed - starting plotting', model_end_pc)        
 
         image_extension = self._get_image_extension(input_params)
-        adaq_scripts_and_args = self._get_adaq_scripts_and_args(
-            input_params, output_dir, plots_dir, image_extension)
+        args = [input_params, output_dir, plots_dir]
+        if self._adaq_scripts_use_image_extension:
+            args.append(image_extension)
+        adaq_scripts_and_args = self._get_adaq_scripts_and_args(*args)
         if adaq_scripts_and_args:
-            adaq_message = run_adaq_scripts(adaq_scripts_and_args)                        
+            default_extension = 'png'  # format written by scripts that do not support filename input
+            adaq_message = run_adaq_scripts(adaq_scripts_and_args)
+
+            if image_extension != default_extension and not self._adaq_scripts_use_image_extension:
+                percent = round((model_end_pc + 100) / 2)
+                self._update_status(f'Plots produced as {default_extension}', percent)
+                message = convert_plots(plots_dir, image_extension)
+                adaq_message += f"Plot format conversion messages:\nf{message}"
+                self._update_status(f'Plots converted to {image_extension}', 100)
+                
             self._update_status('Plots completed', 100)  # basically 100% done at this point
         else:
             adaq_message = '(plots not produced for this run type)'

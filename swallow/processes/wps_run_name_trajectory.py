@@ -101,6 +101,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
     def _make_name_input(self, *args):
         return make_traj_input(*args)
 
+    _adaq_scripts_use_image_extension = True
 
     def _get_adaq_scripts_and_args(self, input_params, outputs_dir, plots_dir, image_extension):
 

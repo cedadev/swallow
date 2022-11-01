@@ -215,7 +215,7 @@ class AirHistoryRun(NAMEBaseProcess):
 
             # the following inputs are unused by make_wps_air_history_input
             #'notification_email': self._get_input(request, 'NotificationEmail'),
-            #'image_format': self._get_input(request, 'ImageFormat'),
+            'image_format': self._get_input(request, 'ImageFormat'),
             'met_height_units': self._get_input(request, 'HeightUnits'),
         }
 
@@ -224,7 +224,7 @@ class AirHistoryRun(NAMEBaseProcess):
         return make_air_history_input(*args)
 
 
-    def _get_adaq_scripts_and_args(self, input_params, outputs_dir, plots_dir, image_extension):
+    def _get_adaq_scripts_and_args(self, input_params, outputs_dir, plots_dir):
         # image_extension not used as does not seem to be supported in name_field_plot.py
         # so also commented out above the call to self._get_image_format_process_input
         # and the inclusion in the dictionary returned by _get_processed_inputs
