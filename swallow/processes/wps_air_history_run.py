@@ -106,7 +106,7 @@ class AirHistoryRun(NAMEBaseProcess):
             #==================================================
  
             #self._get_notification_email_process_input(),
-            #self._get_image_format_process_input(),
+            self._get_image_format_process_input(),
         ]
         
         super().__init__(
