@@ -63,9 +63,7 @@ TGridForFields,   {{MainTGrid_nT}}, {{"%02d"|format(MainTGrid_dT)}}:00,   {{Main
 TGridHourly,    {{HourlyTGrid_nT}},             01:00, {{HourlyTGrid_T0}},
 TGridEndOfRun,                 1,     {{Duration}}:00,   {{EndTimeOfRun}},
 
-Domains:
-Name,              H Unbounded?,  H-Coord,          X Min,          X Max,          Y Min,          Y Max, Z Unbounded?, Z-Coord,   Z Max, T Unbounded?,       Start Time,       End Time, Max Travel Time,
-Dispersion Domain,           No, Lat-Long, {{CompDom_Xmin}}, {{CompDom_Xmax}}, {{CompDom_Ymin}}, {{CompDom_Ymax}},           No,   m asl, 30000.0,           No, {{StartTimeOfRun}}, {{EndTimeOfRun}},        infinity,
+{% include 'h_domain_include.tmpl' %}
 
 Species:
 Name,   Category,          Half Life, UV Loss Rate, Surface Resistance, Deposition Velocity, Mean aerosol diameter, A rain - BC, B rain - BC, A snow - BC, B snow - BC, A rain - IC, B rain - IC, A snow - IC, B snow - IC, Molecular Weight, Material Unit,

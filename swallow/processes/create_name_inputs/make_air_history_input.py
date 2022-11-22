@@ -6,6 +6,7 @@ from .util import (render_template, get_times,
                    sanitise_name, combine_dicts)
 
 from .paths import get_paths
+from .get_domain_inputs import get_domain_inputs
 
 
 
@@ -13,6 +14,7 @@ fixed_params = {
     'nParticlesPerHr': 10000,
     'NWPMetModel': 'UM Global',
     'SyncTime_Minutes': 5,
+    'Domain_Zmax': 30000.,
 }
 
 
@@ -42,10 +44,6 @@ def create_inputs(paths, params):
     data = {
         'AvTimesAll': sync_steps_per_hr * params['Duration'],
         'AvTimesMain': sync_steps_per_hr * params['MainTGrid_dT'],
-        'CompDom_Xmax': params['Domain_Xmax'],
-        'CompDom_Xmin': params['Domain_Xmin'],
-        'CompDom_Ymax': params['Domain_Ymax'],
-        'CompDom_Ymin': params['Domain_Ymin'],
         'Duration': params['Duration'],
         'EndTimeOfRun': run_stop_time.strftime(timeformat),
         'HGrid_Xmax': params['HGrid_Xmax'],
@@ -78,6 +76,7 @@ def create_inputs(paths, params):
         'TopogDir': paths['topog_dir'],
         'ZGrid': params['ZGrid'],
     }
+    data.update(get_domain_inputs(params))
     
     name_input_file = paths['input_file']
     render_template(paths['template_file'], data,

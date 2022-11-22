@@ -6,15 +6,17 @@ from .get_met_info import GetMet
 from .util import (combine_dicts, bool_to_yesno, render_template, get_times,
                    sanitise_name, sanitise_description)
 from .paths import get_paths
+from .get_domain_inputs import get_domain_inputs
 
 
 # parameters which are hard coded but could later
 # be passed from the user
 fixed_params = {
-    'domain_xmin': -105.0,
-    'domain_xmax': 50.0,
-    'domain_ymin': 6.0,
-    'domain_ymax': 84.0,
+    'Domain_Xmin': -180.,
+    'Domain_Xmax': 180.,
+    'Domain_Ymin': -90.,
+    'Domain_Ymax': 90.,
+    'Domain_Zmax': 19000.,
     'constant_height': False,
     'stochastic_trajectories': False,
     'number_stochastic_trajectories': 10,
@@ -42,10 +44,6 @@ def create_inputs(paths, params):
     data = {
         'Backwards': bool_to_yesno(params['run_direction'] == 'Backward'),
         'OutputDir': paths['output_dir'],
-        'CompDom_Xmax': params['domain_xmax'],
-        'CompDom_Xmin': params['domain_xmin'],
-        'CompDom_Ymax': params['domain_ymax'],
-        'CompDom_Ymin': params['domain_ymin'],
         'EndTimeOfRun': run_stop_time.strftime(timeformat),
         'MetDefnFile': met_defn_path,
         #'MetDeclnFile': (met_decln_path),
@@ -71,6 +69,7 @@ def create_inputs(paths, params):
         'TopogDir': paths['topog_dir'],
         'MetRestoreScript': paths['met_restore_script']
     }
+    data.update(get_domain_inputs(params))
 
     name_input_file = paths['input_file']
     render_template(paths['template_file'], data,

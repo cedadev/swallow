@@ -54,9 +54,7 @@ Name,                          nt,      dt,                t0,
 TGrid_Trajectories,          {{nT}}, 00:{{dT}},  {{StartTimeOfRun}},
 TGridHourly,        {{RunDuration}},   01:00, {{TimeAtFirstHour}},
 
-Domains:
-Name,              H Unbounded?,  H-Coord,          X Min,          X Max,          Y Min,          Y Max, Z Unbounded?, Z-Coord,   Z Max, T Unbounded?,       Start Time,       End Time,  Max Travel Time,
-Dispersion Domain,           No, Lat-Long, {{CompDom_Xmin}}, {{CompDom_Xmax}}, {{CompDom_Ymin}}, {{CompDom_Ymax}},           No,   m asl, 19000.0,           No, {{StartTimeOfRun}}, {{EndTimeOfRun}},         infinity,
+{% include 'h_domain_include.tmpl' %}
 
 Species:
         Name, Category, Half Life, UV Loss Rate, Surface Resistance, Deposition Velocity,  Molecular Weight, Material Unit,
