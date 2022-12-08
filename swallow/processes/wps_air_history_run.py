@@ -229,6 +229,8 @@ class AirHistoryRun(NAMEBaseProcess):
         # so also commented out above the call to self._get_image_format_process_input
         # and the inclusion in the dictionary returned by _get_processed_inputs
         
+        z_level_list = self._get_z_level_list(input_params)
+        extent_list = self._get_extent_list(input_params)
         plot_field_ini_contents = f'''
 
 # plot configuration file for plotting NAME field output
@@ -236,7 +238,7 @@ class AirHistoryRun(NAMEBaseProcess):
 # NAME output fields
 field_attribute_dict = {{'Species':'INERT-TRACER'}}
 # z level choices - optional
-z_level_list = [50]
+z_level_list = {z_level_list}
 z_leveltype = 'height'
 
 short_name_list = ["INERT-TRACER_AIR_CONCENTRATION"]
@@ -249,7 +251,7 @@ plot_dir        = "{plots_dir}"
 
 # Style options
 #levels_list = [1.0e-8, 3.2e-8, 1.0e-7, 3.2e-7, 1.0e-6, 3.2e-6, 1.0e-5, 3.2e-5]
-extent_list = [-30, 40, 25, 75]
+extent_list = {extent_list}
 cmap        = 'YlGnBu'
 mapping     = 'countries'
 projection  = 'PlateCarree'
@@ -262,8 +264,6 @@ mobrand     = False
 back        = True
 
 annote_location     = 'right'
-#annote              = 'Here are a few lines of text\n intended to test the annotation feature.\n\n \
-#You can replace this with your own text or\nchoose one of the default annotation options.'
 annote              = ''
 
 '''

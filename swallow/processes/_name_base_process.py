@@ -287,7 +287,7 @@ class NAMEBaseProcess(Process):
                                 dimensions=2)
 
 
-    def _create_metalink(self, dir_paths, identity, description):
+    def _create_metalink(self, dir_paths, extra_file_paths, identity, description):
         
         ml4 = MetaLink4(identity=identity,
                         description=description,
@@ -300,6 +300,9 @@ class NAMEBaseProcess(Process):
             for fname in filenames:
                 path = os.path.join(dir_path, fname)
                 outputs.append((fname, path))
+        for path in extra_file_paths:
+            fname = os.path.basename(path)
+            outputs.append((fname, path))
             
         n = len(outputs)
         for i, (fname, path) in enumerate(outputs, start=1):
@@ -318,10 +321,12 @@ class NAMEBaseProcess(Process):
         return []
     
 
-    def _make_work_file(self, contents, filename):
+    def _make_work_file(self, contents, filename, keep=True):
         path = os.path.join(self.workdir, filename)
         with open(path, 'w') as fout:
             fout.write(contents)
+        if keep:
+            self._work_files_to_keep.append(path)
         return path
 
 
@@ -337,6 +342,8 @@ class NAMEBaseProcess(Process):
         self._logger.info(self._description)
         model_start_pc = 10
         model_end_pc = 90
+
+        self._work_files_to_keep = []
         
         # Set self.response so it can be modified in other methods
         self.response = response
@@ -397,7 +404,9 @@ class NAMEBaseProcess(Process):
         response.outputs['name_stderr'].file = stderr_path
         
         response.outputs['model_output_files'].data = \
-            self._create_metalink([output_dir, plots_dir], 'name-result', 'NAME model output files')
+            self._create_metalink([output_dir, plots_dir],
+                                  self._work_files_to_keep,
+                                  'name-result', 'NAME model output files')
 
         d = input_params
         inputs = ', '.join(f'\n  {k}: {d[k]}' for k in sorted(d))
@@ -436,3 +445,24 @@ Messages from plotting routines (if any):
                   'PDF': 'pdf'}
 
         return lookup.get(image_format, 'png')
+
+
+    def _get_z_level_list(self, input_params):
+        """
+        Get the interface levels from the vertical grid.
+        Used by general forward run and air history run for plotting.
+        """
+        zgrid = input_params['ZGrid']
+        return [(lower + upper) / 2 for lower, upper in zip(zgrid, zgrid[1:])]
+
+    
+    def _get_extent_list(self, input_params):
+        """
+        Get the horizontal extent list for plotting.
+        Used by general forward run and air history run for plotting.
+        Note that this is in a different ordering from the input domain
+        """
+        suffixes = ['Xmin', 'Xmax', 'Ymin', 'Ymax']
+        #prefix = 'Domain_'
+        prefix = 'HGrid_'
+        return [ input_params[f"{prefix}{suffix}"] for suffix in suffixes ]
