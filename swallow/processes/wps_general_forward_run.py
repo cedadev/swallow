@@ -211,7 +211,7 @@ class GenForwardRun(NAMEBaseProcess):
             'ReleaseTop': self._get_input(request, 'ReleaseTop'),
             'RunName': runID,
             'RunStart': self._get_start_date_time(request),
-            'ZGrid': self._get_input(request, 'Heights', multi=True),
+            'ZGrid': self._get_input(request, 'Heights', multi=True, sort=True),
 
             # the following inputs are unused by make_wps_general_forward_input
             #'notification_email': self._get_input(request, 'NotificationEmail'),

@@ -107,7 +107,7 @@ class NAMEBaseProcess(Process):
                 f'{os.getpid()}')
 
 
-    def _get_input(self, request, key, multi=False, default=None):
+    def _get_input(self, request, key, multi=False, default=None, sort=None):
 
         inputs = request.inputs.get(key)
 
@@ -115,7 +115,8 @@ class NAMEBaseProcess(Process):
             return default
         
         if multi:
-            return [inp.data for inp in inputs]
+            vals = [inp.data for inp in inputs]
+            return sorted(vals) if sort else vals
         else:
             inp, = inputs
             return inp.data

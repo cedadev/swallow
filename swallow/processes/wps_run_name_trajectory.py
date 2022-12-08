@@ -70,7 +70,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
         known_location = self._get_input(request, 'KnownLocation')
         latitude = self._get_input(request, 'Latitude')
         longitude = self._get_input(request, 'Longitude')
-        trajectory_heights = self._get_input(request, 'Heights', multi=True)
+        trajectory_heights = self._get_input(request, 'Heights', multi=True, sort=True)
         release_date_time = self._get_start_date_time(request)
 
         if known_location != None and known_location != self._null_label:
