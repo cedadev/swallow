@@ -297,7 +297,7 @@ class NAMEBaseProcess(Process):
 
         outputs = []
         for dir_path in dir_paths:
-            filenames = os.listdir(dir_path)
+            filenames = sorted(os.listdir(dir_path))
             for fname in filenames:
                 path = os.path.join(dir_path, fname)
                 outputs.append((fname, path))
