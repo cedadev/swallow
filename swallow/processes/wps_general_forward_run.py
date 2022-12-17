@@ -95,7 +95,8 @@ class GenForwardRun(NAMEBaseProcess):
 
             self._get_heights_process_input('Grid Levels'),
             self._get_height_units_process_input(),
-
+            self._get_met_data_process_input(),
+            
             LiteralInput('MainTGrid_dT', 'Timestep', 
                          abstract='main computational grid time resolution (hours)',
                          data_type='integer',
@@ -212,6 +213,7 @@ class GenForwardRun(NAMEBaseProcess):
             'RunName': runID,
             'RunStart': self._get_start_date_time(request),
             'ZGrid': self._get_input(request, 'Heights', multi=True, sort=True),
+            'met_data': self._get_input(request, 'MetData'), 
 
             # the following inputs are unused by make_wps_general_forward_input
             #'notification_email': self._get_input(request, 'NotificationEmail'),

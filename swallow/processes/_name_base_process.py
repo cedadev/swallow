@@ -12,6 +12,7 @@ from pywps.app.exceptions import ProcessError
 
 from ._run_name_model import run_name_model
 from ._plot_output import run_adaq_scripts, convert_plots
+from .create_name_inputs.get_met_info import met_dataset_names
 
 LOGGER = logging.getLogger("PYWPS")
 
@@ -139,11 +140,9 @@ class NAMEBaseProcess(Process):
     
     def _get_met_data_process_input(self):
         return LiteralInput('MetData', 'Met Data',
-                            abstract='which forcing dataset to use',
+                            abstract='which forcing dataset to use (currently only global supported)',
                             data_type='string',
-                            allowed_values=["Global",
-                                            "UK 1.5km",
-                                            "Global + UK 1.5km"],
+                            allowed_values=met_dataset_names,
                             min_occurs=1,
                             max_occurs=1)
 

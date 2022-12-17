@@ -2,14 +2,19 @@ import datetime
 import os
 import json
 
+met_json_files = {
+    'Global': 'mets_global.json',
+    #'UK 1.5km': 'mets_uk.json',
+    #'Global + UK 1.5km': 'mets_global+uk.json'
+}
+met_dataset_names = list(met_json_files.keys())
+
 
 class GetMet:
 
-    def __init__(self, met_lookup_file=None):
+    def __init__(self, met_dataset):
 
-        if met_lookup_file == None:
-            met_lookup_file = os.path.join(os.path.dirname(__file__),
-                                           'mets.json')
+        met_lookup_file = self._get_met_lookup_file(met_dataset)
         
         dicts = json.loads(open(met_lookup_file).read())
 
@@ -27,6 +32,12 @@ class GetMet:
             raise ValueError('mk not unique in met info file')
         
 
+    def _get_met_lookup_file(self, met_dataset):
+        
+        filename = met_json_files[met_dataset]
+        return os.path.join(os.path.dirname(__file__), filename)
+
+    
     def _is_in_time_range(self, met_date, d):
         """
         check if specified date is within the time range described by a 
@@ -60,7 +71,19 @@ class GetMet:
             raise ValueError('there is no single met data mark covering all requested dates')
         return self._met_dicts[max(marks)]
 
-    
+
+def get_met_files(params, paths, *times):
+    """
+    convenience function used by all of the run types, to get the files
+    describing the met data that get used in the template
+    """
+    get_met = GetMet(params['met_data'])
+    met_data = get_met.get_met(*times)
+    met_decln_file = met_data['decln_filename'].replace('.txt', '.tmpl')
+    met_defn_path = os.path.join(paths['met_defns_dir'],
+                                 met_data['defn_filename'])
+    return met_decln_file, met_defn_path
+
 
 if __name__ == '__main__':
 
