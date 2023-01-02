@@ -1,3 +1,4 @@
+import os
 import datetime
 import string
 
@@ -25,12 +26,18 @@ def combine_dicts(*dicts):
     return all
 
 
+def is_approx_equal(a, b, tolerance=1e-8):
+    delta = max(abs(a), abs(b)) * tolerance
+    return abs(a - b) < delta
+    
+
 bool_to_yesno = lambda val: 'Yes' if val else 'No'
 
 
 def render_template(template_file, data, include_paths=None, rendered_file=None):
     if include_paths == None:
         include_paths = []
+    include_paths.append(os.path.dirname(template_file))
     template_str = open(template_file).read()    
     template = Environment(loader=FileSystemLoader(include_paths)).from_string(template_str)
     rendered = template.render(**data)

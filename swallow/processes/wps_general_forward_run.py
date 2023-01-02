@@ -52,7 +52,8 @@ class GenForwardRun(NAMEBaseProcess):
         ] + (self._get_date_time_process_inputs('ReleaseStart', 'Release Start',
                                                 'start of species release') +
              self._get_date_time_process_inputs('ReleaseStop', 'Release Stop',
-                                                'end of species release')
+                                                'end of species release',
+                                                default_add_hours=3)
         ) + [
             LiteralInput('PredefDomain', 'Predefined Domain',
                          abstract=('predefined model computational domain '
@@ -94,7 +95,8 @@ class GenForwardRun(NAMEBaseProcess):
 
             self._get_heights_process_input('Grid Levels'),
             self._get_height_units_process_input(),
-
+            self._get_met_data_process_input(),
+            
             LiteralInput('MainTGrid_dT', 'Timestep', 
                          abstract='main computational grid time resolution (hours)',
                          data_type='integer',
@@ -104,7 +106,7 @@ class GenForwardRun(NAMEBaseProcess):
             
             #==================================================
  
-            self._get_notification_email_process_input(),
+            #self._get_notification_email_process_input(),
             self._get_image_format_process_input(),
         ]
         
@@ -210,10 +212,11 @@ class GenForwardRun(NAMEBaseProcess):
             'ReleaseTop': self._get_input(request, 'ReleaseTop'),
             'RunName': runID,
             'RunStart': self._get_start_date_time(request),
-            'ZGrid': self._get_input(request, 'Heights', multi=True),
+            'ZGrid': self._get_input(request, 'Heights', multi=True, sort=True),
+            'met_data': self._get_input(request, 'MetData'), 
 
             # the following inputs are unused by make_wps_general_forward_input
-            'notification_email': self._get_input(request, 'NotificationEmail'),
+            #'notification_email': self._get_input(request, 'NotificationEmail'),
             'image_format': self._get_input(request, 'ImageFormat'),
             'met_height_units': self._get_input(request, 'HeightUnits'),
         }
@@ -224,7 +227,12 @@ class GenForwardRun(NAMEBaseProcess):
 
 
     def _get_adaq_scripts_and_args(self, input_params, outputs_dir, plots_dir):
+        # image_extension not used as does not seem to be supported in name_field_plot.py
+        # so also commented out above the call to self._get_image_format_process_input
+        # and the inclusion in the dictionary returned by _get_processed_inputs
 
+        z_level_list = self._get_z_level_list(input_params)
+        extent_list = self._get_extent_list(input_params)
         plot_field_ini_contents = f'''
 
 # plot configuration file for plotting NAME field output
@@ -232,7 +240,7 @@ class GenForwardRun(NAMEBaseProcess):
 # NAME output fields
 field_attribute_dict = {{'Species':'TRACER'}}
 # z level choices - optional
-z_level_list = [50]
+z_level_list = {z_level_list}
 z_leveltype = 'height'
 
 short_name_list = ["TRACER_AIR_CONCENTRATION"]
@@ -245,7 +253,7 @@ plot_dir        = "{plots_dir}"
 
 # Style options
 #levels_list = [1.0e-8, 3.2e-8, 1.0e-7, 3.2e-7, 1.0e-6, 3.2e-6, 1.0e-5, 3.2e-5]
-extent_list = [-30, 40, 25, 75]
+extent_list = {extent_list}
 cmap        = 'YlGnBu'
 mapping     = 'countries'
 projection  = 'PlateCarree'
@@ -258,8 +266,6 @@ mobrand     = False
 back        = False
 
 annote_location     = 'right'
-#annote              = 'Here are a few lines of text\n intended to test the annotation feature.\n\n \
-#You can replace this with your own text or\nchoose one of the default annotation options.'
 annote              = ''
 
 '''

@@ -2,6 +2,7 @@ import os
 import datetime
 import logging
 import time
+import sys
 
 from pywps import (Process, LiteralInput, LiteralOutput, ComplexOutput,
                    BoundingBoxInput, BoundingBoxOutput, FORMATS)
@@ -10,7 +11,8 @@ from pywps.app.Common import Metadata
 from pywps.app.exceptions import ProcessError
 
 from ._run_name_model import run_name_model
-from ._plot_output import run_adaq_scripts
+from ._plot_output import run_adaq_scripts, convert_plots
+from .create_name_inputs.get_met_info import met_dataset_names
 
 LOGGER = logging.getLogger("PYWPS")
 
@@ -54,7 +56,6 @@ class NAMEBaseProcess(Process):
 
     _null_label = '(none)'
 
-    
     def __init__(self, *args, **kwargs):
         key = 'outputs'
         if key in kwargs:
@@ -107,7 +108,7 @@ class NAMEBaseProcess(Process):
                 f'{os.getpid()}')
 
 
-    def _get_input(self, request, key, multi=False, default=None):
+    def _get_input(self, request, key, multi=False, default=None, sort=None):
 
         inputs = request.inputs.get(key)
 
@@ -115,7 +116,8 @@ class NAMEBaseProcess(Process):
             return default
         
         if multi:
-            return [inp.data for inp in inputs]
+            vals = [inp.data for inp in inputs]
+            return sorted(vals) if sort else vals
         else:
             inp, = inputs
             return inp.data
@@ -138,22 +140,22 @@ class NAMEBaseProcess(Process):
     
     def _get_met_data_process_input(self):
         return LiteralInput('MetData', 'Met Data',
-                            abstract='which forcing dataset to use',
+                            abstract='which forcing dataset to use (currently only global supported)',
                             data_type='string',
-                            allowed_values=["Global",
-                                            "UK 1.5km",
-                                            "Global + UK 1.5km"],
+                            allowed_values=met_dataset_names,
                             min_occurs=1,
                             max_occurs=1)
 
-    
-    def _get_notification_email_process_input(self):
-        return LiteralInput('NotificationEmail', 'Notification Email',
-                            abstract=('which email address to send '
-                                      'notifications to'),
-                            data_type='string',
-                            min_occurs=0,
-                            max_occurs=1)
+    ## Notification Email - we have decided to take this from user database rather
+    ##                      than form input - should not need this input any more
+    #
+    # def _get_notification_email_process_input(self):
+    #     return LiteralInput('NotificationEmail', 'Notification Email',
+    #                         abstract=('which email address to send '
+    #                                   'notifications to'),
+    #                         data_type='string',
+    #                         min_occurs=0,
+    #                         max_occurs=1)
 
     
     def _get_image_format_process_input(self):
@@ -187,29 +189,46 @@ class NAMEBaseProcess(Process):
                             max_occurs=1)
             
 
-    def _get_date_process_input(self, name, label, description):
+    def _get_default_datetime(self):
         current_year = datetime.datetime.now().year
+        return datetime.datetime(current_year, 1, 1)
+    
+    def _get_date_process_input(self, name, label, description, default_datetime=None):
+        if default_datetime is None:
+            default_datetime = self._get_default_datetime()
+        default_date = default_datetime.strftime("%Y-%m-%d")
+            
         return LiteralInput(name, label,
                             abstract=(f'* date of {description} (enter as '
                                       'yyyy-mm-dd or yyyymmdd format)'),
                             data_type='date',
                             min_occurs=1,
                             max_occurs=1,
-                            default=f'{current_year}-01-01')
+                            default=default_date)
 
     
-    def _get_time_process_input(self, name, label, description):
+    def _get_time_process_input(self, name, label, description, default_datetime=None):
+        if default_datetime is None:
+            default_datetime = self._get_default_datetime()
+        default_time = default_datetime.strftime("%H:%M")
         return LiteralInput(name, label,
                             abstract=(f'* time of {description} (enter as hh:mm '
                                       'or hh:mm:ss format)'),
                             data_type='time',
                             min_occurs=1,
                             max_occurs=1,
-                            default='00:00')
+                            default=default_time)
 
-    def _get_date_time_process_inputs(self, name, label, description):
-        return [self._get_date_process_input(f'{name}Date', f'{label} Date', description),
-                self._get_time_process_input(f'{name}Time', f'{label} Time', description)]        
+    def _get_date_time_process_inputs(self, name, label, description,
+                                      default_datetime=None, default_add_hours=None):
+        if default_datetime is None:
+            default_datetime = self._get_default_datetime()
+        if default_add_hours is not None:
+            default_datetime += datetime.timedelta(hours=default_add_hours)
+        return [self._get_date_process_input(f'{name}Date', f'{label} Date', description,
+                                             default_datetime=default_datetime),
+                self._get_time_process_input(f'{name}Time', f'{label} Time', description,
+                                             default_datetime=default_datetime)]
 
     def _get_start_date_time_process_inputs(self):
         return self._get_date_time_process_inputs('Start', 'Start', 'start of run')
@@ -268,7 +287,7 @@ class NAMEBaseProcess(Process):
                                 dimensions=2)
 
 
-    def _create_metalink(self, dir_paths, identity, description):
+    def _create_metalink(self, dir_paths, extra_file_paths, identity, description):
         
         ml4 = MetaLink4(identity=identity,
                         description=description,
@@ -277,10 +296,13 @@ class NAMEBaseProcess(Process):
 
         outputs = []
         for dir_path in dir_paths:
-            filenames = os.listdir(dir_path)
+            filenames = sorted(os.listdir(dir_path))
             for fname in filenames:
                 path = os.path.join(dir_path, fname)
                 outputs.append((fname, path))
+        for path in extra_file_paths:
+            fname = os.path.basename(path)
+            outputs.append((fname, path))
             
         n = len(outputs)
         for i, (fname, path) in enumerate(outputs, start=1):
@@ -292,26 +314,49 @@ class NAMEBaseProcess(Process):
         return ml4.xml
 
 
+    _adaq_scripts_use_image_extension = False
+
     def _get_adaq_scripts_and_args(self, *args):
         # to override in subclasses
         return []
     
 
-    def _make_work_file(self, contents, filename):
+    def _make_work_file(self, contents, filename, keep=True):
         path = os.path.join(self.workdir, filename)
         with open(path, 'w') as fout:
             fout.write(contents)
+        if keep:
+            self._work_files_to_keep.append(path)
         return path
 
+
+    def _update_status(self, message, percentage):
+        pc = round(percentage)
+        pc = max(pc, 0)
+        pc = min(pc, 100)
+        self.response.update_status(message, pc)
+        sys.stderr.write(f"UPDATE STATUS: {message} {pc}\n")
+        
     
     def _handler(self, request, response):
         self._logger.info(self._description)
+        model_start_pc = 10
+        model_end_pc = 90
 
+        self._work_files_to_keep = []
+        
+        # Set self.response so it can be modified in other methods
+        self.response = response
+        
+        self._update_status('Job is now running', 0)
+        
         internal_run_id = self._get_request_internal_id()
         input_params = self._get_processed_inputs(request)
 
         name_input_file, output_dir, dirs_to_create = \
             self._make_name_input(internal_run_id, input_params, self.workdir)
+
+        self._update_status('Input file for Model model created', model_start_pc)
 
         plots_dir = os.path.join(self.workdir, 'plots')
         dirs_to_create.append(plots_dir)
@@ -321,21 +366,47 @@ class NAMEBaseProcess(Process):
                 os.makedirs(path)
 
         t_start = time.time()
-        rtn_code, stdout_path, stderr_path = run_name_model(name_input_file, logdir=self.workdir)
+        rtn_code, stdout_path, stderr_path = run_name_model(name_input_file,
+                                                            logdir=self.workdir,
+                                                            update_status_callback=self._update_status,
+                                                            start_percent=model_start_pc,
+                                                            end_percent=model_end_pc)
         run_time = time.time() - t_start
 
         if rtn_code != 0:
             raise ProcessError(f"NAME Fortran code exited abnormally (status={rtn_code})")
             
-        adaq_message = run_adaq_scripts(
-            self._get_adaq_scripts_and_args(input_params, output_dir, plots_dir))
-                        
+        self._update_status('Model code completed - starting plotting', model_end_pc)        
+
+        image_extension = self._get_image_extension(input_params)
+        args = [input_params, output_dir, plots_dir]
+        if self._adaq_scripts_use_image_extension:
+            args.append(image_extension)
+        adaq_scripts_and_args = self._get_adaq_scripts_and_args(*args)
+        if adaq_scripts_and_args:
+            default_extension = 'png'  # format written by scripts that do not support filename input
+            adaq_message = run_adaq_scripts(adaq_scripts_and_args)
+
+            if image_extension != default_extension and not self._adaq_scripts_use_image_extension:
+                percent = round((model_end_pc + 100) / 2)
+                self._update_status(f'Plots produced as {default_extension}', percent)
+                message = convert_plots(plots_dir, image_extension)
+                adaq_message += f"Plot format conversion messages:\nf{message}"
+                self._update_status(f'Plots converted to {image_extension}', 100)
+                
+            self._update_status('Plots completed', 100)  # basically 100% done at this point
+        else:
+            adaq_message = '(plots not produced for this run type)'
+            self._update_status('Run completed', 100)
+            
         response.outputs['name_input_file'].file = name_input_file
         response.outputs['name_stdout'].file = stdout_path
         response.outputs['name_stderr'].file = stderr_path
         
         response.outputs['model_output_files'].data = \
-            self._create_metalink([output_dir, plots_dir], 'name-result', 'NAME model output files')
+            self._create_metalink([output_dir, plots_dir],
+                                  self._work_files_to_keep,
+                                  'name-result', 'NAME model output files')
 
         d = input_params
         inputs = ', '.join(f'\n  {k}: {d[k]}' for k in sorted(d))
@@ -358,3 +429,40 @@ Messages from plotting routines (if any):
         #os.system(f'cp -r {self.workdir} /tmp/copy/')  # debug...
                
         return response
+
+    
+    def _get_image_extension(self, input_params):
+        """
+        Convert selected filename extension to image format.  It so happens that for the recognised
+        formats it is just a matter of lower case equivalent, but this will force it to default to png
+        if it is anything else (or if the input is not provided by the form).
+        """
+        image_format = input_params.get('image_format')
+
+        # dictionary keys should match the allowed values in _get_image_format_process_input above
+        lookup = {'PNG': 'png',
+                  'JPG': 'jpg',
+                  'PDF': 'pdf'}
+
+        return lookup.get(image_format, 'png')
+
+
+    def _get_z_level_list(self, input_params):
+        """
+        Get the interface levels from the vertical grid.
+        Used by general forward run and air history run for plotting.
+        """
+        zgrid = input_params['ZGrid']
+        return [(lower + upper) / 2 for lower, upper in zip(zgrid, zgrid[1:])]
+
+    
+    def _get_extent_list(self, input_params):
+        """
+        Get the horizontal extent list for plotting.
+        Used by general forward run and air history run for plotting.
+        Note that this is in a different ordering from the input domain
+        """
+        suffixes = ['Xmin', 'Xmax', 'Ymin', 'Ymax']
+        #prefix = 'Domain_'
+        prefix = 'HGrid_'
+        return [ input_params[f"{prefix}{suffix}"] for suffix in suffixes ]

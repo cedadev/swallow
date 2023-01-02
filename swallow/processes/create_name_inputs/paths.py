@@ -6,7 +6,7 @@ from .util import sanitise_name
 this_dir = os.path.dirname(os.path.realpath(__file__))
 template_dir = os.path.join(this_dir, 'templates')
 
-base_dir = '/gws/smf/j04/cedaproc/cedawps/swallow/files/20220406_1'
+base_dir = '/gws/smf/j04/cedaproc/cedawps/swallow/files/20220520_1'
 
 _paths = {
     'met_decl_dir': f'{template_dir}/met_declarations',

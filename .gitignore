@@ -116,3 +116,10 @@ scratch
 
 # IDE settings
 .vscode/
+
+# failed patches
+*.rej
+#
+# data files (testing)
+*.pp
+

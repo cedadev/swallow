@@ -41,7 +41,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
             self._get_heights_process_input('Trajectory Heights'),
             self._get_height_units_process_input(),
             self._get_met_data_process_input(),
-            self._get_notification_email_process_input(),
+            #self._get_notification_email_process_input(),
             self._get_image_format_process_input(),
             
         ]
@@ -70,7 +70,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
         known_location = self._get_input(request, 'KnownLocation')
         latitude = self._get_input(request, 'Latitude')
         longitude = self._get_input(request, 'Longitude')
-        trajectory_heights = self._get_input(request, 'Heights', multi=True)
+        trajectory_heights = self._get_input(request, 'Heights', multi=True, sort=True)
         release_date_time = self._get_start_date_time(request)
 
         if known_location != None and known_location != self._null_label:
@@ -89,9 +89,11 @@ class RunNAMETrajectory(NAMEBaseProcess):
             'run_name': runID,
             'release_date_time': release_date_time,
 
-            # the following inputs are unused by make_traj_input
-            'notification_email': self._get_input(request, 'NotificationEmail'),
+            # used by _get_adaq_scripts_and_args
             'image_format': self._get_input(request, 'ImageFormat'),
+
+            # the following inputs are currently unused
+            #'notification_email': self._get_input(request, 'NotificationEmail'),
             'trajectory_height_units': self._get_input(request, 'HeightUnits'),
         }
 
@@ -99,12 +101,12 @@ class RunNAMETrajectory(NAMEBaseProcess):
     def _make_name_input(self, *args):
         return make_traj_input(*args)
 
+    _adaq_scripts_use_image_extension = True
 
-    def _get_adaq_scripts_and_args(self, input_params, outputs_dir, plots_dir):
+    def _get_adaq_scripts_and_args(self, input_params, outputs_dir, plots_dir, image_extension):
 
-        lonstr = lon_to_str(input_params['longitude'])
-        latstr = lat_to_str(input_params['latitude'])
-        timestr = input_params['release_date_time'].strftime('%d/%m/%Y %H:%M')
+        location = input_params['known_location']
+        site = f'"{location}"' if location not in (None, self._null_label) else None
         plot_trajectory_ini_contents = f'''
 # plot configuration file for plotting NAME particle trajectories
 
@@ -113,9 +115,9 @@ plot_dir        = "{plots_dir}"
 
 marker_interval = 3  # Marker interval in hours
 title = "{input_params['description']}"
-plotname = 'TrajectoryPlot.png'
+plotname = 'TrajectoryPlot.{image_extension}'
 mo_branding = False
-release_info_list = [ '{lonstr}', '{latstr}', '{timestr}']
+release_info_list = [ {site} ]
 mapping = 'countries'
 '''
         plot_traj_args = [self._make_work_file(plot_trajectory_ini_contents, 'plot_trajectory.ini')]

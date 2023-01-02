@@ -1,18 +1,19 @@
 import os
 import datetime
 
-from .get_met_info import GetMet
+from .get_met_info import get_met_files
 from .util import (render_template, get_times,
                    sanitise_name, combine_dicts)
 
 from .paths import get_paths
+from .get_domain_inputs import get_domain_inputs
 
 
 
 fixed_params = {
     'nParticlesPerHr': 10000,
-    'NWPMetModel': 'UM Global',
     'SyncTime_Minutes': 5,
+    'Domain_Zmax': 30000.,
 }
 
 
@@ -26,13 +27,9 @@ def create_inputs(paths, params):
 
     _, main_grid_t0, _ = \
         get_times(params['RunStart'], params['MainTGrid_dT'], direction='Backward')
-
-    get_met = GetMet()
-    global_met = get_met.get_met(run_start_time, run_stop_time)
-
-    met_decln_file = global_met['decln_filename'].replace('.txt', '.tmpl')
-    met_defn_path = os.path.join(paths['met_defns_dir'],
-                                 global_met['defn_filename'])
+       
+    met_decln_file, met_defn_path = get_met_files(params, paths,
+                                                  run_start_time, run_stop_time)
     
     timeformat = '%d/%m/%Y %H:%M'
 
@@ -42,10 +39,6 @@ def create_inputs(paths, params):
     data = {
         'AvTimesAll': sync_steps_per_hr * params['Duration'],
         'AvTimesMain': sync_steps_per_hr * params['MainTGrid_dT'],
-        'CompDom_Xmax': params['Domain_Xmax'],
-        'CompDom_Xmin': params['Domain_Xmin'],
-        'CompDom_Ymax': params['Domain_Ymax'],
-        'CompDom_Ymin': params['Domain_Ymin'],
         'Duration': params['Duration'],
         'EndTimeOfRun': run_stop_time.strftime(timeformat),
         'HGrid_Xmax': params['HGrid_Xmax'],
@@ -78,6 +71,7 @@ def create_inputs(paths, params):
         'TopogDir': paths['topog_dir'],
         'ZGrid': params['ZGrid'],
     }
+    data.update(get_domain_inputs(params))
     
     name_input_file = paths['input_file']
     render_template(paths['template_file'], data,

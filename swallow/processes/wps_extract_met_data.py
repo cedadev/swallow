@@ -63,8 +63,8 @@ class ExtractMetData(NAMEBaseProcess):
 
             self._get_height_units_process_input(),
             self._get_met_data_process_input(),
-            self._get_notification_email_process_input(),
-            self._get_image_format_process_input(),
+            #self._get_notification_email_process_input(),
+            #self._get_image_format_process_input(),
         ]
         
         super().__init__(
@@ -162,8 +162,8 @@ class ExtractMetData(NAMEBaseProcess):
             'start_date_time': start_date_time,
             
             # the following inputs are unused by make_met_extract_input
-            'notification_email': self._get_input(request, 'NotificationEmail'),
-            'image_format': self._get_input(request, 'ImageFormat'),
+            #'notification_email': self._get_input(request, 'NotificationEmail'),
+            #'image_format': self._get_input(request, 'ImageFormat'),
             'met_height_units': self._get_input(request, 'HeightUnits'),
         }
 
