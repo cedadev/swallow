@@ -29,8 +29,7 @@ class NAMEBaseProcess(Process):
     _metadata = [
         Metadata('PyWPS', 'https://pywps.org/'),
         Metadata('Birdhouse', 'http://bird-house.github.io/'),
-        Metadata('PyWPS Demo', 'https://pywps-demo.readthedocs.io/en/latest/'),
-        Metadata('Emu: PyWPS examples', 'https://emu.readthedocs.io/en/latest/'),
+        Metadata('Met Office dispersion model', 'https://www.metoffice.gov.uk/research/approach/modelling-systems/dispersion-model')
     ]
 
     _stations = {
