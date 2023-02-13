@@ -118,6 +118,17 @@
         "suffix": "UMG_Mk10_[IM]_L59PT*.pp",
         "archive_dir": "Global/UMG_Mk10PT",
 	"start": [2017,  6,  1,  0,  0,  0],
-        "end": [2022,  3,  29,  9,  0,  0]
+        "end": [2022,  5,  4,  12,  0,  0]
+    },
+    {
+        "mk": 11,
+        "type": "UMG_Mk11PT",
+        "defn_filename": "MetDefnUMG_Mk11_L59PTpp.txt",
+        "decln_filename": "Use_UMG_Mk11_L59PTpp.txt",
+        "prefix": "MO",
+        "suffix": "UMG_Mk11_[IM]_L59PT*.pp",
+        "archive_dir": "Global/UMG_Mk11PT",
+        "start": [2022,  4,  1,  0,  0,  0],
+        "end": [2025,  1,  1,  0,  0,  0]
     }
 ]
