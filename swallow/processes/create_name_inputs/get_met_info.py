@@ -27,9 +27,20 @@ class GetMet:
             else:
                 d['end'] = None
 
-        self._met_dicts = {d['mk']: d for d in dicts}
+        self._met_dicts = {self._mark_key(d['mk']): d for d in dicts}
         if len(self._met_dicts) < len(dicts):
             raise ValueError('mk not unique in met info file')
+
+        
+    def _mark_key(self, val):
+        """
+        Convert the mark as given in the JSON file into something that can be used
+        as a dictionary key.
+        """
+        if isinstance(val, list):
+            return tuple(val)
+        else:
+            return val
         
 
     def _get_met_lookup_file(self, met_dataset):
