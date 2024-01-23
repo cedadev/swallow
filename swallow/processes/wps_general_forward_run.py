@@ -49,11 +49,12 @@ class GenForwardRun(NAMEBaseProcess):
         ] + self._get_start_date_time_process_inputs() + [
             self._get_run_duration_process_input(),
             
-        ] + (self._get_date_time_process_inputs('ReleaseStart', 'Release Start',
-                                                'start of species release') +
-             self._get_date_time_process_inputs('ReleaseStop', 'Release Stop',
+        ] + (self._get_date_time_process_inputs('ReleaseStart', 'Release Start [if not start of run]:',
+                                                'start of species release',
+                                                optional=True, add_abstract=' - leave blank to use start of run') +
+             self._get_date_time_process_inputs('ReleaseStop', 'Release Stop [if not end of run]:',
                                                 'end of species release',
-                                                default_add_hours=3)
+                                                optional=True, add_abstract=' - leave blank to use end of run')
         ) + [
             LiteralInput('PredefDomain', 'Predefined Domain',
                          abstract=('predefined model computational domain '

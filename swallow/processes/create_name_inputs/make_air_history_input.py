@@ -36,6 +36,14 @@ def create_inputs(paths, params):
     sync_steps_per_hr = 60 // params['SyncTime_Minutes']
     assert(60 % params['SyncTime_Minutes'] == 0)
     
+    arrival_start = params['ArrivalStart']
+    if arrival_start is None:
+        arrival_start = run_start_time
+
+    arrival_stop = params['ArrivalStop']
+    if arrival_stop is None:
+        arrival_stop = run_stop_time
+
     data = {
         'AvTimesAll': sync_steps_per_hr * params['Duration'],
         'AvTimesMain': sync_steps_per_hr * params['MainTGrid_dT'],
@@ -59,8 +67,8 @@ def create_inputs(paths, params):
         'nParticlesPerHr': params['nParticlesPerHr'],
         'OutputDir': paths['output_dir'],
         'ArrivalDZ': params['ArrivalTop'] - params['ArrivalBottom'],
-        'ArrivalStart': params['ArrivalStart'].strftime(timeformat),
-        'ArrivalStop': params['ArrivalStop'].strftime(timeformat),
+        'ArrivalStart': arrival_start.strftime(timeformat),
+        'ArrivalStop': arrival_stop.strftime(timeformat),
         'ArrivalZ': (params['ArrivalTop'] + params['ArrivalBottom']) / 2,
         'Run_Name': sanitise_name(params['RunName']),
         'ReceptorLoc_Name': params['ArrivalLoc_Name'],

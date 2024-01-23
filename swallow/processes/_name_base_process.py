@@ -125,6 +125,10 @@ class NAMEBaseProcess(Process):
     def _get_date_time(self, request, name):
         date = self._get_input(request, f'{name}Date')
         tme = self._get_input(request, f'{name}Time')
+        if (date is None) != (tme is None):
+            raise ValueError('date and time must be both blank or both entered')
+        if date is None or tme is None:
+            return None
         return datetime.datetime(date.year,
                                  date.month,
                                  date.day,
@@ -192,45 +196,54 @@ class NAMEBaseProcess(Process):
         current_year = datetime.datetime.now().year
         return datetime.datetime(current_year, 1, 1)
     
-    def _get_date_process_input(self, name, label, description, default_datetime=None):
-        if default_datetime is None:
-            default_datetime = self._get_default_datetime()
-        default_date = default_datetime.strftime("%Y-%m-%d")
+    def _get_date_process_input(self, name, label, description,
+                                optional=False, default_datetime=None,
+                                add_abstract=''):
+
+        default_date = (default_datetime.strftime("%Y-%m-%d") if default_datetime is not None
+                        else None)
             
+        min_occurs = 0 if optional else 1
+
         return LiteralInput(name, label,
-                            abstract=(f'* date of {description} (enter as '
-                                      'yyyy-mm-dd or yyyymmdd format)'),
+                            abstract=(f'date of {description} (enter as '
+                                      f'yyyy-mm-dd or yyyymmdd format){add_abstract}'),
                             data_type='date',
-                            min_occurs=1,
+                            min_occurs=min_occurs,
                             max_occurs=1,
                             default=default_date)
 
     
-    def _get_time_process_input(self, name, label, description, default_datetime=None):
-        if default_datetime is None:
-            default_datetime = self._get_default_datetime()
-        default_time = default_datetime.strftime("%H:%M")
+    def _get_time_process_input(self, name, label, description,
+                                optional=False, default_datetime=None,
+                                add_abstract=''):
+
+        default_time = (default_datetime.strftime("%H:%M") if default_datetime is not None
+                        else None)
+
+        min_occurs = 0 if optional else 1
+
         return LiteralInput(name, label,
-                            abstract=(f'* time of {description} (enter as hh:mm '
-                                      'or hh:mm:ss format)'),
+                            abstract=(f'time of {description} (enter as hh:mm '
+                                      f'or hh:mm:ss format){add_abstract}'),
                             data_type='time',
-                            min_occurs=1,
+                            min_occurs=min_occurs,
                             max_occurs=1,
                             default=default_time)
 
     def _get_date_time_process_inputs(self, name, label, description,
-                                      default_datetime=None, default_add_hours=None):
-        if default_datetime is None:
-            default_datetime = self._get_default_datetime()
-        if default_add_hours is not None:
-            default_datetime += datetime.timedelta(hours=default_add_hours)
+                                      #default_add_hours=None,
+                                      **kwargs):
+        #if kwargs.get('default_datetime') is not None and default_add_hours is not None:
+        #    kwargs['default_datetime'] += datetime.timedelta(hours=default_add_hours)
         return [self._get_date_process_input(f'{name}Date', f'{label} Date', description,
-                                             default_datetime=default_datetime),
+                                             **kwargs),
                 self._get_time_process_input(f'{name}Time', f'{label} Time', description,
-                                             default_datetime=default_datetime)]
+                                             **kwargs)]
 
     def _get_start_date_time_process_inputs(self):
-        return self._get_date_time_process_inputs('Start', 'Start', 'start of run')
+        return self._get_date_time_process_inputs('Start', 'Start', 'start of run',
+                                                  default_datetime = self._get_default_datetime())
 
     def _get_run_id_process_input(self):
         return LiteralInput('RunID', 'Run Identifier',

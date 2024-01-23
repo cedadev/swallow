@@ -49,11 +49,12 @@ class AirHistoryRun(NAMEBaseProcess):
         ] + self._get_start_date_time_process_inputs() + [
             self._get_run_duration_process_input(),
             
-        ] + (self._get_date_time_process_inputs('ArrivalStart', 'Arrival Start',
-                                                'start of arrival period') +
-             self._get_date_time_process_inputs('ArrivalStop', 'Arrival Stop',
+        ] + (self._get_date_time_process_inputs('ArrivalStart', 'Arrival Start [if not start of run]:',
+                                                'start of arrival period',
+                                                optional=True, add_abstract=' - leave blank to use start of run') +
+             self._get_date_time_process_inputs('ArrivalStop', 'Arrival Stop [if not end of run]:',
                                                 'end of arrival period [NOTE: EARLIER than ArrivalStart, as backwards-running model]',
-                                                default_add_hours=-3)
+                                                optional=True, add_abstract=' - leave blank to use end of run')
         ) + [
             LiteralInput('PredefDomain', 'Predefined Domain',
                          abstract=('predefined model computational domain '
