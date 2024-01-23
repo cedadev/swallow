@@ -91,9 +91,9 @@ def get_met_files(params, paths, *times):
     get_met = GetMet(params['met_data'])
     met_data = get_met.get_met(*times)
     met_decln_file = met_data['decln_filename'].replace('.txt', '.tmpl')
-    met_defn_path = os.path.join(paths['met_defns_dir'],
-                                 met_data['defn_filename'])
-    return met_decln_file, met_defn_path
+    met_defn_paths = [os.path.join(paths['met_defns_dir'], defn_filename)
+                      for defn_filename in met_data['defn_filenames']]
+    return met_decln_file, met_defn_paths
 
 
 if __name__ == '__main__':

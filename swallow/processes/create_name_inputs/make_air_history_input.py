@@ -28,8 +28,8 @@ def create_inputs(paths, params):
     _, main_grid_t0, _ = \
         get_times(params['RunStart'], params['MainTGrid_dT'], direction='Backward')
        
-    met_decln_file, met_defn_path = get_met_files(params, paths,
-                                                  run_start_time, run_stop_time)
+    met_decln_file, met_defn_paths = get_met_files(params, paths,
+                                                   run_start_time, run_stop_time)
     
     timeformat = '%d/%m/%Y %H:%M'
 
@@ -53,7 +53,7 @@ def create_inputs(paths, params):
         'MainTGrid_dT': params['MainTGrid_dT'],
         'MainTGrid_nT': params['Duration'] // params['MainTGrid_dT'],
         'MetDeclnTmpl': met_decln_file,
-        'MetDefnFile': met_defn_path,
+        'MetDefnFiles': met_defn_paths,
         'MetDir': paths['met_dir'],
         'MetRestoreScript': paths['met_restore_script'],
         'nParticlesPerHr': params['nParticlesPerHr'],

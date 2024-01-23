@@ -17,8 +17,8 @@ def create_inputs(paths, params):
     run_start_time, run_stop_time, _ = \
         get_times(params['start_date_time'], params['run_duration'])
 
-    met_decln_file, met_defn_path = get_met_files(params, paths,
-                                                  run_start_time, run_stop_time)
+    met_decln_file, met_defn_paths = get_met_files(params, paths,
+                                                   run_start_time, run_stop_time)
     
     timeformat = '%d/%m/%Y %H:%M'
     data = {
@@ -27,7 +27,7 @@ def create_inputs(paths, params):
         'LocationX': params['longitudes'],
         'LocationY': params['latitudes'],
         'MetDeclnTmpl': met_decln_file,
-        'MetDefnFile': met_defn_path,
+        'MetDefnFiles': met_defn_paths,
         'MetDir': paths['met_dir'],
         'MetHeight': params['met_height'],
         'MetRestoreScript': paths['met_restore_script'],
