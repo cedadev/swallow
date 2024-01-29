@@ -1,0 +1,44 @@
+[
+    {
+        "mk": [2, 7],
+        "defn_filenames": ["MetDefnUM1p5km_Mk2_L57PTpp.txt", "MetDefnUMG_Mk7_L59PT2pp.txt"],
+        "decln_filename": "Use_UM1p5km_Mk2_L57PT_UMG_Mk7_L59PT2.txt",
+        "start": [2014,  1,  1,  0,  0,  0],
+        "end": [2014,  7, 15,  9,  0,  0]
+    },
+    {
+        "mk": [2, 8],
+        "defn_filenames": ["MetDefnUM1p5km_Mk2_L57PTpp.txt", "MetDefnUMG_Mk8_L59PT2pp.txt"],
+        "decln_filename": "Use_UM1p5km_Mk2_L57PT_UMG_Mk8_L59PT2.txt",
+        "start": [2014,  6, 12, 15,  0,  0],
+        "end": [2015,  2,  4,  8,  0,  0]
+    },
+    {
+        "mk": [3, 8],
+        "defn_filenames": ["MetDefnUM1p5km_Mk3_L57PTpp.txt", "MetDefnUMG_Mk8_L59PT2pp.txt"],
+        "decln_filename": "Use_UM1p5km_Mk3_L57PT_UMG_Mk8_L59PT2.txt",
+        "start": [2015,  2,  1,  0,  0,  0],
+        "end": [2015,  8, 25,  9,  0,  0]
+    },
+    {
+        "mk": [3, 9],
+        "defn_filenames": ["MetDefnUM1p5km_Mk3_L57PTpp.txt", "MetDefnUMG_Mk9_L59PT2pp.txt"],
+        "decln_filename": "Use_UM1p5km_Mk3_L57PT_UMG_Mk9_L59PT2.txt",
+        "start": [2015,  7, 20,  0,  0,  0],
+        "end": [2017,  7, 11,  9,  0,  0]
+    },
+    {
+        "mk": [4, 10],
+        "defn_filenames": ["MetDefnUM1p5km_Mk4_L57PTpp.txt", "MetDefnUMG_Mk10_L59PT2pp.txt"],
+        "decln_filename": "Use_UM1p5km_Mk4_L57PT_UMG_Mk10_L59PT2.txt",
+        "start": [2017,  7,  1,  0,  0,  0],
+        "end": [2022,  5,  4,  9,  0,  0]
+    },
+    {
+        "mk": [4, 11],
+        "defn_filenames": ["MetDefnUM1p5km_Mk4_L57PTpp.txt", "MetDefnUMG_Mk11_L59PT2pp.txt"],
+        "decln_filename": "Use_UM1p5km_Mk4_L57PT_UMG_Mk11_L59PT2.txt",
+        "start": [2022,  4,  1,  0,  0,  0],
+        "end": [2025,  1,  1,  0,  0,  0]
+    }
+]

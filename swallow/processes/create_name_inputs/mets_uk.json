@@ -1,0 +1,23 @@
+[
+    {
+        "mk": 2,
+        "defn_filenames": ["MetDefnUM1p5km_Mk2_L57PTpp.txt"],
+        "decln_filename": "Use_UM1p5km_Mk2_L57PTpp.txt",
+        "start": [2014,  1,  1,  0,  0,  0],
+        "end": [2015,  2,  4,  8,  0,  0]
+    },
+    {
+        "mk": 3,
+        "defn_filenames": ["MetDefnUM1p5km_Mk3_L57PTpp.txt"],
+        "decln_filename": "Use_UM1p5km_Mk3_L57PTpp.txt",
+        "start": [2015,  2,  1,  0,  0,  0],
+        "end": [2017,  7, 11, 11,  0,  0]
+    },
+    {
+        "mk": 4,
+        "defn_filenames": ["MetDefnUM1p5km_Mk4_L57PTpp.txt"],
+        "decln_filename": "Use_UM1p5km_Mk4_L57PTpp.txt",
+        "start": [2017,  7,  1,  0,  0,  0],
+        "end": [2025,  1,  1,  0,  0,  0]
+    }
+]

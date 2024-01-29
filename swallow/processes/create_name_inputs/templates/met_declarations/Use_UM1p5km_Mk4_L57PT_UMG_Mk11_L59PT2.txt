@@ -1,0 +1,149 @@
+! Using UM1p5km_Mk4PT met data (UM UKV Mk4) nested within UMG_Mk11PT2 met data (UM GLOBAL Mk11 over European region)
+
+NWP Met Module Instances:
+Name,         Min B L Depth, Max B L Depth, Use NWP BL Depth?,   Restore Met Script, Delete Met?, Met Folder, Topography Folder,  Met Definition Name, Update on Demand?
+UKV_Mk4_PT1,          100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}}, UM1p5km_Mk4_L57PT1pp,               Yes
+UKV_Mk4_PT2,          100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}}, UM1p5km_Mk4_L57PT2pp,               Yes
+UKV_Mk4_PT3,          100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}}, UM1p5km_Mk4_L57PT3pp,               Yes
+UKV_Mk4_PT4,          100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}}, UM1p5km_Mk4_L57PT4pp,               Yes
+UKV_Mk4_PT5,          100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}}, UM1p5km_Mk4_L57PT5pp,               Yes
+UKV_Mk4_PT6,          100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}}, UM1p5km_Mk4_L57PT6pp,               Yes
+UKV_Mk4_PT7,          100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}}, UM1p5km_Mk4_L57PT7pp,               Yes
+UKV_Mk4_PT8,          100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}}, UM1p5km_Mk4_L57PT8pp,               Yes
+UKV_Mk4_PT9,          100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}}, UM1p5km_Mk4_L57PT9pp,               Yes
+UKV_Mk4_PT10,         100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}}, UM1p5km_Mk4_L57PT10pp,              Yes
+UKV_Mk4_PT11,         100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}}, UM1p5km_Mk4_L57PT11pp,              Yes
+UKV_Mk4_PT12,         100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}}, UM1p5km_Mk4_L57PT12pp,              Yes
+UKV_Mk4_PT13,         100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}}, UM1p5km_Mk4_L57PT13pp,              Yes
+UKV_Mk4_PT14,         100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}}, UM1p5km_Mk4_L57PT14pp,              Yes
+UKV_Mk4_PT15,         100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}}, UM1p5km_Mk4_L57PT15pp,              Yes
+UKV_Mk4_PT16,         100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}}, UM1p5km_Mk4_L57PT16pp,              Yes
+Global_Mk11_PT2,      100.0,        4000.0,               Yes, {{MetRestoreScript}},          No, {{MetDir}},      {{TopogDir}},     UMG_Mk11_L59PT2pp,              Yes
+
+NWP Flow Module Instances: 
+Name,              Met Module,            Met,                      Domain, Update on Demand?
+UKV_Mk4_PT1 Flow,     NWP Met,    UKV_Mk4_PT1,  UM1p5km_Mk4_L57PT1pp Whole,               Yes
+UKV_Mk4_PT2 Flow,     NWP Met,    UKV_Mk4_PT2,  UM1p5km_Mk4_L57PT2pp Whole,               Yes
+UKV_Mk4_PT3 Flow,     NWP Met,    UKV_Mk4_PT3,  UM1p5km_Mk4_L57PT3pp Whole,               Yes
+UKV_Mk4_PT4 Flow,     NWP Met,    UKV_Mk4_PT4,  UM1p5km_Mk4_L57PT4pp Whole,               Yes
+UKV_Mk4_PT5 Flow,     NWP Met,    UKV_Mk4_PT5,  UM1p5km_Mk4_L57PT5pp Whole,               Yes
+UKV_Mk4_PT6 Flow,     NWP Met,    UKV_Mk4_PT6,  UM1p5km_Mk4_L57PT6pp Whole,               Yes
+UKV_Mk4_PT7 Flow,     NWP Met,    UKV_Mk4_PT7,  UM1p5km_Mk4_L57PT7pp Whole,               Yes
+UKV_Mk4_PT8 Flow,     NWP Met,    UKV_Mk4_PT8,  UM1p5km_Mk4_L57PT8pp Whole,               Yes
+UKV_Mk4_PT9 Flow,     NWP Met,    UKV_Mk4_PT9,  UM1p5km_Mk4_L57PT9pp Whole,               Yes
+UKV_Mk4_PT10 Flow,    NWP Met,    UKV_Mk4_PT10, UM1p5km_Mk4_L57PT10pp Whole,              Yes
+UKV_Mk4_PT11 Flow,    NWP Met,    UKV_Mk4_PT11, UM1p5km_Mk4_L57PT11pp Whole,              Yes
+UKV_Mk4_PT12 Flow,    NWP Met,    UKV_Mk4_PT12, UM1p5km_Mk4_L57PT12pp Whole,              Yes
+UKV_Mk4_PT13 Flow,    NWP Met,    UKV_Mk4_PT13, UM1p5km_Mk4_L57PT13pp Whole,              Yes
+UKV_Mk4_PT14 Flow,    NWP Met,    UKV_Mk4_PT14, UM1p5km_Mk4_L57PT14pp Whole,              Yes
+UKV_Mk4_PT15 Flow,    NWP Met,    UKV_Mk4_PT15, UM1p5km_Mk4_L57PT15pp Whole,              Yes
+UKV_Mk4_PT16 Flow,    NWP Met,    UKV_Mk4_PT16, UM1p5km_Mk4_L57PT16pp Whole,              Yes
+Global_Mk11_PT2 Flow, NWP Met, Global_Mk11_PT2,     UMG_Mk10_L59PT2pp Whole,              Yes
+
+Flow Order: Update
+Flow Module, Flow
+NWP Flow,    UKV_Mk4_PT1 Flow
+NWP Flow,    UKV_Mk4_PT2 Flow
+NWP Flow,    UKV_Mk4_PT3 Flow
+NWP Flow,    UKV_Mk4_PT4 Flow
+NWP Flow,    UKV_Mk4_PT5 Flow
+NWP Flow,    UKV_Mk4_PT6 Flow
+NWP Flow,    UKV_Mk4_PT7 Flow
+NWP Flow,    UKV_Mk4_PT8 Flow
+NWP Flow,    UKV_Mk4_PT9 Flow
+NWP Flow,    UKV_Mk4_PT10 Flow
+NWP Flow,    UKV_Mk4_PT11 Flow
+NWP Flow,    UKV_Mk4_PT12 Flow
+NWP Flow,    UKV_Mk4_PT13 Flow
+NWP Flow,    UKV_Mk4_PT14 Flow
+NWP Flow,    UKV_Mk4_PT15 Flow
+NWP Flow,    UKV_Mk4_PT16 Flow
+NWP Flow,    Global_Mk11_PT2 Flow
+
+Flow Order: Convert
+Flow Module, Flow
+NWP Flow,    UKV_Mk4_PT1 Flow
+NWP Flow,    UKV_Mk4_PT2 Flow
+NWP Flow,    UKV_Mk4_PT3 Flow
+NWP Flow,    UKV_Mk4_PT4 Flow
+NWP Flow,    UKV_Mk4_PT5 Flow
+NWP Flow,    UKV_Mk4_PT6 Flow
+NWP Flow,    UKV_Mk4_PT7 Flow
+NWP Flow,    UKV_Mk4_PT8 Flow
+NWP Flow,    UKV_Mk4_PT9 Flow
+NWP Flow,    UKV_Mk4_PT10 Flow
+NWP Flow,    UKV_Mk4_PT11 Flow
+NWP Flow,    UKV_Mk4_PT12 Flow
+NWP Flow,    UKV_Mk4_PT13 Flow
+NWP Flow,    UKV_Mk4_PT14 Flow
+NWP Flow,    UKV_Mk4_PT15 Flow
+NWP Flow,    UKV_Mk4_PT16 Flow
+NWP Flow,    Global_Mk11_PT2 Flow
+
+Flow Order: Flow
+Flow Module, Flow
+NWP Flow,    UKV_Mk4_PT1 Flow
+NWP Flow,    UKV_Mk4_PT2 Flow
+NWP Flow,    UKV_Mk4_PT3 Flow
+NWP Flow,    UKV_Mk4_PT4 Flow
+NWP Flow,    UKV_Mk4_PT5 Flow
+NWP Flow,    UKV_Mk4_PT6 Flow
+NWP Flow,    UKV_Mk4_PT7 Flow
+NWP Flow,    UKV_Mk4_PT8 Flow
+NWP Flow,    UKV_Mk4_PT9 Flow
+NWP Flow,    UKV_Mk4_PT10 Flow
+NWP Flow,    UKV_Mk4_PT11 Flow
+NWP Flow,    UKV_Mk4_PT12 Flow
+NWP Flow,    UKV_Mk4_PT13 Flow
+NWP Flow,    UKV_Mk4_PT14 Flow
+NWP Flow,    UKV_Mk4_PT15 Flow
+NWP Flow,    UKV_Mk4_PT16 Flow
+NWP Flow,    Global_Mk11_PT2 Flow
+
+Flow Order: Cloud
+Flow Module, Flow
+NWP Flow,    UKV_Mk4_PT1 Flow
+NWP Flow,    UKV_Mk4_PT2 Flow
+NWP Flow,    UKV_Mk4_PT3 Flow
+NWP Flow,    UKV_Mk4_PT4 Flow
+NWP Flow,    UKV_Mk4_PT5 Flow
+NWP Flow,    UKV_Mk4_PT6 Flow
+NWP Flow,    UKV_Mk4_PT7 Flow
+NWP Flow,    UKV_Mk4_PT8 Flow
+NWP Flow,    UKV_Mk4_PT9 Flow
+NWP Flow,    UKV_Mk4_PT10 Flow
+NWP Flow,    UKV_Mk4_PT11 Flow
+NWP Flow,    UKV_Mk4_PT12 Flow
+NWP Flow,    UKV_Mk4_PT13 Flow
+NWP Flow,    UKV_Mk4_PT14 Flow
+NWP Flow,    UKV_Mk4_PT15 Flow
+NWP Flow,    UKV_Mk4_PT16 Flow
+NWP Flow,    Global_Mk11_PT2 Flow
+
+Flow Order: Rain
+Flow Module, Flow
+NWP Flow,    UKV_Mk4_PT1 Flow
+NWP Flow,    UKV_Mk4_PT2 Flow
+NWP Flow,    UKV_Mk4_PT3 Flow
+NWP Flow,    UKV_Mk4_PT4 Flow
+NWP Flow,    UKV_Mk4_PT5 Flow
+NWP Flow,    UKV_Mk4_PT6 Flow
+NWP Flow,    UKV_Mk4_PT7 Flow
+NWP Flow,    UKV_Mk4_PT8 Flow
+NWP Flow,    UKV_Mk4_PT9 Flow
+NWP Flow,    UKV_Mk4_PT10 Flow
+NWP Flow,    UKV_Mk4_PT11 Flow
+NWP Flow,    UKV_Mk4_PT12 Flow
+NWP Flow,    UKV_Mk4_PT13 Flow
+NWP Flow,    UKV_Mk4_PT14 Flow
+NWP Flow,    UKV_Mk4_PT15 Flow
+NWP Flow,    UKV_Mk4_PT16 Flow
+NWP Flow,    Global_Mk11_PT2 Flow
+
+Flow Attributes:
+Name,    Flow Order
+Update,  Update
+Convert, Convert
+Flow,    Flow
+Cloud,   Cloud
+Rain,    Rain
