@@ -4,8 +4,8 @@ import json
 
 met_json_files = {
     'Global': 'mets_global.json',
-    #'UK 1.5km': 'mets_uk.json',
-    #'Global + UK 1.5km': 'mets_global+uk.json'
+    'UK 1.5km': 'mets_uk.json',
+    'Global + UK 1.5km': 'mets_globalpt2.json'
 }
 met_dataset_names = list(met_json_files.keys())
 
