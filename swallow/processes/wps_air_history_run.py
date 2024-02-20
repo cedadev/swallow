@@ -46,16 +46,16 @@ class AirHistoryRun(NAMEBaseProcess):
                          min_occurs=1,
                          max_occurs=1),
 
-        ] + self._get_start_date_time_process_inputs() + [
+            self._get_start_datetimestr_process_input(),
             self._get_run_duration_process_input(),
             
-        ] + (self._get_date_time_process_inputs('ArrivalStart', 'Arrival Start [if not start of run]:',
+            self._get_datetimestr_process_input('ArrivalStart', 'Arrival Start [if not start of run]:',
                                                 'start of arrival period',
-                                                optional=True, add_abstract=' - leave blank to use start of run') +
-             self._get_date_time_process_inputs('ArrivalStop', 'Arrival Stop [if not end of run]:',
+                                                optional=True, add_abstract=' - leave blank to use start of run'),
+            self._get_datetimestr_process_input('ArrivalStop', 'Arrival Stop [if not end of run]:',
                                                 'end of arrival period [NOTE: EARLIER than ArrivalStart, as backwards-running model]',
-                                                optional=True, add_abstract=' - leave blank to use end of run')
-        ) + [
+                                                optional=True, add_abstract=' - leave blank to use end of run'),
+            
             LiteralInput('PredefDomain', 'Predefined Domain',
                          abstract=('predefined model computational domain '
                                    '(alternative to choosing bounding box)'),
@@ -208,11 +208,11 @@ class AirHistoryRun(NAMEBaseProcess):
             'ArrivalLoc_Name': known_location,
             'ArrivalLoc_X': longitude,
             'ArrivalLoc_Y': latitude,
-            'ArrivalStart': self._get_date_time(request, 'ArrivalStart'),
-            'ArrivalStop': self._get_date_time(request, 'ArrivalStop'),
+            'ArrivalStart': self._get_datetime(request, 'ArrivalStart'),
+            'ArrivalStop': self._get_datetime(request, 'ArrivalStop'),
             'ArrivalTop': self._get_input(request, 'ArrivalTop'),
             'RunName': runID,
-            'RunStart': self._get_start_date_time(request),
+            'RunStart': self._get_start_datetime(request),
             'ZGrid': self._get_input(request, 'Heights', multi=True, sort=True),
             'met_data': self._get_input(request, 'MetData'), 
 

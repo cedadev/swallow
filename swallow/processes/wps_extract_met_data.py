@@ -51,7 +51,7 @@ class ExtractMetData(NAMEBaseProcess):
                          max_occurs=999,
                          allowed_values=sorted(self._stations.keys())),
             
-        ] + self._get_start_date_time_process_inputs() + [
+            self._get_start_datetimestr_process_input(),
             self._get_run_duration_process_input(),
             
             LiteralInput('MetHeight', 'Met Data Height',
@@ -143,7 +143,7 @@ class ExtractMetData(NAMEBaseProcess):
                 location_names.append(location)
 
         longitudes = [lon % 360 for lon in longitudes]
-        start_date_time = self._get_start_date_time(request)
+        start_date_time = self._get_start_datetime(request)
 
         if not longitudes:
             raise ProcessError('process inputs for coordinates and" '
