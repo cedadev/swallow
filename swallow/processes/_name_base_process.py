@@ -139,7 +139,7 @@ class NAMEBaseProcess(Process):
     
     def _get_met_data_process_input(self):
         return LiteralInput('MetData', 'Met Data',
-                            abstract='which forcing dataset to use',
+                            abstract='which met dataset to use',
                             data_type='string',
                             allowed_values=met_dataset_names,
                             min_occurs=1,
