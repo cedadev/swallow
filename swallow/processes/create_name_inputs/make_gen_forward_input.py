@@ -35,6 +35,14 @@ def create_inputs(paths, params):
     sync_steps_per_hr = 60 // params['SyncTime_Minutes']
     assert(60 % params['SyncTime_Minutes'] == 0)
     
+    release_start = params['ReleaseStart']
+    if release_start is None:
+        release_start = run_start_time
+
+    release_stop = params['ReleaseStop']
+    if release_stop is None:
+        release_stop = run_stop_time
+
     data = {
         'AvTimesAll': sync_steps_per_hr * params['Duration'],
         'AvTimesMain': sync_steps_per_hr * params['MainTGrid_dT'],
@@ -58,8 +66,8 @@ def create_inputs(paths, params):
         'nParticlesPerHr': params['nParticlesPerHr'],
         'OutputDir': paths['output_dir'],
         'ReleaseDZ': params['ReleaseTop'] - params['ReleaseBottom'],
-        'ReleaseStart': params['ReleaseStart'].strftime(timeformat),
-        'ReleaseStop': params['ReleaseStop'].strftime(timeformat),
+        'ReleaseStart': release_start.strftime(timeformat),
+        'ReleaseStop': release_stop.strftime(timeformat),
         'ReleaseZ': (params['ReleaseTop'] + params['ReleaseBottom']) / 2,
         'Run_Name': sanitise_name(params['RunName']),
         'SourceLoc_Name': params['ReleaseLoc_Name'],

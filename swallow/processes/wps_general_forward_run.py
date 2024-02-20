@@ -46,15 +46,16 @@ class GenForwardRun(NAMEBaseProcess):
                          min_occurs=1,
                          max_occurs=1),
 
-        ] + self._get_start_date_time_process_inputs() + [
+            self._get_start_datetimestr_process_input(),
             self._get_run_duration_process_input(),
             
-        ] + (self._get_date_time_process_inputs('ReleaseStart', 'Release Start',
-                                                'start of species release') +
-             self._get_date_time_process_inputs('ReleaseStop', 'Release Stop',
+            self._get_datetimestr_process_input('ReleaseStart', 'Release Start [if not start of run]:',
+                                                'start of species release',
+                                                optional=True, add_abstract=' - leave blank to use start of run'),
+            self._get_datetimestr_process_input('ReleaseStop', 'Release Stop [if not end of run]:',
                                                 'end of species release',
-                                                default_add_hours=3)
-        ) + [
+                                                optional=True, add_abstract=' - leave blank to use end of run'),
+
             LiteralInput('PredefDomain', 'Predefined Domain',
                          abstract=('predefined model computational domain '
                                    '(alternative to choosing bounding box)'),
@@ -207,11 +208,11 @@ class GenForwardRun(NAMEBaseProcess):
             'ReleaseLoc_Name': known_location,
             'ReleaseLoc_X': longitude,
             'ReleaseLoc_Y': latitude,
-            'ReleaseStart': self._get_date_time(request, 'ReleaseStart'),
-            'ReleaseStop': self._get_date_time(request, 'ReleaseStop'),
+            'ReleaseStart': self._get_datetime(request, 'ReleaseStart'),
+            'ReleaseStop': self._get_datetime(request, 'ReleaseStop'),
             'ReleaseTop': self._get_input(request, 'ReleaseTop'),
             'RunName': runID,
-            'RunStart': self._get_start_date_time(request),
+            'RunStart': self._get_start_datetime(request),
             'ZGrid': self._get_input(request, 'Heights', multi=True, sort=True),
             'met_data': self._get_input(request, 'MetData'), 
 

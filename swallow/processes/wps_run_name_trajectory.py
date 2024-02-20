@@ -28,7 +28,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
             self._get_latitude_process_input(),
             self._get_longitude_process_input(),
             self._get_known_location_process_input(),
-        ] + self._get_start_date_time_process_inputs() + [
+            self._get_start_datetimestr_process_input(),
             self._get_run_duration_process_input(),
             
             LiteralInput('RunDirection', 'Run Direction',
@@ -71,7 +71,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
         latitude = self._get_input(request, 'Latitude')
         longitude = self._get_input(request, 'Longitude')
         trajectory_heights = self._get_input(request, 'Heights', multi=True, sort=True)
-        release_date_time = self._get_start_date_time(request)
+        release_date_time = self._get_start_datetime(request)
 
         if known_location != None and known_location != self._null_label:
             longitude, latitude = self._stations[known_location]
