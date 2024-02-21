@@ -4,6 +4,8 @@ import logging
 import time
 import sys
 import re
+import glob
+import zipfile
 
 from pywps import (Process, LiteralInput, LiteralOutput, ComplexOutput,
                    BoundingBoxInput, BoundingBoxOutput, FORMATS)
@@ -90,6 +92,10 @@ class NAMEBaseProcess(Process):
                           supported_formats=[FORMATS.TEXT]
             ),
             ComplexOutput('name_stderr', 'NAME model standard error',
+                          as_reference=True,
+                          supported_formats=[FORMATS.TEXT]
+            ),
+            ComplexOutput('zipped_output', 'Zip file containing all other output files',
                           as_reference=True,
                           supported_formats=[FORMATS.TEXT]
             ),
@@ -305,6 +311,18 @@ class NAMEBaseProcess(Process):
         return ml4.xml
 
 
+    def _create_zipfile(self, paths, prefix='NAME_WPS'):
+        #dirname = f'{prefix}_{self.response.uuid}'
+        dirname = f'{prefix}_{datetime.datetime.now().strftime("%Y%m%d.%H%M%S")}'
+        zipname = f'{dirname}.zip'
+        zipfile_path = os.path.join(self.workdir, zipname)
+        with zipfile.ZipFile(zipfile_path, "w") as zipf:
+            for path in paths:
+                zipf.write(path,
+                           arcname=f'{dirname}/{os.path.basename(path)}')
+        return zipfile_path
+    
+
     _adaq_scripts_use_image_extension = False
 
     def _get_adaq_scripts_and_args(self, *args):
@@ -399,6 +417,14 @@ class NAMEBaseProcess(Process):
                                   self._work_files_to_keep,
                                   'name-result', 'NAME model output files')
 
+        zipfile_path = self._create_zipfile([name_input_file,
+                                             stdout_path,
+                                             stderr_path] +
+                                            glob.glob(f'{output_dir}/*') +
+                                            glob.glob(f'{plots_dir}/*'))
+
+        response.outputs['zipped_output'].file = zipfile_path
+        
         d = input_params
         inputs = ', '.join(f'\n  {k}: {d[k]}' for k in sorted(d))
 
