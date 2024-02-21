@@ -20,7 +20,7 @@ def create_inputs(paths, params):
     met_decln_file, met_defn_paths = get_met_files(params, paths,
                                                    run_start_time, run_stop_time)
     
-    timeformat = '%d/%m/%Y %H:%M'
+    timeformat = '%d/%m/%Y %H:%M:%S'
     data = {
         'EndTimeOfRun': run_stop_time.strftime(timeformat),
         'LocationNames': params['location_names'],

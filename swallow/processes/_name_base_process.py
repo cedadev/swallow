@@ -124,8 +124,8 @@ class NAMEBaseProcess(Process):
 
 
     def _datetimestr_to_datetime(self, val):
-        fmt = (r'(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})\s+'
-               r'(?P<hour>\d{2}):(?P<minute>\d{2})(?:(?P<second>\d{2}))?$')
+        fmt = (r'(?P<year>\d{4})-(?P<month>\d{1,2})-(?P<day>\d{1,2})\s+'
+               r'(?P<hour>\d{1,2}):(?P<minute>\d{1,2})(?::(?P<second>\d{1,2}))?$')
         m = re.match(fmt, val.strip())
         if m is None:
             raise ValueError(f'could not parse date and time {val}')
