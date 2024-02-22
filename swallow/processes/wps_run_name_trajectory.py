@@ -66,15 +66,7 @@ class RunNAMETrajectory(NAMEBaseProcess):
         returns dictionary of inputs, some of which are used raw, 
         while others need some processing
         """
-        runID = self._get_input(request, 'RunID')
-        known_location = self._get_input(request, 'KnownLocation')
-        latitude = self._get_input(request, 'Latitude')
-        longitude = self._get_input(request, 'Longitude')
-        trajectory_heights = self._get_input(request, 'Heights', multi=True, sort=True)
-        release_date_time = self._get_start_datetime(request)
-
-        if known_location != None and known_location != self._null_label:
-            longitude, latitude = self._stations[known_location]
+        known_location, longitude, latitude = self.get_processed_location(request)
 
         return {
             'description': self._get_input(request, 'Description',
@@ -82,12 +74,12 @@ class RunNAMETrajectory(NAMEBaseProcess):
             'known_location': known_location,
             'longitude': longitude,
             'latitude': latitude,
-            'trajectory_heights': trajectory_heights,
+            'trajectory_heights': self._get_input(request, 'Heights', multi=True, sort=True),
             'run_duration': self._get_input(request, 'RunDuration'),
             'run_direction': self._get_input(request, 'RunDirection'),
             'met_data': self._get_input(request, 'MetData'), 
-            'run_name': runID,
-            'release_date_time': release_date_time,
+            'run_name': self._get_input(request, 'RunID'),
+            'release_date_time': self._get_start_datetime(request),
 
             # used by _get_adaq_scripts_and_args
             'image_format': self._get_input(request, 'ImageFormat'),

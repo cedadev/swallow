@@ -56,6 +56,12 @@ class NAMEBaseProcess(Process):
         'Weybourne': (1.1219, 52.9503)
     }
 
+    _output_grids = {
+        '(none)': None,
+        'European output grid (25W-35E, 30N-70N) 300x300': [-25, 30, 35, 70, 300, 300],
+        'global (720x360)': [-179.75, -89.75, 179.75, 89.75, 720, 360],
+    }
+
     _null_label = '(none)'
 
     def __init__(self, *args, **kwargs):
@@ -278,12 +284,95 @@ class NAMEBaseProcess(Process):
                             max_occurs=999,
         )
 
-    def _get_bounding_box_input(self, name, description):
-        return BoundingBoxInput(name, description,
-                                crss=['epsg:4326'],
-                                dimensions=2)
+    def _get_output_horiz_grid_process_inputs(self):
+        
+        return [
+
+            LiteralInput('PredefOutputGrid', 'Predefined Output Grid',
+                         abstract=('predefined output grid '
+                                   '(alternative to choosing bounding box and resolution)'),
+                         data_type='string',
+                         allowed_values=list(self._output_grids.keys()),                         
+                         min_occurs=1,
+                         max_occurs=1),
+
+            BoundingBoxInput('OutputGridExtent',
+                             'Output Grid Extent (if no predefined output grid selected)',
+                             crss=['epsg:4326'],
+                             dimensions=2),
+            
+            LiteralInput('OutputGridNumLon', 'Output Grid nx (if no predefined output grid selected)', 
+                         abstract=('enter number of longitudes in output grid '
+                                   'unless you have chosen a predefined output grid'),
+                         data_type='integer',
+                         min_occurs=1,
+                         max_occurs=1,
+                         default=300),
+            
+            LiteralInput('OutputGridNumLat', 'Output Grid ny (if no predefined output grid selected)', 
+                         abstract=('enter number of latitudes in output grid '
+                                   'unless you have chosen a predefined output grid'),
+                         data_type='integer',
+                         min_occurs=1,
+                         max_occurs=1,
+                         default=300),
+        ]                
+        
+    def _get_halo_process_input(self):
+
+        return LiteralInput('HaloSize', 'Halo Size', 
+                            abstract=('number of degrees of lon/lat by which computational domain is larger '
+                                      'than output grid at each edge '
+                                      '(capped at 180W/E, 90S/N)'),
+                            data_type='float',
+                            min_occurs=1,
+                            max_occurs=1,
+                            default=5)
+
+    def _get_timestamp_process_input(self):
+
+        return LiteralInput('MainTGrid_dT', 'Timestep', 
+                            abstract='main computational grid time resolution (hours)',
+                            data_type='integer',
+                            min_occurs=1,
+                            max_occurs=1,
+                            default=6)
 
 
+    # used by general forward, air history, and trajectory
+    def get_processed_location(self, request):
+        known_location = self._get_input(request, 'KnownLocation')
+        latitude = self._get_input(request, 'Latitude')
+        longitude = self._get_input(request, 'Longitude')
+        if known_location != None and known_location != self._null_label:
+            longitude, latitude = self._stations[known_location]
+        return known_location, longitude, latitude
+    
+    
+    # used by general forward and air history
+    def get_processed_grid_and_domain(self, request):
+
+        hgrid_nx = self._get_input(request, 'OutputGridNumLon')
+        hgrid_ny = self._get_input(request, 'OutputGridNumLat')
+        hgrid_extent = self._get_input(request, 'OutputGridExtent')
+        predef_output_grid_name = self._get_input(request, 'PredefOutputGrid')
+        predef_output_grid = self._output_grids[predef_output_grid_name]
+        if predef_output_grid is not None:
+            hgrid_nx, hgrid_ny = predef_output_grid[4:6]
+            hgrid_extent = predef_output_grid[0:4]
+
+        halo_size = self._get_input(request, 'HaloSize')
+
+        hgrid_w, hgrid_s, hgrid_e, hgrid_n = hgrid_extent
+        domain_w = max(hgrid_w - halo_size, -180.)
+        domain_e = min(hgrid_e + halo_size, 180.)
+        domain_s = max(hgrid_s - halo_size, -90.)
+        domain_n = min(hgrid_n + halo_size, 90.)        
+        domain = [domain_w, domain_s, domain_e, domain_n]
+            
+        return hgrid_nx, hgrid_ny, hgrid_extent, domain
+    
+            
     def _create_metalink(self, dir_paths, extra_file_paths, identity, description):
         
         ml4 = MetaLink4(identity=identity,
