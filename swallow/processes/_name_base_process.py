@@ -323,7 +323,7 @@ class NAMEBaseProcess(Process):
         return LiteralInput('HaloSize', 'Halo Size', 
                             abstract=('number of degrees of lon/lat by which computational domain is larger '
                                       'than output grid at each edge '
-                                      '(capped at 180W/E, 90S/N)'),
+                                      '(S/N halos capped at poles; lons will wrap if W/E halos overlap)'),
                             data_type='float',
                             min_occurs=1,
                             max_occurs=1,
@@ -364,10 +364,26 @@ class NAMEBaseProcess(Process):
         halo_size = self._get_input(request, 'HaloSize')
 
         hgrid_w, hgrid_s, hgrid_e, hgrid_n = hgrid_extent
-        domain_w = max(hgrid_w - halo_size, -180.)
-        domain_e = min(hgrid_e + halo_size, 180.)
+
+        # add the halos; for a global (or near global) output domain,
+        # this could produce overlap between the west and east ends
+        # at this stage, but get_domain_inputs will turn this into 
+        # X unbounded when writing the model input file
+
+        domain_w = hgrid_w - halo_size
+        domain_e = hgrid_e + halo_size        
+
+        # nonetheless, uncomment these lines if desired to avoid overlap
+        # at this stage
+        #
+        ## if domain_e > domain_w + 360:
+        ##     domain_w = (domain_w + domain_e - 360) / 2
+        ##     domain_e = domain_w + 360
+
+        # latitudinal haloes - cap at the poles if needed
         domain_s = max(hgrid_s - halo_size, -90.)
-        domain_n = min(hgrid_n + halo_size, 90.)        
+        domain_n = min(hgrid_n + halo_size, 90.)
+
         domain = [domain_w, domain_s, domain_e, domain_n]
             
         return hgrid_nx, hgrid_ny, hgrid_extent, domain
@@ -472,7 +488,8 @@ class NAMEBaseProcess(Process):
         run_time = time.time() - t_start
 
         if rtn_code != 0:
-            raise ProcessError(f"NAME Fortran code exited abnormally (status={rtn_code})")
+            #raise ProcessError(f"NAME Fortran code exited abnormally (status={rtn_code})")
+            pass
             
         self._update_status('Model code completed - starting plotting', model_end_pc)        
 

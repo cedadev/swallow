@@ -1,9 +1,3 @@
-{% if UnboundedHorizontal %}
 Domains:
-Name,              H Unbounded?,  Z Unbounded?, Z-Coord,   Z Max, T Unbounded?,       Start Time,       End Time, Max Travel Time,
-Dispersion Domain,          Yes,            No,   m asl, {{CompDom_Zmax}},           No, {{StartTimeOfRun}}, {{EndTimeOfRun}},        infinity,
-{% else %}
-Domains:
-Name,              H Unbounded?,  H-Coord,          X Min,          X Max,          Y Min,          Y Max, Z Unbounded?, Z-Coord,   Z Max, T Unbounded?,       Start Time,       End Time, Max Travel Time,
-Dispersion Domain,           No, Lat-Long, {{CompDom_Xmin}}, {{CompDom_Xmax}}, {{CompDom_Ymin}}, {{CompDom_Ymax}},           No,   m asl, {{CompDom_Zmax}},           No, {{StartTimeOfRun}}, {{EndTimeOfRun}},        infinity,
-{% endif %}
+Name,{% if not (X_Unbounded and Y_Unbounded) %} H-Coord,{% endif %} X Unbounded?,{% if not X_Unbounded %} X Min, X Max,{% endif %} Y Unbounded?,{% if not Y_Unbounded %} Y Min, Y Max,{% endif %} Z Unbounded?, Z-Coord, Z Max, T Unbounded?, Start Time, End Time, Max Travel Time,
+Dispersion Domain,{% if not (X_Unbounded and Y_Unbounded) %} Lat-Long,{% endif %}{% if X_Unbounded %} Yes,{% else %} No, {{CompDom_Xmin}}, {{CompDom_Xmax}},{% endif %}{% if Y_Unbounded %} Yes,{% else %} No, {{CompDom_Ymin}}, {{CompDom_Ymax}},{% endif %} No, m asl, {{CompDom_Zmax}}, No, {{StartTimeOfRun}}, {{EndTimeOfRun}}, infinity,
