@@ -4,7 +4,7 @@ import os
 import subprocess
 from PIL import Image
 
-adaq_home = '/gws/smf/j04/cedaproc/cedawps/adaq/src/adaq_toolbox-ADAQ_Python_v7.1'
+adaq_home = '/gws/smf/j04/cedaproc/cedawps/adaq/src/ADAQ_Python_v7.4'
 
 def run_adaq_script(script_name,
                     args=None):
