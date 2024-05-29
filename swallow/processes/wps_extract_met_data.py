@@ -140,7 +140,10 @@ class ExtractMetData(NAMEBaseProcess):
                 longitude, latitude, _ = self._stations[location]
                 longitudes.append(longitude)
                 latitudes.append(latitude)
-                location_names.append(location)
+                location_names.append(location
+                                      .replace(' ', '_')
+                                      .replace('(', '')
+                                      .replace(')', ''))
 
         longitudes = [lon % 360 for lon in longitudes]
         start_date_time = self._get_start_datetime(request)
