@@ -137,7 +137,7 @@ class ExtractMetData(NAMEBaseProcess):
         
         if predef_locations != None:
             for location in predef_locations:
-                longitude, latitude = self._stations[location]
+                longitude, latitude, _ = self._stations[location]
                 longitudes.append(longitude)
                 latitudes.append(latitude)
                 location_names.append(location)
