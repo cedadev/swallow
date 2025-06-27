@@ -11,4 +11,6 @@ def test_wps_caps():
                             '/wps:ProcessOfferings'
                             '/wps:Process'
                             '/ows:Identifier')
-    assert sorted(names.split()) == ['NAMEGenForward', 'NAMEMetExtract', 'NAMERunTrajectory']
+
+    expected_names = ["NAMEAirHistory", "NAMEGenForward", "NAMEMetExtract", "NAMERunTrajectory"]
+    assert sorted(names.split()) == expected_names
