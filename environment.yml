@@ -6,8 +6,10 @@ dependencies:
 - python=3.11
 - pywps
 - iris
+- matplotlib=3.8.4
 - cartopy
 - pandas
+- scipy<1.14
 - jinja2
 - click
 - psutil
